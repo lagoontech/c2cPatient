@@ -5,7 +5,6 @@ import 'package:care2care/ReusableUtils_/appBar.dart';
 import 'package:care2care/ReusableUtils_/customLabel.dart';
 import 'package:care2care/ReusableUtils_/image_background.dart';
 import 'package:care2care/ReusableUtils_/sizes.dart';
-import 'package:care2care/Screens_/ProfileDetails/schedule%20_update.dart';
 import 'package:care2care/sharedPref/sharedPref.dart';
 import 'package:enefty_icons/enefty_icons.dart';
 import 'package:flutter/material.dart';
@@ -19,18 +18,18 @@ import '../Profile/Controller/initila_profile_controller.dart';
 import '../cancel-request/cancel_list.dart';
 import '../patient_history/patientHistory_view.dart';
 import 'Information_view.dart';
-import 'package:awesome_dialog/awesome_dialog.dart';
 
 class ProfileDetails extends StatelessWidget {
   ProfileDetails({super.key});
 
-  NotificationController controller = Get.put(NotificationController());
+ final NotificationController controller = Get.put(NotificationController());
 
   @override
   Widget build(BuildContext context) {
     return GetBuilder<InitialProfileDetails>(builder: (v) {
       return CustomBackground(
         appBar: CustomAppBar(
+          leading: SizedBox(),
           title: "Profile Details",
           actions: [
             GetBuilder<NotificationController>(builder: (v) {
@@ -72,8 +71,7 @@ class ProfileDetails extends StatelessWidget {
                           // Optional placeholder color
                           child: ClipOval(
                             child: CachedNetworkImage(
-                              imageUrl:
-                                  '${v.profileList!.profilePath}${v.profileList!.data!.profileImageUrl}',
+                              imageUrl: '${v.profileList!.profilePath}${v.profileList!.data!.profileImageUrl}',
                               fit: BoxFit.cover,
                               // Ensure the image covers the CircleAvatar
                               width: 40,
@@ -207,21 +205,33 @@ class ProfileDetails extends StatelessWidget {
                   icons: EneftyIcons.logout_bold,
                   iconColor: Color(0xff002574),
                   heading: "Logout",
-                  message: "",
+                  message: "want to logout",
                   callback: () async {
-                    AwesomeDialog(
+                    showDialog(
                       context: context,
-                      dialogType: DialogType.noHeader,
-                      animType: AnimType.rightSlide,
-                      title: 'Are You Sure ',
-                      desc: ' Want to Logout',
-                      btnCancelOnPress: () {
-                        Get.back();
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text('Are You Sure?'),
+                          content: Text('Do you want to logout?'),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop(); // Close the dialog
+                              },
+                              child: Text('Cancel'),
+                            ),
+                            TextButton(
+                              onPressed: () async {
+                                await SharedPref().logout();
+                                Navigator.of(context).pop(); // Close the dialog
+                              },
+                              child: Text('Logout'),
+                            ),
+                          ],
+                        );
                       },
-                      btnOkOnPress: () async {
-                        await SharedPref().logout();
-                      },
-                    )..show();
+                    );
+
                   },
                 ),
                 Divider(),

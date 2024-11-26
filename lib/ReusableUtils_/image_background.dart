@@ -7,11 +7,11 @@ class CustomBackground extends StatelessWidget {
   final Widget ?bottomNavBar;
   final PreferredSizeWidget? appBar;
 
-
   const CustomBackground({
     super.key,
     required this.child,
     this.appBar,
+
     this.bottomNavBar,
     this.floatingActionButton,
     this.fit = BoxFit.cover,

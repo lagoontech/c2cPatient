@@ -20,6 +20,7 @@ class CaretakerList extends StatelessWidget {
   Widget build(BuildContext context) {
     return CustomBackground(
       appBar: CustomAppBar(
+        leading: SizedBox(),
         title: "Care Taker list",
         actions: [
           Padding(

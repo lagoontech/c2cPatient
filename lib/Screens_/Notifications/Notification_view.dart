@@ -24,7 +24,7 @@ class NotificationView extends StatelessWidget {
           await controller.allNotifications();
         },
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 10.0),
+          padding: EdgeInsets.symmetric(horizontal: 4.w),
           child: GetBuilder<NotificationController>(
             builder: (v) {
               return ListView(
@@ -82,6 +82,8 @@ class NotificationView extends StatelessWidget {
                               iconColor: Colors.blue,
                               heading: data.data!.title,
                               message: data.data!.body,
+                              notificationId:data.id,
+                              time: data.createdAt,
                             ),
                           ),
                         );
@@ -104,6 +106,8 @@ class CustomNotification extends StatelessWidget {
   final IconData? icon;
   final Color? circleColor;
   final Color? iconColor;
+  final String? notificationId;
+  final DateTime? time;
 
   CustomNotification({
     super.key,
@@ -112,28 +116,41 @@ class CustomNotification extends StatelessWidget {
     this.icon,
     this.circleColor,
     this.iconColor,
+    this.notificationId,
+    this.time, // Initialize the time property
   });
+
+  final NotificationController controller = Get.put(NotificationController());
 
   @override
   Widget build(BuildContext context) {
     return Dismissible(
-      key: UniqueKey(),
+      key: ValueKey(notificationId),
+      direction: DismissDirection.endToStart,
       background: Container(
         color: AppColors.primaryColor.withOpacity(0.8),
         child: Row(
           children: [
-            SizedBox(width: 20.w),
+            SizedBox(width: 20),
             Icon(Icons.delete, color: Colors.white),
           ],
         ),
       ),
+      onDismissed: (direction) {
+        controller.deleteNotification(notificationId!);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Notification deleted'),
+          ),
+        );
+      },
       secondaryBackground: Container(
         color: AppColors.primaryColor.withOpacity(0.7),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            Icon(Icons.delete, color: Colors.white),
-            SizedBox(width: 20.w),
+            Icon(Icons.delete, color: Colors.red),
+            SizedBox(width: 20),
           ],
         ),
       ),
@@ -145,7 +162,6 @@ class CustomNotification extends StatelessWidget {
           borderRadius: BorderRadius.circular(7),
         ),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Padding(
               padding: const EdgeInsets.only(left: 8.0),
@@ -161,35 +177,49 @@ class CustomNotification extends StatelessWidget {
             ),
             Expanded(
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 5.w),
-                child: Container(
-                  height: MediaQuery.of(context).size.height * 0.10,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(height: 5), // Replace kHeight5 with SizedBox
-                      Text(
-                        heading ?? "Notification",
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        // Heading on the left
+                        Expanded(
+                          child: Text(
+                            heading ?? "Notification",
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
+                          ),
                         ),
+                        // Time on the right
+                        if (time != null)
+                          Text(
+                            "${time!.hour}:${time!.minute.toString().padLeft(2, '0')} ${time!.hour >= 12 ? 'PM' : 'AM'}",
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey,
+                            ),
+                          ),
+                      ],
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      message ?? "This is a notification message.",
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.black54,
                       ),
-                      SizedBox(height: 4),
-                      Text(
-                        message ?? "This is a notification message.",
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.black54,
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -199,6 +229,7 @@ class CustomNotification extends StatelessWidget {
     );
   }
 }
+
 
 
 

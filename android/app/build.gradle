@@ -1,16 +1,15 @@
 plugins {
     id "com.android.application"
+    // START: FlutterFire Configuration
     id 'com.google.gms.google-services'
+    // END: FlutterFire Configuration
     id "kotlin-android"
+    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id "dev.flutter.flutter-gradle-plugin"
 }
 
-def flutterVersionCode = localProperties.getProperty('flutter.versionCode') ?: '1'
-def flutterVersionName = localProperties.getProperty('flutter.versionName') ?: '1.0'
-
-
 android {
-    namespace = "care2care.patient"
+    namespace = "com.example.care2care"
     compileSdkVersion 34
     ndkVersion = flutter.ndkVersion
 
@@ -25,7 +24,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "care2care.patient"
+        applicationId = "com.example.care2care"
         minSdkVersion 23
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
@@ -39,7 +38,9 @@ android {
         }
     }
 
+
 }
+
 
 flutter {
     source = "../.."

@@ -95,8 +95,10 @@ import 'package:care2care/sharedPref/sharedPref.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class NotificationController extends GetxController {
   FirebaseMessaging messaging = FirebaseMessaging.instance;
@@ -104,6 +106,7 @@ class NotificationController extends GetxController {
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
   var unreadCount = 0;
+  FlutterTts tts = FlutterTts();
 
   @override
   void onInit() {
@@ -111,6 +114,7 @@ class NotificationController extends GetxController {
     initFirebaseMessaging();
     initLocalNotifications();
     setupInteractedMessage();
+    //initTextToSpeech();
     allNotifications();
   }
 
@@ -127,25 +131,39 @@ class NotificationController extends GetxController {
 
     // Handle foreground messages
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
-      print(
-          'Received a message in the foreground: ${message.notification?.body}');
+      print('Received a message in the foreground: ${message.notification?.body}');
 
       // Show local notification with sound
       if (message.notification != null) {
         showLocalNotification(message.notification?.title,
             message.notification?.body, message.data);
+
+/*        readNotificationWithTTS(
+            message.notification!.title!, message.notification!.body!);*/
+
         unreadCount++;
       }
       await allNotifications();
     });
   }
 
+  //initialize text to speech
+
+ /* void initTextToSpeech() {
+    tts.setLanguage('en-US');
+    tts.setSpeechRate(0.5);
+
+  }
+
+  void readNotificationWithTTS(String title, String body) async {
+    await tts.speak('${title}${body}');
+  }*/
+
   // Handle messages when the app is in the background or terminated
   void setupInteractedMessage() async {
     // When the app is in the background and opened by tapping the notification
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      print(
-          'Notification opened from background: ${message.notification?.body}');
+      print('Notification opened from background: ${message.notification?.body}');
       // Handle notification navigation or actions here
       _navigateToScreen(message.data);
     });
@@ -175,7 +193,7 @@ class NotificationController extends GetxController {
     );
 
     final InitializationSettings initializationSettings =
-        InitializationSettings(android: initializationSettingsAndroid,iOS: initializationSettingsIOS);
+    InitializationSettings(android: initializationSettingsAndroid,iOS: initializationSettingsIOS);
 
     flutterLocalNotificationsPlugin.initialize(initializationSettings,
         onDidReceiveNotificationResponse:
@@ -231,6 +249,10 @@ class NotificationController extends GetxController {
   List<AllNotification> listNotification = [];
   String? Count;
 
+
+
+
+
   allNotifications() async {
     loadNotification = true;
     update();
@@ -244,7 +266,10 @@ class NotificationController extends GetxController {
     );
     if (res.statusCode == 200) {
       receiveNotification = receiveNotificationFromJson(res.body);
-      listNotification= receiveNotification!.notifications ?? [];
+      listNotification = receiveNotification!.notifications ?? [];
+      // Access and print notification IDs (if needed)
+
+
       unreadCount = receiveNotification!.unreadCount ?? 0;
       update();
       print("------All notifications${Count}");
@@ -273,7 +298,7 @@ class NotificationController extends GetxController {
       },
     );
     if (request.statusCode == 200) {
-      unreadCount=0;
+      unreadCount = 0;
       update();
       showCustomToast(message: "successfully read");
     } else {
@@ -282,4 +307,32 @@ class NotificationController extends GetxController {
     viewedNotification = false;
     update();
   }
+
+
+
+  Future<void> deleteNotification(String notificationId) async {
+    String? token = await SharedPref().getToken();
+    try {
+      var res = await http.delete(
+        Uri.parse("${ApiUrls().deleteNotification}/$notificationId"),
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (res.statusCode == 200) {
+        // Remove the notification from the list locally
+        listNotification.removeWhere((notification) => notification.id == notificationId);
+        update();
+        showCustomToast(message: "Notification deleted successfully");
+      } else {
+        debugPrint("Failed to delete notification: ${res.body}");
+        showCustomToast(message: "Failed to delete notification");
+      }
+    } catch (e) {
+      debugPrint("Exception while deleting notification: $e");
+      showCustomToast(message: "An error occurred while deleting the notification");
+    }
+  }
+
 }

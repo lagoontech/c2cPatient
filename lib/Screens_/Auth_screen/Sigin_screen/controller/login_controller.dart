@@ -4,13 +4,11 @@ import 'package:care2care/constants/api_urls.dart';
 import 'package:care2care/sharedPref/sharedPref.dart';
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-//import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
-
 import '../../../OtpScreen/otp_screen.dart';
 
 class LoginController extends GetxController {
@@ -119,9 +117,7 @@ class LoginController extends GetxController {
     print("---->$isLoading");
   }
 
-  //
   googleSignInAccount() async {
-
     try {
       GoogleSignInAccount? acc = await googleSignIn.signIn();
       GoogleSignInAuthentication accAuth = await acc!.authentication;

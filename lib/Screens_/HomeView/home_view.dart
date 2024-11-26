@@ -15,24 +15,20 @@ class _HomeViewState extends State<HomeView> {
 
   Future<bool> _onWillPop() async {
     final now = DateTime.now();
-
-    // Check if the current index is 0
     if (bn.currentIndex == 0) {
-      if (_lastBackPressTime == null ||
-          now.difference(_lastBackPressTime!) > Duration(seconds: 2)) {
-        // If this is the first press or the time between presses is more than 2 seconds
+      if (_lastBackPressTime == null || now.difference(_lastBackPressTime!) > Duration(seconds: 2)) {
         _lastBackPressTime = now;
         CustomToast.show(context, 'Press back again to exit');
-        return Future.value(false); // Prevent the default back navigation
+        return Future.value(false);
+      } else {
+        return Future.value(true);
       }
-      // If the time between presses is less than 2 seconds, exit the app
-      return Future.value(true); // Allow the default back navigation
     } else {
-      // If currentIndex is not 0, navigate back to the first screen
       bn.currentIndex = 0;
-      bn.update(); // Notify the controller to update the view
-      return Future.value(false); // Prevent the default back navigation
+      bn.update(); // Ensure this updates the UI correctly
+      return Future.value(false);
     }
+
   }
 
   @override

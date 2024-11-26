@@ -1,16 +1,13 @@
-import 'dart:ui';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:care2care/ReusableUtils_/AppColors.dart';
 import 'package:care2care/ReusableUtils_/customLabel.dart';
 import 'package:care2care/ReusableUtils_/sizes.dart';
 import 'package:care2care/Screens_/HomeScreen/controller/home%20controller.dart';
-import 'package:custom_rating_bar/custom_rating_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:get/get_state_manager/src/simple/get_state.dart';
-import 'package:iconly/iconly.dart';
 import 'package:shimmer/shimmer.dart';
+
 import '../../Notification/controller.dart';
 import '../../ReusableUtils_/appBar.dart';
 import '../Profile/Controller/initila_profile_controller.dart';
@@ -69,7 +66,7 @@ class HomePage extends StatelessWidget {
                               fontWeight: FontWeight.bold,
                             ),
                             CustomLabel(
-                              text: " Care2Care",
+                              text: "Care2Care",
                               fontSize: 19.sp,
                               color: AppColors.primaryColor,
                               fontWeight: FontWeight.bold,

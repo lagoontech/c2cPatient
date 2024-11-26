@@ -15,7 +15,7 @@ import 'package:permission_handler/permission_handler.dart';
 
 import '../../../modals/Profile_modal.dart';
 import '../../PrimaryInformation/primaryInformation_view.dart';
-import '../../Schedule/controller/schedule_controller.dart';
+
 
 class InitialProfileDetails extends GetxController {
   TextEditingController firstName = TextEditingController();
@@ -161,14 +161,13 @@ class InitialProfileDetails extends GetxController {
           "Authorization": "Bearer $token",
         },
       );
-      print("------------------------------------$token");
       if (res.statusCode == 200) {
         //await ScheduleController().fetchPrimaryInformationApi();
         Get.to(() => PrimaryInformationView());
         print("Profile details added successfully");
       } else {
-        //var errorMsg = jsonDecode(res.body)['message'] ?? 'Error occurred';
-        //showCustomToast(message: errorMsg);
+        var errorMsg = jsonDecode(res.body)['message'] ?? 'Error occurred';
+        showCustomToast(message: errorMsg);
       }
     } catch (w) {
       print(w);
@@ -227,8 +226,8 @@ class InitialProfileDetails extends GetxController {
         // await ScheduleController().fetchPrimaryInformationApi();
         debugPrint('successfully update');
       } else {
-       /* var errorMsg = jsonDecode(res.body)['message'] ?? 'Error occurred';
-        showCustomToast(message: errorMsg);*/
+        var errorMsg = jsonDecode(res.body)['message'] ?? 'Error occurred';
+        showCustomToast(message: errorMsg);
         debugPrint('not successfully update');
       }
     } catch (w) {
@@ -265,6 +264,7 @@ class InitialProfileDetails extends GetxController {
         var decodeBody = jsonDecode(res.body);
         profileList = ProfileList.fromJson(decodeBody);
         initialUserDetails = profileList!.data!.patientInfo;
+        update();
         if (initialUserDetails != null) {
           // Populate the text controllers with user details
           firstName.text = initialUserDetails?.firstName ?? '';
@@ -296,6 +296,7 @@ class InitialProfileDetails extends GetxController {
           update();
           return true;
         }
+        update();
       } else {
         print("Error: ${res.statusCode} - ${res.body}");
       }
@@ -306,6 +307,60 @@ class InitialProfileDetails extends GetxController {
     update();
     return false;
   }
+  bool isUpdated = false;
+
+
+  void addListeners() {
+    firstName.addListener(() => trackChanges());
+    lastName.addListener(() => trackChanges());
+    sexCT.addListener(() => trackChanges());
+    emailCT.addListener(() => trackChanges());
+    ageCT.addListener(() => trackChanges());
+    dobCT.addListener(() => trackChanges());
+    heightCT.addListener(() => trackChanges());
+    weightCT.addListener(() => trackChanges());
+    locationCT.addListener(() => trackChanges());
+    nationalityCT.addListener(() => trackChanges());
+    addressCT.addListener(() => trackChanges());
+    diagnosisCT.addListener(() => trackChanges());
+    primary_care_giver_nameCT.addListener(() => trackChanges());
+    primaryContactNameCT.addListener(() => trackChanges());
+    primaryContactNumberCT.addListener(() => trackChanges());
+    secondaryNameCT.addListener(() => trackChanges());
+    secondaryNumberCT.addListener(() => trackChanges());
+    specialist_nameCT.addListener(() => trackChanges());
+    moreInfoCT.addListener(() => trackChanges());
+  }
+
+  void trackChanges() {
+    // Compare the current values with initial values
+    if (firstName.text != initialUserDetails?.firstName ||
+        lastName.text != initialUserDetails?.lastName ||
+        sexCT.text != initialUserDetails?.sex ||
+        emailCT.text != initialUserDetails?.email ||
+        ageCT.text != initialUserDetails?.age.toString() ||
+        dobCT.text != initialUserDetails?.dob?.toIso8601String() ||
+        heightCT.text != initialUserDetails?.height.toString() ||
+        weightCT.text != initialUserDetails?.weight.toString() ||
+        locationCT.text != initialUserDetails?.location ||
+        nationalityCT.text != initialUserDetails?.nationality ||
+        addressCT.text != initialUserDetails?.address ||
+        diagnosisCT.text != initialUserDetails?.diagnosis ||
+        primary_care_giver_nameCT.text != initialUserDetails?.primaryCareGiverName ||
+        primaryContactNameCT.text != initialUserDetails?.primaryContactName ||
+        primaryContactNumberCT.text != initialUserDetails?.primaryContactNumber ||
+        secondaryNameCT.text != initialUserDetails?.secondaryContactName ||
+        secondaryNumberCT.text != initialUserDetails?.secondaryContactNumber ||
+        specialist_nameCT.text != initialUserDetails?.specialistName ||
+        moreInfoCT.text != initialUserDetails?.moreinfo) {
+      isUpdated = true;
+    } else {
+      isUpdated = false;
+    }
+    update();
+  }
+
+
 
   //getCurrentLocation and show the location name
 
@@ -367,4 +422,5 @@ class InitialProfileDetails extends GetxController {
       openAppSettings();
     }
   }
+
 }

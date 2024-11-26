@@ -12,22 +12,33 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final List<Widget>? actions; // Accept a list of actions
   final Widget? leading;
   final PreferredSizeWidget? bottom;
+  final Color? appbarBackgroundColor;
+  final bool ? isbackKey;
 
-  CustomAppBar({
-    Key? key,
-    this.title,
-    this.actions,
-    this.leading,
-    this.bottom,
-  }) : super(key: key);
+  CustomAppBar(
+      {Key? key,
+      this.title,
+      this.actions,
+      this.leading,
+      this.bottom,
+        this.isbackKey,
+      this.appbarBackgroundColor})
+      : super(key: key);
   NotificationController controller = Get.put(NotificationController());
 
   @override
   Widget build(BuildContext context) {
     return AppBar(
       scrolledUnderElevation: 0,
-      backgroundColor: Colors.white,
-      leading: leading ?? const SizedBox(),
+      backgroundColor: appbarBackgroundColor ?? Colors.white,
+      leading: leading ??
+          IconButton(
+              highlightColor: Colors.transparent,
+              splashColor: Colors.transparent,
+              onPressed: () {
+                  Navigator.pop(context);
+              },
+              icon: Icon(Icons.arrow_back_ios,color: Colors.black,)),
       title: Text(
         title ?? '',
         style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.w600),
@@ -134,7 +145,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                     // Adjust icon color
                     onPressed: () {
                       v.notificationsUnread();
-                      Get.to(() =>NotificationView());
+                      Get.to(() => NotificationView());
                     },
                   ),
                 );

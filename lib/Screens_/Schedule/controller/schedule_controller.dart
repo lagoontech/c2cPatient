@@ -8,6 +8,7 @@ import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:path/path.dart' as path;
+import '../../../ReusableUtils_/toast2.dart';
 import '../../../sharedPref/sharedPref.dart';
 import '../../HomeView/home_view.dart';
 import '../../Profile/modal/initilaProfileDetailsModal.dart' hide PatientInfo;
@@ -443,6 +444,30 @@ class ScheduleController extends GetxController {
     uploadLoading = false;
     update();
   }
+
+  deleteProfileImage() async {
+    try {
+      String? token = await SharedPref().getToken();
+      var res = await http.post(
+        Uri.parse(ApiUrls().deleteImage),
+        headers: {
+          "Authorization": "Bearer $token",
+          "Accept": "application/json",
+        },
+      );
+      if(res.statusCode ==200 ){
+        selectImage = null;
+        profile!.data!.profileImageUrl = 'default-profile-img-female.png';
+        update();
+        showCustomToast(message: 'Successfully Removed');
+      }else{
+        showCustomToast(message: 'Not Successfully Removed');
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+  }
+
 
   @override
   void onInit() {

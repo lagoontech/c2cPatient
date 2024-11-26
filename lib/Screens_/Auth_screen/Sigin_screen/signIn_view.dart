@@ -108,7 +108,7 @@ class _MobileEmailState extends State<MobileEmail> {
                 GetBuilder<LoginController>(builder: (v) {
                   return InkWell(
                     onTap: () {
-                      //v.googleSignInAccount();
+                      v.googleSignInAccount();
                     },
                     child: Center(
                       child: SvgPicture.asset(

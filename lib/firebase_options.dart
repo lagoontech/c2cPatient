@@ -68,6 +68,39 @@ class DefaultFirebaseOptions {
   );
 
 }*/
+// import 'package:firebase_core/firebase_core.dart';
+//
+// class DefaultFirebaseOptions {
+//   static FirebaseOptions get care2care {
+//     return const FirebaseOptions(
+//       apiKey: 'AIzaSyBFzoMa0Qn3hH_WFT2qhcmnJ_cWN5GmjVM',
+//       appId: '1:496441455277:android:23d1d1089abd3bbc774c24',
+//       messagingSenderId: '496441455277',
+//       projectId: 'c2cpatient-d4526',
+//       storageBucket: 'c2cpatient-d4526.appspot.com',
+//     );
+//   }
+//
+//   static FirebaseOptions get care2caretaker {
+//     return const FirebaseOptions(
+//       apiKey: 'AIzaSyBFzoMa0Qn3hH_WFT2qhcmnJ_cWN5GmjVM',
+//       appId: '1:496441455277:android:662af5d3bc954389774c24',
+//       messagingSenderId: '496441455277',
+//       projectId: 'c2cpatient-d4526',
+//       storageBucket: 'c2cpatient-d4526.appspot.com',
+//     );
+//   }
+//
+//   static FirebaseOptions get currentPlatform {
+//     // Modify this logic based on the package name or other criteria to select the correct options
+//     const String packageName = "com.example.care2caretaker"; // Change based on the running app
+//     if (packageName == "com.example.care2care") {
+//       return care2care;
+//     } else {
+//       return care2caretaker;
+//     }
+//   }
+// }
 import 'package:firebase_core/firebase_core.dart';
 import 'dart:io';
 
@@ -97,6 +130,6 @@ class DefaultFirebaseOptions {
 
   static FirebaseOptions get currentPlatform {
 
-      return care2care;
+    return care2care;
   }
 }

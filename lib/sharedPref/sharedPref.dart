@@ -3,6 +3,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../Notification/controller.dart';
+import '../Screens_/HomeScreen/controller/home controller.dart';
+import '../Screens_/Profile/Controller/initila_profile_controller.dart';
+
 class SharedPref {
   saveToken(String token) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -62,13 +66,23 @@ class SharedPref {
     return pref.getBool('isDetailsComplete') ?? false;
   }
 
+
+
   Future<void> logout() async {
-    // Clear shared preferences
+    // Step 1: Delete all controllers to ensure no lingering state
+    Get.delete<InitialProfileDetails>(force: true);
+    Get.delete<HomeController>(force: true);
+    Get.delete<NotificationController>(force: true);
+    Get.deleteAll(); // Optionally, delete all controllers if necessary
+
+    // Step 2: Clear shared preferences
     SharedPreferences pref = await SharedPreferences.getInstance();
-    await pref.remove('token');
-    await pref.remove('isDetailsComplete');
-    await pref.remove('fcm_token');
-    Get.deleteAll();
-    Get.offAll(MobileEmail());
+    await pref.clear(); // This clears all stored preferences
+
+    // Step 3: Navigate to the login screen after a short delay
+    Future.delayed(Duration(milliseconds: 200), () {
+      Get.offAll(() => MobileEmail()); // Navigate to the login screen
+    });
   }
+
 }

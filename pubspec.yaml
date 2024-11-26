@@ -1,7 +1,7 @@
 name: care2care
 description: "A new Flutter project."
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
-version: 1.0.4+5
+version: 1.0.0+1
 
 environment:
   sdk: ">=3.3.0 <4.0.0"
@@ -14,6 +14,7 @@ dependencies:
 
   cupertino_icons: ^1.0.8
   get:
+  flutter_staggered_animations:
   shared_preferences:
   flutter_screenutil:
   google_fonts:
@@ -49,12 +50,11 @@ dependencies:
   cached_network_image:
   shimmer:
   file_picker:
-
+  flutter_tts:
   googleapis_auth:
   firebase_messaging:
   flutter_local_notifications:
   firebase_analytics:
-  awesome_dialog:
   flutter_stripe: ^11.2.0
 dev_dependencies:
   flutter_test:

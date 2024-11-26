@@ -1,12 +1,14 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:care2care/ReusableUtils_/appBar.dart';
 import 'package:care2care/ReusableUtils_/image_background.dart';
 import 'package:care2care/ReusableUtils_/sizes.dart';
+import 'package:care2care/Screens_/Schedule/controller/schedule_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:shimmer/shimmer.dart';
-
 import '../../ReusableUtils_/AppColors.dart';
 import '../../ReusableUtils_/custom_textfield.dart';
 import '../Profile/Controller/initila_profile_controller.dart';
@@ -15,6 +17,7 @@ class AccountInformation extends StatelessWidget {
   AccountInformation({super.key});
 
   final InitialProfileDetails getX = Get.put(InitialProfileDetails());
+  final ScheduleController sc = Get.put(ScheduleController());
 
   @override
   Widget build(BuildContext context) {
@@ -25,14 +28,18 @@ class AccountInformation extends StatelessWidget {
           title: 'Profile Information',
           actions: [
             InkWell(
-              onTap: (){
-                Get.back();
-              },
+              onTap: getX.isUpdated
+                  ? () {
+                      getX.updateInitialProfileDetails();
+                    }
+                  : null,
               child: Padding(
-                padding: const EdgeInsets.only(right: 8.0),
+                padding: const EdgeInsets.only(right: 12.0),
                 child: Text(
                   "Done",
-                  style: TextStyle(color: Colors.grey),
+                  style: TextStyle(
+                    color: getX.isUpdated ? Colors.blue : Colors.grey,
+                  ),
                 ),
               ),
             ),
@@ -48,7 +55,8 @@ class AccountInformation extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.only(left: 8.0),
                       child: GetBuilder<InitialProfileDetails>(builder: (v) {
-                        String imageURL = '${v.profileList!.profilePath}${v.profileList!.data!.profileImageUrl}';
+                        String imageURL =
+                            '${v.profileList!.profilePath}${v.profileList!.data!.profileImageUrl}';
                         return CircleAvatar(
                             radius: 20,
                             child: CachedNetworkImage(imageUrl: imageURL));
@@ -75,33 +83,82 @@ class AccountInformation extends StatelessWidget {
                               ),
                             ),
                             SizedBox(height: 4),
-                            Text(
-                              "Remove Photo",
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.black54,
-                              ),
-                            ),
+                            GetBuilder<ScheduleController>(builder: (v) {
+                              return InkWell(
+                                onTap: () {
+                                  v.deleteProfileImage();
+                                },
+                                child: Text(
+                                  "Remove Photo",
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.black54,
+                                  ),
+                                ),
+                              );
+                            }),
                           ],
                         ),
                       );
                     }),
                     kWidth10,
-                    Padding(
-                      padding: EdgeInsets.only(top: 20.h),
-                      child: Align(
-                        alignment: Alignment.center,
-                        child: Text(
-                          'Change Photo',
-                          style: TextStyle(
-                            color: Colors.blue, // Adjust color if needed
-                            fontSize: 14.sp, // Adjust font size if needed
+                    GetBuilder<ScheduleController>(builder: (v) {
+                      return Padding(
+                        padding: EdgeInsets.only(top: 20.h),
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: TextButton(
+                            onPressed: () {
+                              showModalBottomSheet(
+                                context: context,
+                                builder: (context) {
+                                  return Container(
+                                    height: MediaQuery.of(context).size.height *
+                                        0.20,
+                                    width: MediaQuery.of(context).size.width,
+                                    color: Colors.white,
+                                    child: Column(
+                                      //crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        TextButton(
+                                            onPressed: () {
+                                              v.pickImage(
+                                                  ImageSource.camera, context);
+                                            },
+                                            style: ButtonStyle(
+                                                overlayColor:
+                                                    MaterialStatePropertyAll(
+                                                        Colors.transparent)),
+                                            child: AutoSizeText('Camera')),
+                                        TextButton(
+                                            onPressed: () {
+                                              v.pickImage(
+                                                  ImageSource.gallery, context);
+                                            },
+                                            style: ButtonStyle(
+                                                overlayColor:
+                                                    MaterialStatePropertyAll(
+                                                        Colors.transparent)),
+                                            child: AutoSizeText('Gallery')),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                            child: Text(
+                              'Change Photo',
+                              style: TextStyle(
+                                color: Colors.blue,
+                                fontSize: 14.sp,
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                    ),
+                      );
+                    }),
                   ],
                 ),
                 kHeight20,
@@ -126,7 +183,8 @@ class AccountInformation extends StatelessWidget {
                     Flexible(
                       flex: 5,
                       child: customTextField(context,
-                          controller: TextEditingController(text: '${data!.age}'),
+                          controller:
+                              TextEditingController(text: '${data!.age}'),
                           labelText: "Age"),
                     ),
                   ],
@@ -149,8 +207,8 @@ class AccountInformation extends StatelessWidget {
                     Expanded(
                         flex: 5,
                         child: customTextField(context,
-                            controller: TextEditingController(text: '${data.location}'),
-
+                            controller:
+                                TextEditingController(text: '${data.location}'),
                             labelText: "Location")),
                     kWidth15,
                     Flexible(
@@ -171,7 +229,8 @@ class AccountInformation extends StatelessWidget {
                 kHeight15,
                 customTextField(
                   context,
-                  controller: TextEditingController(text: '${data.nationality}'),
+                  controller:
+                      TextEditingController(text: '${data.nationality}'),
                   labelText: "Nationality",
                 ),
                 kHeight15,
@@ -182,7 +241,7 @@ class AccountInformation extends StatelessWidget {
                   labelText: "Address",
                 ),
                 kHeight15,
-          /*      DottedBorder(
+                /*      DottedBorder(
                   color: AppColors.primaryColor,
                   strokeWidth: 1,
                   child: Container(

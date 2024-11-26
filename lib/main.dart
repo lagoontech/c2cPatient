@@ -1,6 +1,7 @@
 import 'package:care2care/Screens_/SplashScreen/splash_screen.dart';
 import 'package:care2care/test/payment%20screen.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_analytics/observer.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -16,8 +17,7 @@ import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  //Impeller.setEnabled(false);
-  Stripe.publishableKey = "pk_test_51O0Fr3SINY9SXzkchfDIq1iKssrpWyKJHEaOd2dVya0NOxYDtLT2pbX6dkBMvbsS5QvMmwuovC2brM3bkLAgvDkQ00tGDrRjSi";
+   Stripe.publishableKey = "pk_test_51O0Fr3SINY9SXzkchfDIq1iKssrpWyKJHEaOd2dVya0NOxYDtLT2pbX6dkBMvbsS5QvMmwuovC2brM3bkLAgvDkQ00tGDrRjSi";
   await Stripe.instance.applySettings();
   try {
     Firebase.apps.forEach((app) {
@@ -29,7 +29,7 @@ void main() async {
       options: DefaultFirebaseOptions.currentPlatform,
     );
   } on Exception catch (e) {
-
+    // TODO
   }
   Get.put(NotificationController());
   Get.lazyPut<InitialProfileDetails>(() => InitialProfileDetails());

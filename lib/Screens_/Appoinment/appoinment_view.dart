@@ -24,6 +24,7 @@ class AppointmentView extends StatelessWidget {
       length: 3,
       child: CustomBackground(
         appBar: CustomAppBar(
+          leading: SizedBox(),
           title: "Appointment",
           bottom: const TabBar(
             tabs: [
@@ -53,19 +54,16 @@ class AppointmentView extends StatelessWidget {
                               padding: EdgeInsets.symmetric(vertical: 3.h),
                               child: InkWell(
                                 onTap: () {
-                                  Get.to(() => RequestDetailsScreen(
+                                  Get.to(() => RequestDetailsScreen2(
                                         careTakerId: requested.caretakerId,
-                                        AppointmentId: requested.id,
+                                        appointmentId: requested.id,
+                                        serviceCharge: requested.caretaker!.caretakerInfo!.serviceCharge,
                                         paymentStatus: requested.paymentStatus,
-                                        imgUrl:
-                                            '${controller.appointmentStatus!.profilePath}${requested.caretaker?.profileImageUrl}',
-                                        name: requested.caretaker!
-                                            .caretakerInfo!.firstName,
-                                        date: DateFormat('dd/MM/yyyy')
-                                            .format(requested.appointmentDate!),
+                                        imgUrl: '${controller.appointmentStatus!.profilePath}${requested.caretaker?.profileImageUrl}',
+                                        name: requested.caretaker!.caretakerInfo!.firstName,
+                                        date: DateFormat('dd/MM/yyyy').format(requested.appointmentDate!),
                                         status: requested.serviceStatus,
-                                        time:
-                                            "${requested.appointmentStartTime} - ${requested.appointmentEndTime}",
+                                        time: "${requested.appointmentStartTime} - ${requested.appointmentEndTime}",
                                       ));
                                 },
                                 child: AppointmentsContainer(
@@ -137,8 +135,7 @@ class AppointmentView extends StatelessWidget {
                                                   approved.paymentStatus,
                                               imgUrl:
                                                   '${controller.appointmentStatus!.profilePath}${approved.caretaker?.profileImageUrl}',
-                                              name: approved.caretaker!
-                                                  .caretakerInfo!.firstName,
+                                              name: '${approved.caretaker!.caretakerInfo!.firstName} ${approved.caretaker!.caretakerInfo!.lastName}',
                                               date: DateFormat('dd/MM/yyyy')
                                                   .format(approved
                                                       .appointmentDate!),

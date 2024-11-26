@@ -19,6 +19,8 @@ class ApiUrls {
 
   String uploadImage = '$baseUrl/api/patients/patient/profile-img-upload';
 
+  String deleteImage = '$baseUrl/api/patients/patient/delete-profile-img';
+
   String DocUpload = '$baseUrl/api/patients/patient/documents-upload';
 
   String deleteDocument = '$baseUrl/api/patients/patient/document-delete';
@@ -48,6 +50,8 @@ class ApiUrls {
   String allNotifications = '$baseUrl/api/patients/patient/notifications';
 
   String markAllUnread =  '$baseUrl/api/patients/patient/notifications/mark-all-as-read';
+
+  String deleteNotification = '$baseUrl/api/patients/patient/delete-notification';
 
   String ServiceHistory = '$baseUrl/api/patients/patient/get-service-history';
 }

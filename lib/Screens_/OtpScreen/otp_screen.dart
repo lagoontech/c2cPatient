@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:onscreen_num_keyboard/onscreen_num_keyboard.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import '../../ReusableUtils_/customButton.dart';
+import '../Auth_screen/Sigin_screen/controller/login_controller.dart';
 import 'Controller/otp_controller.dart';
 
 class OtpScreen extends StatefulWidget {
@@ -20,6 +21,7 @@ class OtpScreen extends StatefulWidget {
 
 class _OtpScreenState extends State<OtpScreen> {
   OtpController vc = Get.put(OtpController());
+  LoginController dc = Get.put(LoginController());
 
   @override
   Widget build(BuildContext context) {
@@ -102,13 +104,18 @@ class _OtpScreenState extends State<OtpScreen> {
             SizedBox(height: 10.h),
             SizedBox(
               width: MediaQuery.of(context).size.width * 0.60,
-              child: const Align(
+              child: Align(
                 alignment: Alignment.centerRight,
-                child: Text(
-                  "Resend code",
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.primaryColor),
+                child: InkWell(
+                  onTap: (){
+                  dc.loginorRegister();
+                  },
+                  child: const Text(
+                    "Resend code",
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.primaryColor),
+                  ),
                 ),
               ),
             ),

@@ -126,7 +126,6 @@ class AppointmentStatusController extends GetxController {
       if (req.statusCode == 200) {
         appointmentStatus = appointmentStatusFromJson(req.body);
         CancelledAppointment = appointmentStatus!.data ?? [];
-        print("------------------------${CancelledAppointment.length}");
       } else {
         debugPrint("Not load cancel req");
       }

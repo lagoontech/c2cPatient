@@ -37,13 +37,14 @@ class ProfileView extends StatelessWidget {
                         )
                       : InkWell(
                           onTap: () {
-                            if (v.profileList == null) {
+                            /* if (v.profileList == null) {
                               debugPrint("Calling addInitialProfileDetails()");
                               v.addInitialProfileDetails();
                             } else {
                               debugPrint("Calling updateInitialProfileDetails()");
                               v.updateInitialProfileDetails();
-                            }
+                            }*/
+                            v.addInitialProfileDetails();
                           },
                           child: Icon(
                             IconlyLight.tick_square,
@@ -262,32 +263,3 @@ class ProfileView extends StatelessWidget {
   }
 }
 
-/*
-
-if (!v.hasFetchedUserDetails) {
-bool userFound = await v.fetchInitialUserDetails();
-if (userFound) {
-v.updateInitialProfileDetails();
-showCustomToast(
-message: 'User details successfully updated!',
-);
-} else {
-v.addInitialProfileDetails();
-showCustomToast(
-message: 'User details successfully added!',
-);
-}
-} else {
-if (v.isUserFound) {
-v.updateInitialProfileDetails();
-showCustomToast(
-message: 'User details successfully updated!',
-);
-} else {
-v.addInitialProfileDetails();
-showCustomToast(
-message: 'User details successfully added!',
-);
-}
-}
-*/
