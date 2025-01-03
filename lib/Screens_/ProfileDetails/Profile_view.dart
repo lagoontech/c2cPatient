@@ -5,6 +5,7 @@ import 'package:care2care/ReusableUtils_/appBar.dart';
 import 'package:care2care/ReusableUtils_/customLabel.dart';
 import 'package:care2care/ReusableUtils_/image_background.dart';
 import 'package:care2care/ReusableUtils_/sizes.dart';
+import 'package:care2care/Screens_/ProfileDetails/schedule%20_update.dart';
 import 'package:care2care/sharedPref/sharedPref.dart';
 import 'package:enefty_icons/enefty_icons.dart';
 import 'package:flutter/material.dart';
@@ -143,29 +144,29 @@ class ProfileDetails extends StatelessWidget {
                   icons: IconlyBold.profile,
                   iconColor: Color(0xff246AFD),
                   heading: "Profile",
-                  message: "change Your Account Information ",
+                  message: "Change your account information ",
                   callback: () {
                     Get.to(() => AccountInformation());
                   },
                 ),
-                /*    Divider(),
+                    Divider(),
                 kHeight10,
                 ProfileDetailsCustom(
                   icons: EneftyIcons.wallet_remove_bold,
                   iconColor: Colors.green,
                   heading: "My Schedules",
-                  message: "Add your Insurance Details",
+                  message: "Update medical information",
                   callback: () {
                     Get.to(() => ScheduleUpdate());
                   },
-                ),*/
+                ),
                 Divider(),
                 kHeight10,
                 ProfileDetailsCustom(
                   icons: EneftyIcons.wallet_remove_bold,
                   iconColor: Colors.green,
                   heading: "My History",
-                  message: "To View Your Previous Appointment History ",
+                  message: "To view your previous appointment history ",
                   callback: () {
                     Get.to(() => PatientHistoryView());
                   },
@@ -176,7 +177,7 @@ class ProfileDetails extends StatelessWidget {
                   icons: EneftyIcons.wallet_remove_bold,
                   iconColor: Colors.green,
                   heading: "Cancelled Appointments",
-                  message: "To View Your Cancelled Appointments History ",
+                  message: "To view your cancelled appointments history ",
                   callback: () {
                     Get.to(() => CancelList());
                   },
@@ -205,7 +206,7 @@ class ProfileDetails extends StatelessWidget {
                   icons: EneftyIcons.logout_bold,
                   iconColor: Color(0xff002574),
                   heading: "Logout",
-                  message: "want to logout",
+                  message: "Tap to logout",
                   callback: () async {
                     showDialog(
                       context: context,

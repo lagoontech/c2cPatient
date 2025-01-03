@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:care2care/ReusableUtils_/toast2.dart';
+import 'package:care2care/Utils/date_utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
@@ -16,11 +17,21 @@ class AppointmentStatusController extends GetxController {
   List<StatusData> statusData = [];
 
   List<StatusData> RequestAppointment = [];
+  List<StatusData> searchedRequestAppointment = [];
   List<StatusData> ApprovedAppointment = [];
+  List<StatusData> searchedAppointments = [];
   List<StatusData> CompletedAppointment = [];
+  List<StatusData> searchedCompletedAppointment = [];
   List<StatusData> CancelledAppointment = [];
   List<StatusData> ProcessingAppointment = [];
+  List<StatusData> searchedProcessingAppointment = [];
   TextEditingController cancelCT = TextEditingController();
+
+  DateTime ?selectedDate;
+
+  int currentTab = 1;
+  TextEditingController searchTEC = TextEditingController();
+  String ?displayDate;
 
   Future<void> refreshAppointments() async {
     await fetchAppointments();
@@ -114,6 +125,7 @@ class AppointmentStatusController extends GetxController {
     }
   }
 
+  //
   loadRejectList() async {
     try {
       String? token = await SharedPref().getToken();
@@ -135,6 +147,7 @@ class AppointmentStatusController extends GetxController {
   }
   ServiceHistory? serviceHistory;
 
+  //
   loadGetHistory({int? appointmentId, int? CaretakerId}) async {
     try {
       String? token = await SharedPref().getToken();
@@ -161,10 +174,84 @@ class AppointmentStatusController extends GetxController {
     }
   }
 
+  //
+  searchAppointments({bool completedOnly = false}){
+
+    if(completedOnly){
+      searchedCompletedAppointment = CompletedAppointment.where((app)
+      {
+        var hasAppointment = false;
+        if(displayDate==null)
+          hasAppointment = app.caretaker!.caretakerInfo!.firstName!.toLowerCase().contains(
+              searchTEC.text.toLowerCase());
+        else if(displayDate!=null && searchTEC.text.isNotEmpty) {
+          hasAppointment = app.caretaker!.caretakerInfo!.firstName!.toLowerCase().contains(
+              searchTEC.text.toLowerCase()) && displayDate == DateUtils().dateOnlyFormat(app.appointmentDate!);
+        }else if(displayDate!=null){
+          hasAppointment = displayDate == DateUtils().dateOnlyFormat(app.appointmentDate!);
+        }
+        return hasAppointment;
+      }
+      ).toList();
+      update();
+      return;
+    }
+
+    if(currentTab == 0){
+      searchedRequestAppointment = RequestAppointment.where((app)
+      {
+        var hasAppointment = false;
+        if(displayDate==null)
+          hasAppointment = app.caretaker!.caretakerInfo!.firstName!.toLowerCase().contains(
+              searchTEC.text.toLowerCase());
+        else if(displayDate!=null && searchTEC.text.isNotEmpty) {
+          hasAppointment = app.caretaker!.caretakerInfo!.firstName!.toLowerCase().contains(
+              searchTEC.text.toLowerCase()) && displayDate == DateUtils().dateOnlyFormat(app.appointmentDate!);
+        }else if(displayDate!=null){
+          hasAppointment = displayDate == DateUtils().dateOnlyFormat(app.appointmentDate!);
+        }
+        return hasAppointment;
+      }
+      ).toList();
+    }
+    if(currentTab == 1){
+      searchedAppointments = ApprovedAppointment.where((app) {
+        var hasAppointment = false;
+        if(displayDate==null)
+        hasAppointment = app.caretaker!.caretakerInfo!.firstName!.toLowerCase().contains(
+            searchTEC.text.toLowerCase());
+        else if(displayDate!=null && searchTEC.text.isNotEmpty) {
+          hasAppointment = app.caretaker!.caretakerInfo!.firstName!.toLowerCase().contains(
+              searchTEC.text.toLowerCase()) && displayDate == DateUtils().dateOnlyFormat(app.appointmentDate!);
+        }else if(displayDate!=null){
+          hasAppointment = displayDate == DateUtils().dateOnlyFormat(app.appointmentDate!);
+        }
+        return hasAppointment;
+      }
+      ).toList();
+    }
+    if(currentTab == 2){
+      searchedProcessingAppointment = ProcessingAppointment.where((app)
+      {
+        var hasAppointment = false;
+        if(displayDate==null)
+          hasAppointment = app.caretaker!.caretakerInfo!.firstName!.toLowerCase().contains(
+              searchTEC.text.toLowerCase());
+        else if(displayDate!=null && searchTEC.text.isNotEmpty) {
+          hasAppointment = app.caretaker!.caretakerInfo!.firstName!.toLowerCase().contains(
+              searchTEC.text.toLowerCase()) && displayDate == DateUtils().dateOnlyFormat(app.appointmentDate!);
+        }else if(displayDate!=null){
+          hasAppointment = displayDate == DateUtils().dateOnlyFormat(app.appointmentDate!);
+        }
+        return hasAppointment;
+      }).toList();
+    }
+    update();
+  }
+
+  //
   @override
   void onInit() {
-    // TODO: implement onInit
-    debugPrint("Fetching appointments on init");
     loadRejectList();
     fetchAppointments();
     super.onInit();

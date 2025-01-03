@@ -20,12 +20,7 @@ void main() async {
    Stripe.publishableKey = "pk_test_51O0Fr3SINY9SXzkchfDIq1iKssrpWyKJHEaOd2dVya0NOxYDtLT2pbX6dkBMvbsS5QvMmwuovC2brM3bkLAgvDkQ00tGDrRjSi";
   await Stripe.instance.applySettings();
   try {
-    Firebase.apps.forEach((app) {
-      print("dasd");
-      app.delete();
-    });
     await Firebase.initializeApp(
-      name: "main",
       options: DefaultFirebaseOptions.currentPlatform,
     );
   } on Exception catch (e) {

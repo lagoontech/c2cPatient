@@ -29,7 +29,8 @@ class CaretakerInformation extends StatefulWidget {
   String? experience;
   String? rating;
   String? imageUrl;
-  String?charge;
+  String? charge;
+  String? about;
 
   int? careTakerId;
 
@@ -45,6 +46,7 @@ class CaretakerInformation extends StatefulWidget {
     this.imageUrl,
     this.careTakerId,
     this.charge,
+    this.about
   });
 
   @override
@@ -88,7 +90,7 @@ class _CaretakerInformationState extends State<CaretakerInformation> {
         padding: EdgeInsets.symmetric(horizontal: 10.w),
         child: SingleChildScrollView(
           child: GetBuilder<HomeController>(builder: (v) {
-            var path = v.viewAllCareTakers!.profilePath;
+            var path = v.profilePath;
             //var imgUrl = v.viewAllCareTakers!.data![index].profileImageUrl;
             return Column(
               children: [
@@ -124,8 +126,8 @@ class _CaretakerInformationState extends State<CaretakerInformation> {
                   fontWeight: FontWeight.bold,
                 ),
                 kHeight10,
-                const ReadMoreText(
-                  'A medical caretaker doctor is a healthcare professional dedicated to providing personalized care and support to patients, especially the elderly or those with chronic conditions. They work closely with families to ensure that patients receive comprehensive medical attention, from daily health monitoring to specialized treatments, helping to improve their quality of life.',
+                ReadMoreText(
+                  widget.about ?? "",
                   trimMode: TrimMode.Line,
                   trimLines: 2,
                   colorClickableText: Colors.pink,
@@ -170,6 +172,7 @@ class _CaretakerInformationState extends State<CaretakerInformation> {
                 GetBuilder<CareTakerController>(builder: (v) {
                   return CustomEasyDateTimeLine(
                     disabledDates: v.getDisabledDates(),
+                    selectedDate: v.appointmentDate,
                     onDateChange: (date) {
                       v.appointmentDate = date;
                       print("selected Date: $date");

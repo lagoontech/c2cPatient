@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:care2care/ReusableUtils_/AppColors.dart';
@@ -119,71 +120,73 @@ class AppointmentsContainer extends StatelessWidget {
                   ),
                   const Divider(),
                   SizedBox(height: 5.h),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.07,
-                    width: MediaQuery.of(context).size.width,
-                    child: Row(
-                      children: [
-                        CircleAvatar(
-                          radius: 28.r,
-                          backgroundImage: NetworkImage(imageUrl ?? ''),
-                        ),
-                        SizedBox(width: 12.w),
-                        Expanded(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                doctorName ?? '',
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 17.sp,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              Text(
-                                doctorDesignation ?? '',
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 14.sp,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ],
+                  Expanded(
+                    child: SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.07,
+                      width: MediaQuery.of(context).size.width,
+                      child: Row(
+                        children: [
+                          CircleAvatar(
+                            radius: 28.r,
+                            backgroundImage: NetworkImage(imageUrl ?? ''),
                           ),
-                        ),
-                        Expanded(
-                          child: Align(
-                            alignment: Alignment.bottomRight,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
+                          SizedBox(width: 12.w),
+                          Expanded(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                actionIcon != null
-                                    ? Icon(
-                                        actionIcon,
-                                        size: 20.sp,
-                                        color: AppColors.secondaryColor,
-                                      )
-                                    : SizedBox(),
-                                SizedBox(width: 5.w),
-                                InkWell(
-                                  onTap: actionTap,
-                                  child: Text(
-                                    action ?? '',
-                                    style: TextStyle(
-                                      fontSize: 12.sp,
-                                      color: actionColor,
-                                    ),
+                                Text(
+                                  doctorName ?? '',
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 15.sp,
+                                    fontWeight: FontWeight.bold,
                                   ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                Text(
+                                  doctorDesignation ?? '',
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 12.sp,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ],
                             ),
                           ),
-                        ),
-                      ],
+                          Expanded(
+                            child: Align(
+                              alignment: Alignment.bottomRight,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  actionIcon != null
+                                      ? Icon(
+                                          actionIcon,
+                                          size: 20.sp,
+                                          color: AppColors.secondaryColor,
+                                        )
+                                      : SizedBox(),
+                                  SizedBox(width: 5.w),
+                                  InkWell(
+                                    onTap: actionTap,
+                                    child: Text(
+                                      action ?? '',
+                                      style: TextStyle(
+                                        fontSize: 12.sp,
+                                        color: actionColor,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   )
                 ],

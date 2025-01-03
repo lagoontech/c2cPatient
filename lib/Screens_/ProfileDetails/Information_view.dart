@@ -4,7 +4,8 @@ import 'package:care2care/ReusableUtils_/appBar.dart';
 import 'package:care2care/ReusableUtils_/image_background.dart';
 import 'package:care2care/ReusableUtils_/sizes.dart';
 import 'package:care2care/Screens_/Schedule/controller/schedule_controller.dart';
-import 'package:flutter/material.dart';
+import 'package:care2care/Utils/date_utils.dart';
+import 'package:flutter/material.dart' hide DateUtils;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -12,33 +13,39 @@ import 'package:shimmer/shimmer.dart';
 import '../../ReusableUtils_/AppColors.dart';
 import '../../ReusableUtils_/custom_textfield.dart';
 import '../Profile/Controller/initila_profile_controller.dart';
+import 'Controller/edit_profile_controller.dart';
 
 class AccountInformation extends StatelessWidget {
   AccountInformation({super.key});
 
   final InitialProfileDetails getX = Get.put(InitialProfileDetails());
   final ScheduleController sc = Get.put(ScheduleController());
+  EditProfileController ec = Get.put(EditProfileController());
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<InitialProfileDetails>(builder: (v) {
-      var data = getX.profileList!.data!.patientInfo;
-      return CustomBackground(
+
+    return GetBuilder<EditProfileController>(builder: (v) {
+
+      var data ;
+      if(!ec.loadingProfile && ec.profileList!=null){
+        data = ec.profileList!.data!.patientInfo;
+      }
+
+      return !v.loadingProfile?CustomBackground(
         appBar: CustomAppBar(
           title: 'Profile Information',
           actions: [
             InkWell(
-              onTap: getX.isUpdated
-                  ? () {
-                      getX.updateInitialProfileDetails();
-                    }
-                  : null,
+              onTap: () {
+                      ec.updateInitialProfileDetails();
+                    },
               child: Padding(
                 padding: const EdgeInsets.only(right: 12.0),
                 child: Text(
                   "Done",
                   style: TextStyle(
-                    color: getX.isUpdated ? Colors.blue : Colors.grey,
+                    color: Colors.blue,
                   ),
                 ),
               ),
@@ -56,7 +63,7 @@ class AccountInformation extends StatelessWidget {
                       padding: const EdgeInsets.only(left: 8.0),
                       child: GetBuilder<InitialProfileDetails>(builder: (v) {
                         String imageURL =
-                            '${v.profileList!.profilePath}${v.profileList!.data!.profileImageUrl}';
+                            '${ec.profileList!.profilePath}${ec.profileList!.data!.profileImageUrl}';
                         return CircleAvatar(
                             radius: 20,
                             child: CachedNetworkImage(imageUrl: imageURL));
@@ -65,7 +72,7 @@ class AccountInformation extends StatelessWidget {
                     kWidth10,
                     GetBuilder<InitialProfileDetails>(builder: (v) {
                       String fullName =
-                          '${v.profileList!.data!.patientInfo!.firstName!} ${v.profileList!.data!.patientInfo!.lastName!}';
+                          '${ec.profileList!.data!.patientInfo!.firstName!} ${ec.profileList!.data!.patientInfo!.lastName!}';
                       return Container(
                         height: MediaQuery.of(context).size.height * 0.10,
                         child: Column(
@@ -162,12 +169,22 @@ class AccountInformation extends StatelessWidget {
                   ],
                 ),
                 kHeight20,
-                customTextField(
-                  context,
-                  controller: TextEditingController(
-                      text:
-                          '${v.profileList!.data!.patientInfo!.firstName!} ${v.profileList!.data!.patientInfo!.lastName!}'),
-                  labelText: "Full Name",
+                Row(
+                  children: [
+                    Expanded(
+                      child: customTextField(
+                        context,
+                        controller: ec.firstName,
+                        labelText: "First Name",
+                      ),
+                    ),
+                    kWidth20,
+                    Expanded(child: customTextField(
+                      context,
+                      controller: ec.lastName,
+                      labelText: "Last Name",
+                    ))
+                  ],
                 ),
                 kHeight15,
                 Row(
@@ -175,16 +192,13 @@ class AccountInformation extends StatelessWidget {
                     Expanded(
                         flex: 5,
                         child: customTextField(context,
-                            controller: TextEditingController(
-                                text:
-                                    '${v.profileList!.data!.patientInfo!.sex}'),
+                            controller: ec.sexCT,
                             labelText: "Sex")),
                     kWidth20,
                     Flexible(
                       flex: 5,
                       child: customTextField(context,
-                          controller:
-                              TextEditingController(text: '${data!.age}'),
+                          controller: ec.ageCT,
                           labelText: "Age"),
                     ),
                   ],
@@ -192,14 +206,18 @@ class AccountInformation extends StatelessWidget {
                 kHeight15,
                 customTextField(
                   context,
-                  controller: TextEditingController(text: '${data.dob}'),
-                  labelText: "Date of Birth",
+                  controller: ec.emailCT,
+                  labelText: "Email",
                 ),
                 kHeight15,
                 customTextField(
                   context,
-                  controller: TextEditingController(text: '${"dat"}'),
-                  labelText: "Medical License",
+                  controller: ec.dobCT,
+                  readOnly: true,
+                  onTap: (){
+                    selectDob(context);
+                  },
+                  labelText: "Date of Birth",
                 ),
                 kHeight15,
                 Row(
@@ -207,8 +225,37 @@ class AccountInformation extends StatelessWidget {
                     Expanded(
                         flex: 5,
                         child: customTextField(context,
-                            controller:
-                                TextEditingController(text: '${data.location}'),
+                            controller: ec.heightCT,
+                            onChanged: (v){
+                          ec.calculateBMI();
+                            },
+                            labelText: "Height")),
+                    kWidth20,
+                    Flexible(
+                      flex: 5,
+                      child: customTextField(context,
+                          controller: ec.weightCT,
+                          onChanged: (v){
+                        ec.calculateBMI();
+                          },
+                          labelText: "Weight"),
+                    ),
+                    kWidth20,
+                    Flexible(
+                      flex: 5,
+                      child: customTextField(context,
+                          controller: ec.bmiCT,
+                          labelText: "BMI"),
+                    ),
+                  ],
+                ),
+                kHeight15,
+                Row(
+                  children: [
+                    Expanded(
+                        flex: 5,
+                        child: customTextField(context,
+                            controller: ec.locationCT,
                             labelText: "Location")),
                     kWidth15,
                     Flexible(
@@ -229,49 +276,120 @@ class AccountInformation extends StatelessWidget {
                 kHeight15,
                 customTextField(
                   context,
-                  controller:
-                      TextEditingController(text: '${data.nationality}'),
+                  controller: ec.nationalityCT,
                   labelText: "Nationality",
                 ),
                 kHeight15,
                 customTextField(
                   context,
-                  controller: TextEditingController(text: '${data.address}'),
+                  controller: ec.addressCT,
                   maxLines: 3,
                   labelText: "Address",
                 ),
-                kHeight15,
-                /*      DottedBorder(
-                  color: AppColors.primaryColor,
-                  strokeWidth: 1,
-                  child: Container(
-                    height: MediaQuery.of(context).size.height * 0.10,
-                    width: MediaQuery.of(context).size.width,
-                    child: Column(
-                      children: [
-                        IconButton(
-                          padding: EdgeInsets.zero,
-                          onPressed: () {
-                            Get.to(() => DocumentUploadNew());
-                          },
-                          icon: Icon(EneftyIcons.attach_circle_outline),
-                        ),
-                        Text(
-                          "Add Attachment",
-                          style: TextStyle(color: AppColors.primaryColor),
-                        ),
-                      ],
+                kHeight20,
+                customTextField(
+                  context,
+                  controller: ec.diagnosisCT,
+                  labelText: "Diagnosis",
+                ),
+                kHeight20,
+                customTextField(context,
+                    labelText: "Primary Care Provider Name",
+                    controller: ec.primary_care_giver_nameCT),
+                kHeight20,
+                customTextField(context,
+                    labelText: "Primary Contact Name",
+                    controller: ec.primaryContactNameCT),
+                kHeight20,
+                customTextField(context,
+                    labelText: "Secondary Contact Name",
+                    controller: ec.secondaryNameCT),
+                kHeight20,
+                Row(
+                  children: [
+                    Expanded(
+                      flex: 5,
+                      child: customTextField(context,
+                          textInputType: TextInputType.phone,
+                          labelText: "Primary Contact Number",
+                          controller: ec.primaryContactNumberCT),
                     ),
-                  ),
-                ),*/
-                kHeight15,
+                    kWidth15,
+                    Flexible(
+                      flex: 5,
+                      child: customTextField(context,
+                          textInputType: TextInputType.phone,
+                          labelText: "Secondary Contact Number",
+                          controller: ec.secondaryNumberCT),
+                    )
+                  ],
+                ),
+                kHeight20,
+                customTextField(context,
+                    labelText: "Specialist (DR) Name",
+                    controller: ec.specialist_nameCT),
+                kHeight20,
+                customTextField(
+                  context,
+                  controller: ec.specialListNumberCT,
+                  textInputType: TextInputType.phone,
+                  labelText: "Specialist (DR) Phone Number",
+                ),
+                kHeight20,
+                customTextField(
+                  context,
+                  maxLines: 3,
+                  controller: ec.moreInfoCT,
+                  labelText: "More Info",
+                ),  kHeight20,  kHeight20,
               ],
             ),
+          ),
+        ),
+      ) : Scaffold(
+        body: Center(
+          child: Container(
+              color: Colors.white,
+              width: 32.w,
+              height: 32.w,
+              child: CircularProgressIndicator(
+              strokeWidth: 2,
+              )
           ),
         ),
       );
     });
   }
+
+  //
+  Future<void> selectDob(BuildContext context) async {
+
+    DateTime? pickDob = await showDatePicker(
+        context: context,
+        initialDate: ec.dob ?? DateTime.now(),
+        firstDate: DateTime(1000),
+        lastDate: DateTime(2101));
+    if (pickDob != null) {
+      print(pickDob);
+      ec.dob = pickDob;
+      ec.dobCT.text = DateUtils().dateOnlyFormat(pickDob);
+      int age = calculateAge(pickDob);
+      ec.ageCT.text = age.toString();
+      ec.update();
+    }
+
+  }
+
+    //
+    int calculateAge(DateTime birthDate) {
+      DateTime today = DateTime.now();
+      int age = today.year - birthDate.year;
+      if (today.month < birthDate.month ||
+          (today.month == birthDate.month && today.day < birthDate.day)) {
+        age--;
+      }
+      return age;
+    }
 }
 
 class ProfileInformationLoader extends StatelessWidget {

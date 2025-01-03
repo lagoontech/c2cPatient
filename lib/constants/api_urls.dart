@@ -29,6 +29,8 @@ class ApiUrls {
 
   String viewAllCareTakers = '$baseUrl/api/patients/patient/view-caretakers';
 
+  String topCaretakers = '$baseUrl/api/patients/patient/view-top-caretakers';
+
   //book Appointment
 
   String appointment = '$baseUrl/api/patients/patient/schedule-appointment';
@@ -54,4 +56,7 @@ class ApiUrls {
   String deleteNotification = '$baseUrl/api/patients/patient/delete-notification';
 
   String ServiceHistory = '$baseUrl/api/patients/patient/get-service-history';
+
+  String addReview = '$baseUrl/api/patients/patient/reviews/add';
+
 }

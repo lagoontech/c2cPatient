@@ -95,7 +95,6 @@ import 'package:care2care/sharedPref/sharedPref.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter_tts/flutter_tts.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -106,7 +105,7 @@ class NotificationController extends GetxController {
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
   var unreadCount = 0;
-  FlutterTts tts = FlutterTts();
+  //FlutterTts tts = FlutterTts();
 
   @override
   void onInit() {

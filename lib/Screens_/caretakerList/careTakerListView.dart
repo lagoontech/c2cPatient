@@ -1,11 +1,16 @@
 import 'package:care2care/ReusableUtils_/appBar.dart';
+import 'package:care2care/ReusableUtils_/customButton.dart';
+import 'package:care2care/ReusableUtils_/custom_textfield.dart';
 import 'package:care2care/ReusableUtils_/image_background.dart';
 import 'package:care2care/ReusableUtils_/sizes.dart';
+import 'package:custom_rating_bar/custom_rating_bar.dart';
 import 'package:enefty_icons/enefty_icons.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:iconly/iconly.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import '../../ReusableUtils_/AppColors.dart';
 import '../CareTakerInformation/CareTaker_information.dart';
@@ -26,7 +31,9 @@ class CaretakerList extends StatelessWidget {
           Padding(
             padding: EdgeInsets.only(right: 10.w),
             child: IconButton(
-              onPressed: () {},
+              onPressed: () {
+                showFilterSheet(context);
+              },
               icon: const Icon(
                 IconlyLight.filter,
                 color: AppColors.primaryColor,
@@ -35,41 +42,62 @@ class CaretakerList extends StatelessWidget {
           ),
         ],
       ),
-      child: RefreshIndicator(
+      child: SmartRefresher(
         onRefresh: () async {
-          await ct.fetchAllCaretakersApi();
+          await ct.getCareTakers();
         },
+        onLoading: (){
+          ct.getCareTakers(loading: true);
+        },
+        enablePullUp: true,
+        controller: ct.refreshController,
         child: SingleChildScrollView(
-          physics: AlwaysScrollableScrollPhysics(),
+          physics: NeverScrollableScrollPhysics(),
           child: Column(
             children: [
+
+              Padding(
+                padding: EdgeInsets.symmetric(
+                    horizontal: 10.h,
+                    vertical: 12.h),
+                child: customTextField(
+                    context,
+                    onChanged: (v){
+                      ct.debounceSearch();
+                    },
+                    hint: "Search caretakers",
+                    controller: ct.searchTEC,
+                    borderColor: AppColors.primaryColor,
+                    labelText: "",
+                    prefix: Icon(Icons.search),
+                ),
+              ),
+
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 10.h),
                 child: GetBuilder<HomeController>(
                   builder: (controller) {
-                    // Check if caretakers list is loaded and available
                     if (controller.isLoadingCareTakersList) {
                       return Center(
                           child:
                               CircularProgressIndicator()); // Loading indicator
                     }
-                    if (controller.careTakerInfo.isEmpty) {
+                    if (controller.careTakers.isEmpty) {
                       return SizedBox(
                         height: MediaQuery.of(context).size.height * 0.7,
-                        // Ensures a large enough area for pull-to-refresh
                         child: Center(child: Text("No Care Takers Available")),
                       );
                     }
 
                     return ListView.builder(
                       shrinkWrap: true,
-                      physics: BouncingScrollPhysics(),
-                      itemCount: controller.careTakerInfo.length,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemCount: controller.careTakers.length,
                       itemBuilder: (context, index) {
-                        var caretaker = controller.careTakerInfo[index];
-                        var path = controller.viewAllCareTakers!.profilePath;
+                        var caretaker = controller.careTakers[index].caretakerInfo;
+                        var path = controller.profilePath;
                         var imgUrl = controller
-                            .viewAllCareTakers!.data![index].profileImageUrl;
+                            .careTakers[index].profileImageUrl;
 
                         return GestureDetector(
                           onTap: () {
@@ -81,11 +109,12 @@ class CaretakerList extends StatelessWidget {
                                 doctorDesignation: 'Care Taker',
                                 doctorState: caretaker.nationality,
                                 gender: caretaker.sex,
+                                about: caretaker.about,
                                 totalPatient:
                                     caretaker.totalPatientsAttended.toString(),
                                 experience:
                                     caretaker.yearOfExperiences.toString(),
-                                rating: caretaker.yearOfExperiences.toString(),
+                                rating: controller.careTakers[index].averageRating,
                                 imageUrl: '${path}${imgUrl}',
                               ),
                               transition: Transition.fade,
@@ -98,6 +127,7 @@ class CaretakerList extends StatelessWidget {
                               context,
                               ct,
                               charge:caretaker.serviceCharge ,
+                              gender: caretaker.sex,
                               doctorDesignation: 'Care Taker',
                               doctorName: caretaker.firstName,
                               imageUrl: '${path}${imgUrl}',
@@ -122,6 +152,161 @@ class CaretakerList extends StatelessWidget {
       ),
     );
   }
+
+  //
+  Widget filterLabel(String label){
+
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 9.w,vertical: 12.h),
+      child: Text(
+          label,
+          style: TextStyle(
+              fontWeight: FontWeight.w600,
+              fontSize: 15.sp,
+          )),
+    );
+
+  }
+
+  //
+  showFilterSheet(BuildContext context) async{
+
+    await showModalBottomSheet(
+        context: context,
+        builder: (context){
+          return GetBuilder<HomeController>(
+            builder: (vc) {
+              return Container(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height * 0.5,
+                padding: EdgeInsets.symmetric(horizontal: 12.w),
+                child: SingleChildScrollView(child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+
+                    filterLabel("Rating"),
+
+                    Center(
+                      child: RatingBar(
+                          alignment: Alignment.center,
+                          filledIcon: Icons.star,
+                          emptyIcon: Icons.star_border,
+                          onRatingChanged: (v){
+                            ct.rating = v;
+                            ct.update();
+                          }
+                      ),
+                    ),
+
+                    filterLabel("Price"),
+
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.8,
+                      child: SliderTheme(
+                        data: SliderThemeData(
+                            showValueIndicator: ShowValueIndicator.always,
+                        ),
+                        child: RangeSlider(
+                          values: ct.priceRange,
+                          min: 0,
+                          max: 1000,
+                          labels: RangeLabels('${ct.priceRange.start.round()}', '${ct.priceRange.end.round()}'),
+                          inactiveColor: Colors.grey,
+                          activeColor: Colors.black,
+                          onChanged: (RangeValues values) {
+                            ct.priceRange = values;
+                            ct.update();
+                          },
+                        ),
+                      )
+                    ),
+
+                    SizedBox(height: 12.h,),
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // Male Option
+                      GestureDetector(
+                        onTap: (){
+                          ct.gender = "male";
+                          ct.update();
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+                          decoration: BoxDecoration(
+                            color: ct.gender == "male" ? Colors.blue : Colors.grey[300],
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            "Male",
+                            style: TextStyle(
+                              color: ct.gender == "male" ? Colors.white : Colors.black,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      // Female Option
+                      GestureDetector(
+                        onTap: (){
+                          ct.gender = "female";
+                          ct.update();
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+                          decoration: BoxDecoration(
+                            color: ct.gender == "female" ? Colors.pink : Colors.grey[300],
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            "Female",
+                            style: TextStyle(
+                              color: ct.gender == "female" ? Colors.white : Colors.black,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                    SizedBox(height: 24.h,),
+
+                    Row(
+                      children: [
+                        Expanded(
+                          child: CustomButton(
+                            width: 80.w,
+                            text: "Apply",
+                            onPressed: (){
+                              ct.getCareTakers();
+                            },
+                          ),
+                        ),
+                        CustomButton(
+                          width: 80.w,
+                          text: "Clear",
+                          color: Colors.red,
+                          onPressed: (){
+                            ct.gender = "";
+                            ct.priceRange = const RangeValues(0, 1000);
+                            ct.rating = 0.0;
+                            ct.update();
+                          },
+                        ),
+                      ],
+                    )
+
+                  ],
+                ),),
+              );
+            }
+          );
+        });
+  }
+
 }
 
 Widget carTakerList(BuildContext context, HomeController controller,
@@ -135,7 +320,9 @@ Widget carTakerList(BuildContext context, HomeController controller,
     String? rating,
       String?charge,
     String? reviews,
-    String? imageUrl}) {
+    String? imageUrl,
+    String? about
+    }) {
   // Define the icon and color based on the gender
   IconData genderIcon =
       (gender?.toLowerCase() == 'male') ? Icons.male : Icons.female;
@@ -220,7 +407,9 @@ Widget carTakerList(BuildContext context, HomeController controller,
             ],
           ),
         ),
+
         const Divider(),
+
         Container(
           height: MediaQuery.of(context).size.height * 0.10,
           width: MediaQuery.of(context).size.width,
@@ -233,10 +422,11 @@ Widget carTakerList(BuildContext context, HomeController controller,
                   icon: IconlyBold.work, name: '${experience}+ years '),
               Circleso(context, icon: EneftyIcons.dollar_circle_outline, name: "\$${charge}/Hr"),
               Circleso(context,
-                  icon: IconlyBold.star, name: '${rating}+ratings\n Reviews'),
+                  icon: IconlyBold.star, name: rating!=null? '${double.parse(rating).toStringAsFixed(1)}':'No ratings'),
             ],
           ),
         )
+
       ],
     ),
   );

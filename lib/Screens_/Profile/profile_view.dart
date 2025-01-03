@@ -102,8 +102,13 @@ class ProfileView extends StatelessWidget {
                           kWidth20,
                           Expanded(
                               flex: 5,
-                              child: customTextField(context,
-                                  labelText: "Sex", controller: CT.sexCT)),
+                              child: customDropdown(context,
+                                  value: null,
+                                  items: ["Male","Female","Other"].map((e) =>
+                                      DropdownMenuItem(child: Text(e),value: e,)).toList(),
+                                  labelText: "Sex",onChanged: (v){
+                                CT.sexCT.text = v;
+                              })),
                         ],
                       ),
                       SizedBox(height: 15.h),

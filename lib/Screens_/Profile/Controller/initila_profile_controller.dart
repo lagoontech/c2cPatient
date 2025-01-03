@@ -20,7 +20,7 @@ import '../../PrimaryInformation/primaryInformation_view.dart';
 class InitialProfileDetails extends GetxController {
   TextEditingController firstName = TextEditingController();
   TextEditingController lastName = TextEditingController();
-  TextEditingController sexCT = TextEditingController();
+  TextEditingController sexCT = TextEditingController(text: "Male");
   TextEditingController emailCT = TextEditingController();
   TextEditingController ageCT = TextEditingController();
   TextEditingController dobCT = TextEditingController();
@@ -132,7 +132,7 @@ class InitialProfileDetails extends GetxController {
         "patient_id": patientID,
         "first_name": firstName.text,
         "last_name": lastName.text,
-        "sex": sexCT.text,
+        "sex": sexCT.text.toLowerCase(),
         "age": ageCT.text,
         "dob": dobCT.text,
         "email":emailCT.text,
@@ -165,9 +165,16 @@ class InitialProfileDetails extends GetxController {
         //await ScheduleController().fetchPrimaryInformationApi();
         Get.to(() => PrimaryInformationView());
         print("Profile details added successfully");
+      } else if(res.statusCode == 422){
+        var response = jsonDecode(res.body) as Map<String,dynamic>;
+        response.keys.forEach((element) {
+          var errorMsg = response[element][0];
+          showCustomToast(message: errorMsg);
+        });
       } else {
         var errorMsg = jsonDecode(res.body)['message'] ?? 'Error occurred';
         showCustomToast(message: errorMsg);
+        debugPrint('not successfully update');
       }
     } catch (w) {
       print(w);

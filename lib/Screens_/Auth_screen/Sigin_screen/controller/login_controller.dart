@@ -10,8 +10,10 @@ import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import '../../../OtpScreen/otp_screen.dart';
+import 'dart:io';
 
 class LoginController extends GetxController {
+
   TextEditingController phoneCT = TextEditingController();
   FocusNode focusNode = FocusNode();
   GoogleSignIn googleSignIn = GoogleSignIn();
@@ -20,15 +22,22 @@ class LoginController extends GetxController {
   String? fcmToken;
 
   Future<void> getFcmToken() async {
+
     try {
       await FirebaseMessaging.instance.deleteToken();
-      fcmToken = await FirebaseMessaging.instance.getToken();
+      bool android = Platform.isAndroid;
+      if(android){
+        fcmToken = await FirebaseMessaging.instance.getToken();
+      }else {
+        fcmToken = await FirebaseMessaging.instance.getToken();
+      }
       print("Fetched FCM Token: $fcmToken");
     } catch (e) {
       print("Error fetching FCM Token: $e");
       showCustomToast(
           message: "Failed to retrieve FCM token. Please try again.");
     }
+
   }
 
   Future<void> updateFCMTokenOnServer(String newToken) async {
@@ -97,7 +106,7 @@ class LoginController extends GetxController {
     var result = await http.post(Uri.parse(ApiUrls().loginorRegister),
         body: {'mobilenum': phoneCT.text, 'fcm_token': fcmToken});
     print("phoneCT $phoneCT");
-    if (result.statusCode == 200) {
+    if (result.statusCode == 201 || result.statusCode == 200) {
       var responseBody = jsonDecode(result.body);
       debugPrint(responseBody.toString());
       var otp = responseBody['otp'];

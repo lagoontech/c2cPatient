@@ -138,11 +138,6 @@ class CustomNotification extends StatelessWidget {
       ),
       onDismissed: (direction) {
         controller.deleteNotification(notificationId!);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Notification deleted'),
-          ),
-        );
       },
       secondaryBackground: Container(
         color: AppColors.primaryColor.withOpacity(0.7),

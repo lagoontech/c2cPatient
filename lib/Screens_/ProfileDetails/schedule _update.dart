@@ -31,12 +31,11 @@ class _ScheduleUpdateState extends State<ScheduleUpdate> {
   Widget build(BuildContext context) {
     return CustomBackground(
       appBar: CustomAppBar(title: "Update Schedules", actions: [
-        GetBuilder<InitialProfileDetails>(
-            init: InitialProfileDetails(),
-            builder: (v) {
+        GetBuilder<ScheduleController>(
+            builder: (sc) {
               return Padding(
                 padding: EdgeInsets.only(right: 18.r),
-                child: v.isLoading
+                child: sc.updating
                     ? Center(
                         child: SizedBox(
                           height: 20.h,
@@ -49,8 +48,7 @@ class _ScheduleUpdateState extends State<ScheduleUpdate> {
                       )
                     : InkWell(
                         onTap: () {
-                          debugPrint("Calling updateInitialProfileDetails()");
-                          v.updateInitialProfileDetails();
+                         sc.updateInformationAndScheduleApi();
                         },
                         child: Icon(
                           IconlyLight.tick_square,
@@ -86,7 +84,6 @@ class _ScheduleUpdateState extends State<ScheduleUpdate> {
                   onListChanged: (List<Diet> value) {
                     if (!ListEquality().equals(controller.diet, value)) {
                       controller.diet = value;
-                      print(controller.diet);
                       controller.update();
                     }
                   },
@@ -151,7 +148,7 @@ class _ScheduleUpdateState extends State<ScheduleUpdate> {
                               v.patientSchedules?.patientBreakfasttime;
                           String? formattedSelectedBreakfastTime;
                           if (selectedBreakfastTime != null) {
-                            final timeParts = selectedBreakfastTime.split(':');
+                            final timeParts = selectedBreakfastTime.split('.');
                             final hour = int.parse(timeParts[0]);
                             final minute = timeParts[1];
                             formattedSelectedBreakfastTime =
@@ -173,7 +170,6 @@ class _ScheduleUpdateState extends State<ScheduleUpdate> {
                                 onSelected: (bool selected) {
                                   if (selected) {
                                     v.filters.clear();
-                                    print("--->${v.filters.isEmpty}");
                                     v.patientSchedules?.patientBreakfasttime =
                                         null;
                                     v.filters.add(time);
@@ -185,7 +181,6 @@ class _ScheduleUpdateState extends State<ScheduleUpdate> {
                                   // Update the controller and UI
                                   v.update();
 
-                                  print("updated time: $time");
                                 },
                               );
                             }).toList(),
@@ -209,7 +204,7 @@ class _ScheduleUpdateState extends State<ScheduleUpdate> {
                             v.patientSchedules?.patientLunchtime;
                         String? formattedSelectedBreakfastTime;
                         if (selectedBreakfastTime != null) {
-                          final timeParts = selectedBreakfastTime.split(':');
+                          final timeParts = selectedBreakfastTime.split('.');
                           final hour = int.parse(timeParts[0]);
                           final minute = timeParts[1];
                           formattedSelectedBreakfastTime =
@@ -220,7 +215,7 @@ class _ScheduleUpdateState extends State<ScheduleUpdate> {
                         }
                         return Wrap(
                           spacing: 8.0,
-                          children: v.breakFast.map((String name) {
+                          children: v.lunchList.map((String name) {
                             bool isSelected =
                                 name == formattedSelectedBreakfastTime ||
                                     v.lunchFilters.contains(name);
@@ -256,7 +251,6 @@ class _ScheduleUpdateState extends State<ScheduleUpdate> {
                         scrollDirection: Axis.horizontal,
                         child: GetBuilder<ScheduleController>(
                           builder: (v) {
-                            // Assign default snack time if empty or null, otherwise use existing snack time
                             String selectedSnackTime = v.patientSchedules
                                         ?.patientSnackstime?.isNotEmpty ==
                                     true
@@ -284,7 +278,7 @@ class _ScheduleUpdateState extends State<ScheduleUpdate> {
 
                             return Wrap(
                               spacing: 8.0,
-                              children: v.breakFast.map((String name) {
+                              children: v.snackList.map((String name) {
                                 // Ensure that the list is not empty or out of bounds
                                 bool isSelected =
                                     name == formattedSelectedSnackTime ||
@@ -329,7 +323,7 @@ class _ScheduleUpdateState extends State<ScheduleUpdate> {
                             v.patientSchedules?.patientDinnertime;
                         String? formattedSelectedBreakfastTime;
                         if (selectedBreakfastTime != null) {
-                          final timeParts = selectedBreakfastTime.split(':');
+                          final timeParts = selectedBreakfastTime.split('.');
                           final hour = int.parse(timeParts[0]);
                           final minute = timeParts[1];
                           formattedSelectedBreakfastTime =
@@ -340,7 +334,7 @@ class _ScheduleUpdateState extends State<ScheduleUpdate> {
                         }
                         return Wrap(
                           spacing: 8.0,
-                          children: sc.breakFast.map((String name) {
+                          children: sc.dinnerList.map((String name) {
                             bool isSelected =
                                 name == formattedSelectedBreakfastTime ||
                                     v.dinner.contains(name);
@@ -368,46 +362,6 @@ class _ScheduleUpdateState extends State<ScheduleUpdate> {
                 ],
               ),
               kHeight15,
-              CustomLabel(text: "Tube Feeding"),
-              kHeight10,
-              GetBuilder<ScheduleController>(builder: (v) {
-                return Row(
-                  children: [
-                    Expanded(
-                      child: SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Wrap(
-                            children: [
-                              CustomRadioButton(
-                                selectedColor: AppColors.primaryColor,
-                                unselectedColor: Colors.white,
-                                value: 'Option 1',
-                                groupValue: sc.selectedOption,
-                                label: 'Yes',
-                                onChanged: (value) {
-                                  sc.selectedOption = value!;
-                                  sc.update();
-                                },
-                              ),
-                              kWidth10,
-                              CustomRadioButton(
-                                selectedColor: AppColors.primaryColor,
-                                unselectedColor: Colors.white,
-                                value: 'Option 2',
-                                groupValue: sc.selectedOption,
-                                label: 'No',
-                                onChanged: (value) {
-                                  sc.selectedOption = value!;
-                                  sc.update();
-                                },
-                              ),
-                            ],
-                          )),
-                    ),
-                  ],
-                );
-              }),
-              kHeight15,
               CustomLabel(text: "Hydration(Water)"),
               kHeight10,
               Row(
@@ -417,7 +371,7 @@ class _ScheduleUpdateState extends State<ScheduleUpdate> {
                       scrollDirection: Axis.horizontal,
                       child: GetBuilder<ScheduleController>(builder: (v) {
                         String? hydrationLevel =
-                            v.patientSchedules!.patientHydration;
+                            v.selectedHydration;
                         return Wrap(
                           spacing: 8.0,
                           children: sc.Hydration.map((String name) {
@@ -425,15 +379,9 @@ class _ScheduleUpdateState extends State<ScheduleUpdate> {
                               label: name,
                               isSelected: name == hydrationLevel,
                               onSelected: (bool selected) {
-                                setState(() {
-                                  if (selected) {
-                                    sc.hydration
-                                      ..clear()
-                                      ..add(name);
-                                  } else {
-                                    sc.hydration.remove(name);
-                                  }
-                                });
+                                  print(name);
+                                  sc.selectedHydration = name;
+                                  sc.update();
                               },
                             );
                           }).toList(),
@@ -486,46 +434,6 @@ class _ScheduleUpdateState extends State<ScheduleUpdate> {
                                 label: 'Evening',
                                 onChanged: (value) {
                                   sc.oralSelection = value!;
-                                  sc.update();
-                                },
-                              ),
-                            ],
-                          )),
-                    ),
-                  ],
-                );
-              }),
-              kHeight15,
-              CustomLabel(text: "Ostomy Care"),
-              kHeight10,
-              GetBuilder<ScheduleController>(builder: (v) {
-                return Row(
-                  children: [
-                    Expanded(
-                      child: SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Wrap(
-                            children: [
-                              CustomRadioButton(
-                                selectedColor: AppColors.primaryColor,
-                                unselectedColor: Colors.white,
-                                value: 'Option 1',
-                                groupValue: sc.ostomySelection,
-                                label: 'Yes',
-                                onChanged: (value) {
-                                  sc.ostomySelection = value!;
-                                  sc.update();
-                                },
-                              ),
-                              kWidth10,
-                              CustomRadioButton(
-                                selectedColor: AppColors.primaryColor,
-                                unselectedColor: Colors.white,
-                                value: 'Option 2',
-                                groupValue: sc.ostomySelection,
-                                label: 'No',
-                                onChanged: (value) {
-                                  sc.ostomySelection = value!;
                                   sc.update();
                                 },
                               ),

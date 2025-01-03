@@ -1,12 +1,16 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:care2care/ReusableUtils_/toast2.dart';
+import 'package:care2care/constants/api_urls.dart';
+import 'package:dio/dio.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:enefty_icons/enefty_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-
+import 'package:open_filex/open_filex.dart';
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
 import '../../ReusableUtils_/AppColors.dart';
 import '../../ReusableUtils_/appBar.dart';
 import '../../ReusableUtils_/customLabel.dart';
@@ -152,6 +156,7 @@ class DocumentUploadView extends StatelessWidget {
                       final doc = v.uploadedDocuments[index];
                       return Upload(
                         index: index,
+                        url: doc.filePath!,
                         DeleteCallback: () {
                           v.deleteDocumentApi(index);
                           v.update();
@@ -181,6 +186,7 @@ class Upload extends StatelessWidget {
   VoidCallback? ViewCallback;
   double? radiusSize;
   int?index;
+  String ?url;
 
   Upload({
     super.key,
@@ -191,7 +197,8 @@ class Upload extends StatelessWidget {
     this.ViewCallback,
     this.circleColor,
     this.iconColor,
-    this.radiusSize,this.index
+    this.radiusSize,this.index,
+    this.url
   });
 
   final DocsUploadController controller = Get.put(DocsUploadController());
@@ -242,7 +249,9 @@ class Upload extends StatelessWidget {
           ),
           GetBuilder<DocsUploadController>(builder: (v) {
             return GestureDetector(
-              onTap: ViewCallback,
+              onTap: (){
+                downloadAndOpenPdf(context,url!,heading!);
+              },
               child: CircleAvatar(
                 backgroundColor: AppColors.primaryColor.withOpacity(0.1),
                 radius: 20,
@@ -285,4 +294,35 @@ class Upload extends StatelessWidget {
       ),
     );
   }
+
+  //
+
+  Future<void> downloadAndOpenPdf(BuildContext context,String pdfUrl,String title) async {
+    try {
+      // Show downloading message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Downloading PDF...")),
+      );
+
+      // Get directory to save the file
+      final dir = await getApplicationDocumentsDirectory();
+      final filePath = "${dir.path}/$title.pdf";
+
+      // Download the file
+      Dio dio = Dio();
+      print(ApiUrls.baseUrl+"/"+pdfUrl);
+      await dio.download(ApiUrls.baseUrl+"/"+pdfUrl, filePath);
+
+      // Show download complete message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("PDF downloaded successfully!")),
+      );
+      await OpenFilex.open(filePath);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Failed to download or open PDF: $e")),
+      );
+    }
+  }
+
 }

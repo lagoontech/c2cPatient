@@ -3,6 +3,8 @@ import 'package:care2care/ReusableUtils_/AppColors.dart';
 import 'package:care2care/ReusableUtils_/customLabel.dart';
 import 'package:care2care/ReusableUtils_/sizes.dart';
 import 'package:care2care/Screens_/HomeScreen/controller/home%20controller.dart';
+import 'package:custom_rating_bar/custom_rating_bar.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -66,7 +68,7 @@ class HomePage extends StatelessWidget {
                               fontWeight: FontWeight.bold,
                             ),
                             CustomLabel(
-                              text: "Care2Care",
+                              text: " Care2Care",
                               fontSize: 19.sp,
                               color: AppColors.primaryColor,
                               fontWeight: FontWeight.bold,
@@ -104,9 +106,11 @@ class HomePage extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   kHeight15,
-                                  Text(
-                                    "We provide high quality, individualized care for patients of all ages where you feel most comfortable – your home or community",
-                                    style: TextStyle(color: Colors.white),
+                                  Expanded(
+                                    child: Text(
+                                      "We provide high quality, individualized care for patients of all ages where you feel most comfortable – your home or community",
+                                      style: TextStyle(color: Colors.white,fontSize: 13.sp),
+                                    ),
                                   )
                                   /* kHeight25,
                                   Text(
@@ -206,15 +210,14 @@ class HomePage extends StatelessWidget {
                     return ListView.builder(
                       shrinkWrap: true,
                       physics: NeverScrollableScrollPhysics(),
-                      itemCount: v.careTakerInfo.length > 4
+                      itemCount: v.topCaretakers.length > 4
                           ? 4
-                          : v.careTakerInfo.length,
+                          : v.topCaretakers.length,
                       itemBuilder: (BuildContext context, int index) {
 
-                        var path = v.viewAllCareTakers!.profilePath;
-                        var imgUrl =
-                            v.viewAllCareTakers!.data![index].profileImageUrl;
-                        var data = v.careTakerInfo[index];
+                        var path = v.profilePath;
+                        var imgUrl = v.topCaretakers[index].profileImageUrl;
+                        var data = v.topCaretakers[index].caretakerInfo;
                         return Padding(
                           padding: EdgeInsets.symmetric(vertical: 5.h),
                           child: CustomCareTakers(
@@ -223,6 +226,7 @@ class HomePage extends StatelessWidget {
                             //initial: 2,
                             imageUrl: '${path}${imgUrl}',
                             amount:data. serviceCharge,
+                            rating: v.topCaretakers[index].averageRating,
                           ),
                         );
                       },
@@ -273,6 +277,7 @@ class CustomCareTakers extends StatelessWidget {
   final double initial;
   String? amount;
   final VoidCallback? onPressed;
+  String ?rating;
 
   // Constructor with named parameters
   CustomCareTakers({
@@ -282,12 +287,13 @@ class CustomCareTakers extends StatelessWidget {
     this.amount,
     this.initial = 3.0,
     this.onPressed,
+    this.rating
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height * 0.10,
+      height: MediaQuery.of(context).size.height * 0.12,
       width: MediaQuery.of(context).size.width,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10.r),
@@ -313,28 +319,42 @@ class CustomCareTakers extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Text(
-                name ?? '',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.bold,
-                ),
+              Row(
+                children: [
+                  Text(
+                    name ?? '',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
               ),
               Text(
                 "Age : ${age ?? ''}Yrs",
                 style: TextStyle(
                   color: Colors.black,
-                  fontSize: 16.sp,
+                  fontSize: 12.sp,
                 ),
               ),
               Text(
                 "Service Charge : \$${amount ?? ''}/Hr",
                 style: TextStyle(
                   color: Colors.black,
-                  fontSize: 16.sp,
+                  fontSize: 12.sp,
                 ),
               ),
+              SizedBox(height: 4.h),
+              rating!=null
+                  ? RatingBar.readOnly(
+                filledIcon: Icons.star,
+                emptyIcon: Icons.star_border,
+                isHalfAllowed: true,
+                halfFilledIcon: Icons.star_half,
+                initialRating: double.parse(rating!),
+                size: 16.sp,
+              ):SizedBox()
               /*  RatingBar(
                 size: 23.sp,
                 filledIcon: Icons.star,

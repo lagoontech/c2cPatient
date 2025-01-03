@@ -112,6 +112,7 @@ class ScheduleController extends GetxController {
     '8L',
     '9L'
   ];
+  var selectedHydration = "";
   var selectedOption = '';
   var oralSelection = '';
   var ostomySelection = '';
@@ -136,6 +137,8 @@ class ScheduleController extends GetxController {
   // Common variables
   String? token;
   int? patientID;
+
+  bool updating = false;
 
   Future<void> fetchCommonDetails() async {
     token = await SharedPref().getToken();
@@ -183,7 +186,7 @@ class ScheduleController extends GetxController {
         "patient_bathing": bathingSelection,
         "patient_dressing": dressingSelection,
         "patient_toileting": toileting.text,
-        "patient_walkingtime": DateFormat.Hm().format(DateTime.now()), // This remains unchanged
+        "patient_walkingtime": walkingTime, // This remains unchanged
         "patient_vitalsigns": {
           "blood_pressure": bp.text,
           "heart_rate": heartRate.text,
@@ -217,6 +220,8 @@ class ScheduleController extends GetxController {
   }
 
   updateInformationAndScheduleApi() async {
+    updating = true;
+    update();
     try {
       String? patientIDStr = await SharedPref().getId();
       Map<String, dynamic> params = {
@@ -230,12 +235,12 @@ class ScheduleController extends GetxController {
         "patient_dinnertime": dinner.isNotEmpty ? dinner.first : null, // Access as string
         "patient_snackstime": snacks.isNotEmpty ? snacks.first : null, // Access as string
         "patient_medications": medidation,
-        "patient_hydration": hydration.isNotEmpty ? hydration.first : null,
+        "patient_hydration": selectedHydration,
         "patient_oralcare": oralSelection,
         "patient_bathing": bathingSelection,
         "patient_dressing": dressingSelection,
         "patient_toileting": toileting.text,
-        "patient_walkingtime": DateFormat.Hm().format(DateTime.now()), // This remains unchanged
+        "patient_walkingtime": walkingTime, // This remains unchanged
         "patient_vitalsigns": {
           "blood_pressure": bp.text,
           "heart_rate": heartRate.text,
@@ -258,7 +263,8 @@ class ScheduleController extends GetxController {
 
       if (res.statusCode == 200) {
         onUserDetailsCompleted();
-        Get.offAll(() => HomeView());
+        Get.back();
+        showCustomToast(message: "Updated successfully");
         debugPrint("succssfully");
       } else {
         debugPrint("not Succeesfully");
@@ -266,6 +272,8 @@ class ScheduleController extends GetxController {
     } catch (e) {
       debugPrint(e.toString());
     }
+    updating = false;
+    update();
   }
 
 
@@ -295,6 +303,7 @@ class ScheduleController extends GetxController {
         toileting.text = patientSchedules!.patientToileting!;
         temp.text = 120.toString();
         bp.text = patientSchedules!.patientVitalsigns!.bloodPressure!;
+        walkingTime = patientSchedules!.patientWalkingtime!;
         heartRate.text =
             patientSchedules!.patientVitalsigns!.heartRate.toString();
         respiration.text =
@@ -355,6 +364,7 @@ class ScheduleController extends GetxController {
             patientSchedules!.patientHydration!.isNotEmpty) {
           hydration.clear();
           hydration.add(patientSchedules!.patientHydration!);
+          selectedHydration = patientSchedules!.patientHydration!;
           update();
         }
 

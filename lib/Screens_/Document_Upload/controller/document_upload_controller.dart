@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:care2care/ReusableUtils_/toast2.dart';
 import 'package:care2care/constants/api_urls.dart';
 import 'package:care2care/modals/Profile_modal.dart';
 import 'package:care2care/sharedPref/sharedPref.dart';
@@ -51,7 +52,6 @@ class DocsUploadController extends GetxController {
             fileName: file.path.split('/').last,
             filePath: file.path,
             documentName: inputFileNameCT.text,
-
             createdAt: DateTime.now().toIso8601String()));
       }
       await multiDocUploadApi();
@@ -114,13 +114,18 @@ class DocsUploadController extends GetxController {
       update(); // Update the UI
       Get.snackbar('Success', 'Documents uploaded successfully!',
           snackPosition: SnackPosition.BOTTOM);
+    } else if(res.statusCode == 422){
+      Get.snackbar('Error', jsonDecode(response.body)["document"][0],
+          snackPosition: SnackPosition.BOTTOM);
     } else {
       Get.snackbar('Error', 'Failed to upload documents',
           snackPosition: SnackPosition.BOTTOM);
     }
 
     uploading = false; // Reset uploading state
+    fetchDocumentApi();
     update(); // Final UI update
+
   }
 
 
@@ -168,6 +173,7 @@ class DocsUploadController extends GetxController {
         print("delete index$index");
         await Future.delayed(Duration(seconds: 2));
         uploadedDocuments.removeAt(index);
+        showCustomToast(message: "Deleted successfully");
       } else {
         print("cant delete");
       }

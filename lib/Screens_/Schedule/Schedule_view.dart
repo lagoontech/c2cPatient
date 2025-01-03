@@ -317,7 +317,6 @@ class _ScheduleViewState extends State<ScheduleView> {
                                   setState(() {
                                     if (selected) {
                                       v.lunchFilters.clear();
-                                      v.patientSchedules!.patientLunchtime = null;
                                       v.lunchFilters.add(name);
                                     } else {
                                       v.lunchFilters.remove(name);
@@ -343,7 +342,7 @@ class _ScheduleViewState extends State<ScheduleView> {
                         child: GetBuilder<ScheduleController>(
                           builder: (v) {
                             // Assign default snack time if empty or null, otherwise use existing snack time
-                            String selectedSnackTime = v.patientSchedules!.patientSnackstime!;/*?.isNotEmpty == true
+                            String selectedSnackTime = v.patientSchedules!=null ? v.patientSchedules!.patientSnackstime!:"";/*?.isNotEmpty == true
                                 ? v.patientSchedules!.patientSnackstime!
                                 : "06:00"; // Default to "06:00"
 */
@@ -448,46 +447,6 @@ class _ScheduleViewState extends State<ScheduleView> {
                   ],
                 ),
                 kHeight15,
-                CustomLabel(text: "Tube Feeding"),
-                kHeight10,
-                GetBuilder<ScheduleController>(builder: (v) {
-                  return Row(
-                    children: [
-                      Expanded(
-                        child: SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Wrap(
-                              children: [
-                                CustomRadioButton(
-                                  selectedColor: AppColors.primaryColor,
-                                  unselectedColor: Colors.white,
-                                  value: 'Option 1',
-                                  groupValue: sc.selectedOption,
-                                  label: 'Yes',
-                                  onChanged: (value) {
-                                    sc.selectedOption = value!;
-                                    sc.update();
-                                  },
-                                ),
-                                kWidth10,
-                                CustomRadioButton(
-                                  selectedColor: AppColors.primaryColor,
-                                  unselectedColor: Colors.white,
-                                  value: 'Option 2',
-                                  groupValue: sc.selectedOption,
-                                  label: 'No',
-                                  onChanged: (value) {
-                                    sc.selectedOption = value!;
-                                    sc.update();
-                                  },
-                                ),
-                              ],
-                            )),
-                      ),
-                    ],
-                  );
-                }),
-                kHeight15,
                 CustomLabel(text: "Hydration(Water)"),
                 kHeight10,
                 Row(
@@ -502,18 +461,10 @@ class _ScheduleViewState extends State<ScheduleView> {
                             children: sc.Hydration.map((String name) {
                               return CustomChip(
                                 label: name,
-                                isSelected:  v.hydration.contains(name),
+                                isSelected: v.selectedHydration == name,
                                 onSelected: (bool selected) {
-                                  setState(() {
-                                    if (selected) {
-                                      v.hydration.clear();
-                                     /* v.patientSchedules?.patientHydration =
-                                      null;*/
-                                      v.hydration.add(name);
-                                    } else {
-                                      sc.hydration.remove(name);
-                                    }
-                                  });
+                                  v.selectedHydration = name;
+                                  v.update();
                                 },
                               );
                             }).toList(),

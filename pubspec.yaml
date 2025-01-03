@@ -56,6 +56,12 @@ dependencies:
   flutter_local_notifications:
   firebase_analytics:
   flutter_stripe: ^11.2.0
+  flutter_rating_bar:
+  pull_to_refresh:
+  dio:
+  path_provider:
+  open_filex:
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
