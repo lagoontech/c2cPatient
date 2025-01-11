@@ -107,7 +107,7 @@ class CaretakerList extends StatelessWidget {
                                 careTakerId: caretaker.caretakerId,
                                 doctorName: caretaker.firstName,
                                 doctorDesignation: 'Care Taker',
-                                doctorState: caretaker.nationality,
+                                doctorState: caretaker.address,
                                 gender: caretaker.sex,
                                 about: caretaker.about,
                                 totalPatient:
@@ -131,7 +131,7 @@ class CaretakerList extends StatelessWidget {
                               doctorDesignation: 'Care Taker',
                               doctorName: caretaker.firstName,
                               imageUrl: '${path}${imgUrl}',
-                              doctorState: caretaker.nationality,
+                              doctorState: caretaker.address,
                               totalPatient:
                                   caretaker.totalPatientsAttended.toString(),
                               experience:

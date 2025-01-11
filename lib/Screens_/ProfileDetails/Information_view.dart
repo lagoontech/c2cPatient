@@ -175,14 +175,14 @@ class AccountInformation extends StatelessWidget {
                       child: customTextField(
                         context,
                         controller: ec.firstName,
-                        labelText: "First Name",
+                        labelText: "First Name *",
                       ),
                     ),
                     kWidth20,
                     Expanded(child: customTextField(
                       context,
                       controller: ec.lastName,
-                      labelText: "Last Name",
+                      labelText: "Last Name *",
                     ))
                   ],
                 ),
@@ -193,7 +193,7 @@ class AccountInformation extends StatelessWidget {
                         flex: 5,
                         child: customTextField(context,
                             controller: ec.sexCT,
-                            labelText: "Sex")),
+                            labelText: "Sex *")),
                     kWidth20,
                     Flexible(
                       flex: 5,
@@ -207,7 +207,7 @@ class AccountInformation extends StatelessWidget {
                 customTextField(
                   context,
                   controller: ec.emailCT,
-                  labelText: "Email",
+                  labelText: "Email *",
                 ),
                 kHeight15,
                 customTextField(
@@ -217,7 +217,7 @@ class AccountInformation extends StatelessWidget {
                   onTap: (){
                     selectDob(context);
                   },
-                  labelText: "Date of Birth",
+                  labelText: "Date of Birth *",
                 ),
                 kHeight15,
                 Row(
@@ -298,7 +298,7 @@ class AccountInformation extends StatelessWidget {
                     controller: ec.primary_care_giver_nameCT),
                 kHeight20,
                 customTextField(context,
-                    labelText: "Primary Contact Name",
+                    labelText: "Primary Contact Name *",
                     controller: ec.primaryContactNameCT),
                 kHeight20,
                 customTextField(context,
@@ -311,7 +311,7 @@ class AccountInformation extends StatelessWidget {
                       flex: 5,
                       child: customTextField(context,
                           textInputType: TextInputType.phone,
-                          labelText: "Primary Contact Number",
+                          labelText: "Primary Contact Number *",
                           controller: ec.primaryContactNumberCT),
                     ),
                     kWidth15,

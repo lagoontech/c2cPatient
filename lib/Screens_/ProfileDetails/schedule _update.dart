@@ -364,33 +364,8 @@ class _ScheduleUpdateState extends State<ScheduleUpdate> {
               kHeight15,
               CustomLabel(text: "Hydration(Water)"),
               kHeight10,
-              Row(
-                children: [
-                  Expanded(
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: GetBuilder<ScheduleController>(builder: (v) {
-                        String? hydrationLevel =
-                            v.selectedHydration;
-                        return Wrap(
-                          spacing: 8.0,
-                          children: sc.Hydration.map((String name) {
-                            return CustomChip(
-                              label: name,
-                              isSelected: name == hydrationLevel,
-                              onSelected: (bool selected) {
-                                  print(name);
-                                  sc.selectedHydration = name;
-                                  sc.update();
-                              },
-                            );
-                          }).toList(),
-                        );
-                      }),
-                    ),
-                  ),
-                ],
-              ),
+              customTextField(context,
+                  controller: sc.hydrationTEC, labelText: "Hydration"),
               kHeight15,
               CustomLabel(text: "Oral Care"),
               kHeight10,
@@ -496,7 +471,7 @@ class _ScheduleUpdateState extends State<ScheduleUpdate> {
                 );
               }),
               kHeight15,
-              CustomLabel(text: "Meditation"),
+              CustomLabel(text: "Medication"),
               kHeight10,
               GetBuilder<ScheduleController>(builder: (v) {
                 return Row(
@@ -668,7 +643,7 @@ class _ScheduleUpdateState extends State<ScheduleUpdate> {
                 );
               }),
               kHeight15,
-              CustomLabel(text: "Vital Signs"),
+              CustomLabel(text: "Baseline Vital Signs"),
               kHeight10,
               Column(
                 children: [
@@ -687,27 +662,24 @@ class _ScheduleUpdateState extends State<ScheduleUpdate> {
                           child: customTextField(context,
                               controller: sc.respiration,
                               labelText: "Respirations")),
+                      kWidth10,
+                      Expanded(
+                          child: customTextField(context,
+                              controller: sc.bp, labelText: "BP")),
                     ],
                   ),
                   SizedBox(height: 10),
-                  // Optional: Add some spacing between the rows
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Expanded(
-                          child: SizedBox(
-                        width: 30,
-                        child: GetBuilder<ScheduleController>(builder: (v) {
-                          return customTextField(context,
-                              controller: sc.bp, labelText: "Blood Pressure");
-                        }),
-                      )),
-                      // Updated label for the 4th field
-                    ],
-                  ),
                 ],
               ),
               kHeight15,
+              CustomLabel(text: "Blood Sugar"),
+              kHeight10,
+              GetBuilder<ScheduleController>(builder: (v) {
+                return customTextField(context,
+                    controller: sc.bloodSugarTEC, labelText: "Blood Sugar");
+              }),
+              kHeight10,
+
             ],
           ),
         ),

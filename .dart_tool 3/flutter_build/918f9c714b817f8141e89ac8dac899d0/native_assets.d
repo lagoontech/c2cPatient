@@ -1,0 +1,1 @@
+ /Users/lagoontech/Documents/GitHub/c2cPatient/.dart_tool/flutter_build/918f9c714b817f8141e89ac8dac899d0/native_assets.yaml: 

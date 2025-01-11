@@ -20,6 +20,7 @@ class ScheduleController extends GetxController {
   final List<String> dinner = [];
   final List<String> meditations = [];
   final List<String> hydration = [];
+  final List<String> blood = [];
 
   var DietItems = [
     Diet(name: 'Regular Diet', id: 1),
@@ -123,7 +124,9 @@ class ScheduleController extends GetxController {
   TextEditingController medicalHistoryCT = TextEditingController();
   TextEditingController toileting = TextEditingController();
   TextEditingController bp = TextEditingController();
+  TextEditingController bloodSugarTEC = TextEditingController();
   TextEditingController heartRate = TextEditingController();
+  TextEditingController hydrationTEC = TextEditingController();
   TextEditingController respiration = TextEditingController();
   TextEditingController temp = TextEditingController();
   TextEditingController activityCT = TextEditingController();
@@ -181,7 +184,7 @@ class ScheduleController extends GetxController {
         "patient_dinnertime": dinner.isNotEmpty ? dinner.first : null, // Access as string
         "patient_snackstime": snacks.isNotEmpty ? snacks.first : null, // Access as string
         "patient_medications": medidation,
-        "patient_hydration": hydration.isNotEmpty ? hydration.first : null,
+        "patient_hydration": hydrationTEC.text,
         "patient_oralcare": oralSelection,
         "patient_bathing": bathingSelection,
         "patient_dressing": dressingSelection,
@@ -194,7 +197,7 @@ class ScheduleController extends GetxController {
           "temperature": temp.text,
           "weight": '90',
         },
-        "patient_bloodsugar": double.tryParse('120.80')?.toString() ?? '0.0',
+        "patient_bloodsugar": bloodSugarTEC.text,
         // Populate as needed
       };
       var res = await http.post(
@@ -235,7 +238,7 @@ class ScheduleController extends GetxController {
         "patient_dinnertime": dinner.isNotEmpty ? dinner.first : null, // Access as string
         "patient_snackstime": snacks.isNotEmpty ? snacks.first : null, // Access as string
         "patient_medications": medidation,
-        "patient_hydration": selectedHydration,
+        "patient_hydration": hydrationTEC.text,
         "patient_oralcare": oralSelection,
         "patient_bathing": bathingSelection,
         "patient_dressing": dressingSelection,
@@ -248,7 +251,7 @@ class ScheduleController extends GetxController {
           "temperature": temp.text,
           "weight": '90',
         },
-        "patient_bloodsugar": double.tryParse('120.80')?.toString() ?? '0.0',
+        "patient_bloodsugar": bloodSugarTEC.text,
         // Populate as needed
       };
 
@@ -362,9 +365,7 @@ class ScheduleController extends GetxController {
         }
         if (patientSchedules!.patientHydration != null &&
             patientSchedules!.patientHydration!.isNotEmpty) {
-          hydration.clear();
-          hydration.add(patientSchedules!.patientHydration!);
-          selectedHydration = patientSchedules!.patientHydration!;
+          hydrationTEC.text = patientSchedules!.patientHydration!;
           update();
         }
 
