@@ -1,4 +1,5 @@
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
+import 'package:care2care/ReusableUtils_/customButton.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -380,7 +381,7 @@ class _ScheduleUpdateState extends State<ScheduleUpdate> {
                               CustomRadioButton(
                                 selectedColor: AppColors.primaryColor,
                                 unselectedColor: Colors.white,
-                                value: 'Option 1',
+                                value: 'Morning',
                                 groupValue: sc.oralSelection,
                                 label: 'Morning',
                                 onChanged: (value) {
@@ -392,7 +393,7 @@ class _ScheduleUpdateState extends State<ScheduleUpdate> {
                               CustomRadioButton(
                                 selectedColor: AppColors.primaryColor,
                                 unselectedColor: Colors.white,
-                                value: 'Option 2',
+                                value: 'Noon',
                                 groupValue: sc.oralSelection,
                                 label: 'Noon',
                                 onChanged: (value) {
@@ -404,7 +405,7 @@ class _ScheduleUpdateState extends State<ScheduleUpdate> {
                               CustomRadioButton(
                                 selectedColor: AppColors.primaryColor,
                                 unselectedColor: Colors.white,
-                                value: 'Option 3',
+                                value: 'Evening',
                                 groupValue: sc.oralSelection,
                                 label: 'Evening',
                                 onChanged: (value) {
@@ -432,7 +433,7 @@ class _ScheduleUpdateState extends State<ScheduleUpdate> {
                               CustomRadioButton(
                                 selectedColor: AppColors.primaryColor,
                                 unselectedColor: Colors.white,
-                                value: 'Option 1',
+                                value: 'Morning',
                                 groupValue: sc.bathingSelection,
                                 label: 'Morning',
                                 onChanged: (value) {
@@ -444,7 +445,7 @@ class _ScheduleUpdateState extends State<ScheduleUpdate> {
                               CustomRadioButton(
                                 selectedColor: AppColors.primaryColor,
                                 unselectedColor: Colors.white,
-                                value: 'Option 2',
+                                value: 'Noon',
                                 groupValue: sc.bathingSelection,
                                 label: 'Noon',
                                 onChanged: (value) {
@@ -456,7 +457,7 @@ class _ScheduleUpdateState extends State<ScheduleUpdate> {
                               CustomRadioButton(
                                 selectedColor: AppColors.primaryColor,
                                 unselectedColor: Colors.white,
-                                value: 'Option 3',
+                                value: 'Evening',
                                 groupValue: sc.bathingSelection,
                                 label: 'Evening',
                                 onChanged: (value) {
@@ -484,11 +485,12 @@ class _ScheduleUpdateState extends State<ScheduleUpdate> {
                               CustomRadioButton(
                                 selectedColor: AppColors.primaryColor,
                                 unselectedColor: Colors.white,
-                                value: 'Option 1',
+                                value: 'Morning',
                                 groupValue: sc.medidation,
                                 label: 'Morning',
                                 onChanged: (value) {
                                   sc.medidation = value!;
+                                  sc.selectedMedication = "Morning";
                                   sc.update();
                                 },
                               ),
@@ -496,11 +498,12 @@ class _ScheduleUpdateState extends State<ScheduleUpdate> {
                               CustomRadioButton(
                                 selectedColor: AppColors.primaryColor,
                                 unselectedColor: Colors.white,
-                                value: 'Option 2',
+                                value: 'Noon',
                                 groupValue: sc.medidation,
                                 label: 'Noon',
                                 onChanged: (value) {
                                   sc.medidation = value!;
+                                  sc.selectedMedication = "Noon";
                                   sc.update();
                                 },
                               ),
@@ -508,11 +511,12 @@ class _ScheduleUpdateState extends State<ScheduleUpdate> {
                               CustomRadioButton(
                                 selectedColor: AppColors.primaryColor,
                                 unselectedColor: Colors.white,
-                                value: 'Option 3',
+                                value: 'Evening',
                                 groupValue: sc.medidation,
                                 label: 'Evening',
                                 onChanged: (value) {
                                   sc.medidation = value!;
+                                  sc.selectedMedication = "Evening";
                                   sc.update();
                                 },
                               ),
@@ -522,6 +526,63 @@ class _ScheduleUpdateState extends State<ScheduleUpdate> {
                   ],
                 );
               }),
+              GetBuilder<ScheduleController>(
+                  builder: (v){
+                    return sc.selectedMedication!=null
+                        ? Column(
+                          children: [
+
+                            kHeight15,
+
+                            ListView.builder(
+                            itemCount: sc.meditationDetails.firstWhere((element) => element.time == sc.selectedMedication!).medicationDetails!.length,
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemBuilder: (context,index){
+                                                  return Padding(
+                                                    padding: EdgeInsets.only(top: 16.h),
+                                                    child: Row(
+                                                      children: [
+
+                                                        Expanded(
+                                                          flex: 3,
+                                                          child: customTextField(
+                                                              context,
+                                                              controller: sc.meditationDetails.firstWhere((element) => element.time == sc.selectedMedication!).medicationDetails![index],
+                                                              hint: "Enter details",
+                                                              labelText: "${sc.selectedMedication!} medication ${index+1}"
+                                                          ),
+                                                        ),
+
+                                                        Expanded(
+                                                          flex: 1,
+                                                          child: IconButton(
+                                                            onPressed: (){
+                                                              sc.meditationDetails.firstWhere((element) => element.time == sc.selectedMedication!).medicationDetails!.removeAt(index);
+                                                              sc.update();
+                                                              },
+                                                            icon: Icon(Icons.remove),
+                                                        )),
+
+                                                      ],
+                                                    ),
+                                                  );
+                                                }),
+
+                            kHeight15,
+
+                            CustomButton(
+                                onPressed: (){
+                                  sc.meditationDetails.firstWhere((element) => element.time == sc.selectedMedication!).medicationDetails!.add(TextEditingController());
+                                  sc.update();
+                                },
+                                text: "Add medication detail"
+                            ),
+
+                          ],
+                        ) : SizedBox();
+                  }
+              ),
               kHeight15,
               CustomLabel(text: "Dressing"),
               kHeight10,

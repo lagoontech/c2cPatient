@@ -11,6 +11,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:iconly/iconly.dart';
 import 'package:image_picker/image_picker.dart';
+import '../../ReusableUtils_/customButton.dart';
 import '../../ReusableUtils_/customChips.dart';
 import '../../ReusableUtils_/customradio.dart';
 import '../Profile/modal/initilaProfileDetailsModal.dart';
@@ -40,7 +41,8 @@ class _ScheduleViewState extends State<ScheduleView> {
   void initState() {
     super.initState();
     sc.diet = widget.selectedDiet!;
-     // sc.fetchPrimaryInformationApi();
+    sc.setInitialMedication();
+    // sc.fetchPrimaryInformationApi();
   }
 
   @override
@@ -49,23 +51,36 @@ class _ScheduleViewState extends State<ScheduleView> {
         appBar: CustomAppBar(title: "My Schedule", actions: [
           Padding(
             padding: const EdgeInsets.only(right: 18.0),
-            child: IconButton(
-              onPressed: () {
-                if (sc.patientSchedules == null) {
-                  print("calling Function Insert");
-                  sc.InsertPrimaryInformationAndScheduleApi();
-                } else {
-                  print("calling Function update");
-                  sc.updateInformationAndScheduleApi();
-                }
+            child: GetBuilder<ScheduleController>(builder: (vc) {
+              return sc.inserting
+                  ? Center(
+                      child: SizedBox(
+                        height: 20.h,
+                        width: 23.w,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 1,
+                          color: AppColors.primaryColor,
+                        ),
+                      ),
+                    )
+                  : IconButton(
+                      onPressed: () {
+                        if (sc.patientSchedules == null) {
+                          print("calling Function Insert");
+                          sc.InsertPrimaryInformationAndScheduleApi();
+                        } else {
+                          print("calling Function update");
+                          sc.updateInformationAndScheduleApi();
+                        }
 
-                //  Get.to(()=>HomeView());
-              },
-              icon: Icon(
-                IconlyLight.tick_square,
-              ),
-              color: AppColors.primaryColor,
-            ),
+                        //  Get.to(()=>HomeView());
+                      },
+                      icon: Icon(
+                        IconlyLight.tick_square,
+                      ),
+                      color: AppColors.primaryColor,
+                    );
+            }),
           ),
         ]),
         child: SingleChildScrollView(
@@ -237,7 +252,7 @@ class _ScheduleViewState extends State<ScheduleView> {
                           builder: (v) {
                             String? selectedBreakfastTime =
                                 v.patientSchedules?.patientBreakfasttime;
-                           /* String? formattedSelectedBreakfastTime;
+                            /* String? formattedSelectedBreakfastTime;
                             if (selectedBreakfastTime != null) {
                               final timeParts =
                                   selectedBreakfastTime.split(':');
@@ -294,9 +309,10 @@ class _ScheduleViewState extends State<ScheduleView> {
                       child: SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
                         child: GetBuilder<ScheduleController>(builder: (v) {
-                          String? selectedBreakfastTime = v.patientSchedules?.patientLunchtime;
+                          String? selectedBreakfastTime =
+                              v.patientSchedules?.patientLunchtime;
                           String? formattedSelectedBreakfastTime;
-                       /*   if (selectedBreakfastTime != null) {
+                          /*   if (selectedBreakfastTime != null) {
                             final timeParts = selectedBreakfastTime.split(':');
                             final hour = int.parse(timeParts[0]);
                             final minute = timeParts[1];
@@ -309,7 +325,8 @@ class _ScheduleViewState extends State<ScheduleView> {
                           return Wrap(
                             spacing: 8.0,
                             children: v.lunchList.map((String name) {
-                              bool isSelected = name == selectedBreakfastTime || v.lunchFilters.contains(name);
+                              bool isSelected = name == selectedBreakfastTime ||
+                                  v.lunchFilters.contains(name);
                               return CustomChip(
                                 label: name,
                                 isSelected: isSelected,
@@ -338,18 +355,22 @@ class _ScheduleViewState extends State<ScheduleView> {
                   children: [
                     Expanded(
                       child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: GetBuilder<ScheduleController>(
-                          builder: (v) {
-                            // Assign default snack time if empty or null, otherwise use existing snack time
-                            String selectedSnackTime = v.patientSchedules!=null ? v.patientSchedules!.patientSnackstime!:"";/*?.isNotEmpty == true
+                          scrollDirection: Axis.horizontal,
+                          child: GetBuilder<ScheduleController>(
+                            builder: (v) {
+                              // Assign default snack time if empty or null, otherwise use existing snack time
+                              String selectedSnackTime = v.patientSchedules !=
+                                      null
+                                  ? v.patientSchedules!.patientSnackstime!
+                                  : ""; /*?.isNotEmpty == true
                                 ? v.patientSchedules!.patientSnackstime!
                                 : "06:00"; // Default to "06:00"
 */
-                            String formattedSelectedSnackTime = "06:00"; // Default value in case of errors
+                              String formattedSelectedSnackTime =
+                                  "06:00"; // Default value in case of errors
 
-                            // Safely split and format the time, ensuring it doesn't cause index errors
-                       /*     if (selectedSnackTime.contains(':')) {
+                              // Safely split and format the time, ensuring it doesn't cause index errors
+                              /*     if (selectedSnackTime.contains(':')) {
                               final timeParts = selectedSnackTime.split(':');
                               if (timeParts.length == 2) {
                                 final hour = int.tryParse(timeParts[0]) ?? 0;
@@ -362,36 +383,36 @@ class _ScheduleViewState extends State<ScheduleView> {
                               }
                             }*/
 
-                            return Wrap(
-                              spacing: 8.0,
-                              children: v.snackList.map((String name) {
-                                // Ensure that the list is not empty or out of bounds
-                                bool isSelected = name == selectedSnackTime || v.snacks.contains(name);
+                              return Wrap(
+                                spacing: 8.0,
+                                children: v.snackList.map((String name) {
+                                  // Ensure that the list is not empty or out of bounds
+                                  bool isSelected = name == selectedSnackTime ||
+                                      v.snacks.contains(name);
 
-                                return CustomChip(
-                                  label: name,
-                                  isSelected: isSelected,
-                                  onSelected: (bool selected) {
-                                    // Safely update snacks list
-                                    if (selected) {
-                                      v.snacks.clear();
-                                      v.snacks.add(name);
-                                      v.patientSchedules!.patientSnackstime = name; // Update snack time
-                                      v.update(); // Rebuild GetX state
-                                    } else {
-                                      v.snacks.remove(name);
-                                      v.patientSchedules!.patientSnackstime = null; // Clear snack time
-                                      v.update();
-                                    }
-                                  },
-                                );
-                              }).toList(),
-                            );
-                          },
-                        )
-
-
-                      ),
+                                  return CustomChip(
+                                    label: name,
+                                    isSelected: isSelected,
+                                    onSelected: (bool selected) {
+                                      // Safely update snacks list
+                                      if (selected) {
+                                        v.snacks.clear();
+                                        v.snacks.add(name);
+                                        v.patientSchedules!.patientSnackstime =
+                                            name; // Update snack time
+                                        v.update(); // Rebuild GetX state
+                                      } else {
+                                        v.snacks.remove(name);
+                                        v.patientSchedules!.patientSnackstime =
+                                            null; // Clear snack time
+                                        v.update();
+                                      }
+                                    },
+                                  );
+                                }).toList(),
+                              );
+                            },
+                          )),
                     ),
                   ],
                 ),
@@ -407,7 +428,7 @@ class _ScheduleViewState extends State<ScheduleView> {
                           String? selectedBreakfastTime =
                               v.patientSchedules?.patientDinnertime;
                           String? formattedSelectedBreakfastTime;
-                         /* if (selectedBreakfastTime != null) {
+                          /* if (selectedBreakfastTime != null) {
                             final timeParts = selectedBreakfastTime.split(':');
                             final hour = int.parse(timeParts[0]);
                             final minute = timeParts[1];
@@ -420,9 +441,8 @@ class _ScheduleViewState extends State<ScheduleView> {
                           return Wrap(
                             spacing: 8.0,
                             children: sc.dinnerList.map((String name) {
-                              bool isSelected =
-                                  name == selectedBreakfastTime ||
-                                      v.dinner.contains(name);
+                              bool isSelected = name == selectedBreakfastTime ||
+                                  v.dinner.contains(name);
                               return CustomChip(
                                 label: name,
                                 isSelected: isSelected,
@@ -449,31 +469,8 @@ class _ScheduleViewState extends State<ScheduleView> {
                 kHeight15,
                 CustomLabel(text: "Hydration(Water)"),
                 kHeight10,
-                Row(
-                  children: [
-                    Expanded(
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: GetBuilder<ScheduleController>(builder: (v) {
-                         // String? hydrationLevel = v.patientSchedules!.patientHydration != null ?v.patientSchedules!.patientHydration:"500ML";
-                          return Wrap(
-                            spacing: 8.0,
-                            children: sc.Hydration.map((String name) {
-                              return CustomChip(
-                                label: name,
-                                isSelected: v.selectedHydration == name,
-                                onSelected: (bool selected) {
-                                  v.selectedHydration = name;
-                                  v.update();
-                                },
-                              );
-                            }).toList(),
-                          );
-                        }),
-                      ),
-                    ),
-                  ],
-                ),
+                customTextField(context,
+                    controller: sc.hydrationTEC, labelText: "Hydration"),
                 kHeight15,
                 CustomLabel(text: "Oral Care"),
                 kHeight10,
@@ -488,7 +485,7 @@ class _ScheduleViewState extends State<ScheduleView> {
                                 CustomRadioButton(
                                   selectedColor: AppColors.primaryColor,
                                   unselectedColor: Colors.white,
-                                  value: 'Option 1',
+                                  value: 'Morning',
                                   groupValue: sc.oralSelection,
                                   label: 'Morning',
                                   onChanged: (value) {
@@ -500,7 +497,7 @@ class _ScheduleViewState extends State<ScheduleView> {
                                 CustomRadioButton(
                                   selectedColor: AppColors.primaryColor,
                                   unselectedColor: Colors.white,
-                                  value: 'Option 2',
+                                  value: 'Noon',
                                   groupValue: sc.oralSelection,
                                   label: 'Noon',
                                   onChanged: (value) {
@@ -512,7 +509,7 @@ class _ScheduleViewState extends State<ScheduleView> {
                                 CustomRadioButton(
                                   selectedColor: AppColors.primaryColor,
                                   unselectedColor: Colors.white,
-                                  value: 'Option 3',
+                                  value: 'Evening',
                                   groupValue: sc.oralSelection,
                                   label: 'Evening',
                                   onChanged: (value) {
@@ -540,7 +537,7 @@ class _ScheduleViewState extends State<ScheduleView> {
                                 CustomRadioButton(
                                   selectedColor: AppColors.primaryColor,
                                   unselectedColor: Colors.white,
-                                  value: 'Option 1',
+                                  value: 'Morning',
                                   groupValue: sc.bathingSelection,
                                   label: 'Morning',
                                   onChanged: (value) {
@@ -552,7 +549,7 @@ class _ScheduleViewState extends State<ScheduleView> {
                                 CustomRadioButton(
                                   selectedColor: AppColors.primaryColor,
                                   unselectedColor: Colors.white,
-                                  value: 'Option 2',
+                                  value: 'Noon',
                                   groupValue: sc.bathingSelection,
                                   label: 'Noon',
                                   onChanged: (value) {
@@ -564,7 +561,7 @@ class _ScheduleViewState extends State<ScheduleView> {
                                 CustomRadioButton(
                                   selectedColor: AppColors.primaryColor,
                                   unselectedColor: Colors.white,
-                                  value: 'Option 3',
+                                  value: 'Evening',
                                   groupValue: sc.bathingSelection,
                                   label: 'Evening',
                                   onChanged: (value) {
@@ -579,7 +576,7 @@ class _ScheduleViewState extends State<ScheduleView> {
                   );
                 }),
                 kHeight15,
-                CustomLabel(text: "Medidation"),
+                CustomLabel(text: "Medication"),
                 kHeight10,
                 GetBuilder<ScheduleController>(builder: (v) {
                   return Row(
@@ -592,11 +589,12 @@ class _ScheduleViewState extends State<ScheduleView> {
                                 CustomRadioButton(
                                   selectedColor: AppColors.primaryColor,
                                   unselectedColor: Colors.white,
-                                  value: 'Option 1',
+                                  value: 'Morning',
                                   groupValue: sc.medidation,
                                   label: 'Morning',
                                   onChanged: (value) {
                                     sc.medidation = value!;
+                                    sc.selectedMedication = "Morning";
                                     sc.update();
                                   },
                                 ),
@@ -604,11 +602,12 @@ class _ScheduleViewState extends State<ScheduleView> {
                                 CustomRadioButton(
                                   selectedColor: AppColors.primaryColor,
                                   unselectedColor: Colors.white,
-                                  value: 'Option 2',
+                                  value: 'Noon',
                                   groupValue: sc.medidation,
                                   label: 'Noon',
                                   onChanged: (value) {
                                     sc.medidation = value!;
+                                    sc.selectedMedication = "Noon";
                                     sc.update();
                                   },
                                 ),
@@ -616,11 +615,12 @@ class _ScheduleViewState extends State<ScheduleView> {
                                 CustomRadioButton(
                                   selectedColor: AppColors.primaryColor,
                                   unselectedColor: Colors.white,
-                                  value: 'Option 3',
+                                  value: 'Evening',
                                   groupValue: sc.medidation,
                                   label: 'Evening',
                                   onChanged: (value) {
                                     sc.medidation = value!;
+                                    sc.selectedMedication = "Evening";
                                     sc.update();
                                   },
                                 ),
@@ -629,6 +629,70 @@ class _ScheduleViewState extends State<ScheduleView> {
                       ),
                     ],
                   );
+                }),
+                GetBuilder<ScheduleController>(builder: (v) {
+                  return sc.selectedMedication != null
+                      ? Column(
+                          children: [
+                            kHeight15,
+                            ListView.builder(
+                                itemCount: sc.meditationDetails
+                                    .firstWhere((element) =>
+                                        element.time == sc.selectedMedication!)
+                                    .medicationDetails!
+                                    .length,
+                                shrinkWrap: true,
+                                physics: NeverScrollableScrollPhysics(),
+                                itemBuilder: (context, index) {
+                                  return Padding(
+                                    padding: EdgeInsets.only(top: 16.h),
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          flex: 3,
+                                          child: customTextField(context,
+                                              controller: sc.meditationDetails
+                                                  .firstWhere((element) =>
+                                                      element.time ==
+                                                      sc.selectedMedication!)
+                                                  .medicationDetails![index],
+                                              hint: "Enter details",
+                                              labelText:
+                                                  "${sc.selectedMedication!} medication ${index + 1}"),
+                                        ),
+                                        Expanded(
+                                            flex: 1,
+                                            child: IconButton(
+                                              onPressed: () {
+                                                sc.meditationDetails
+                                                    .firstWhere((element) =>
+                                                        element.time ==
+                                                        sc.selectedMedication!)
+                                                    .medicationDetails!
+                                                    .removeAt(index);
+                                                sc.update();
+                                              },
+                                              icon: Icon(Icons.remove),
+                                            )),
+                                      ],
+                                    ),
+                                  );
+                                }),
+                            kHeight15,
+                            CustomButton(
+                                onPressed: () {
+                                  sc.meditationDetails
+                                      .firstWhere((element) =>
+                                          element.time ==
+                                          sc.selectedMedication!)
+                                      .medicationDetails!
+                                      .add(TextEditingController());
+                                  sc.update();
+                                },
+                                text: "Add medication detail"),
+                          ],
+                        )
+                      : SizedBox();
                 }),
                 kHeight15,
                 CustomLabel(text: "Dressing"),
@@ -644,7 +708,7 @@ class _ScheduleViewState extends State<ScheduleView> {
                                 CustomRadioButton(
                                   selectedColor: AppColors.primaryColor,
                                   unselectedColor: Colors.white,
-                                  value: 'Option 1',
+                                  value: 'Morning',
                                   groupValue: sc.dressingSelection,
                                   label: 'Morning',
                                   onChanged: (value) {
@@ -656,7 +720,7 @@ class _ScheduleViewState extends State<ScheduleView> {
                                 CustomRadioButton(
                                   selectedColor: AppColors.primaryColor,
                                   unselectedColor: Colors.white,
-                                  value: 'Option 2',
+                                  value: 'Noon',
                                   groupValue: sc.dressingSelection,
                                   label: 'Noon',
                                   onChanged: (value) {
@@ -668,7 +732,7 @@ class _ScheduleViewState extends State<ScheduleView> {
                                 CustomRadioButton(
                                   selectedColor: AppColors.primaryColor,
                                   unselectedColor: Colors.white,
-                                  value: 'Option 3',
+                                  value: 'Evening',
                                   groupValue: sc.dressingSelection,
                                   label: 'Evening',
                                   onChanged: (value) {
@@ -770,24 +834,20 @@ class _ScheduleViewState extends State<ScheduleView> {
                             child: customTextField(context,
                                 controller: sc.respiration,
                                 labelText: "Respirations")),
-                      ],
-                    ),
-                    SizedBox(height: 10),
-                    // Optional: Add some spacing between the rows
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
+                        kWidth10,
                         Expanded(
-                            child: SizedBox(
-                          width: 30,
-                          child: GetBuilder<ScheduleController>(builder: (v) {
-                            return customTextField(context,
-                                controller: sc.bp, labelText: "Blood Pressure");
-                          }),
-                        )),
-                        // Updated label for the 4th field
+                            child: customTextField(context,
+                                controller: sc.bp, labelText: "BP")),
                       ],
                     ),
+                    kHeight15,
+                    CustomLabel(text: "Blood Sugar"),
+                    kHeight10,
+                    GetBuilder<ScheduleController>(builder: (v) {
+                      return customTextField(context,
+                          controller: sc.bloodSugarTEC,
+                          labelText: "Blood Sugar");
+                    }),
                   ],
                 ),
                 kHeight10,

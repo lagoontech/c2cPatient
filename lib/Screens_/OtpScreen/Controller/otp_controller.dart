@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:care2care/Screens_/HomeView/home_view.dart';
+import 'package:care2care/Screens_/PrimaryInformation/primaryInformation_view.dart';
 import 'package:care2care/constants/api_urls.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:geolocator/geolocator.dart';
@@ -41,15 +42,17 @@ class OtpController extends GetxController {
       bool locationIsEnabled = await Geolocator.isLocationServiceEnabled();
       await initialProfileDetails.fetchInitialUserDetails();
       if (initialProfileDetails.profileList != null &&
-          initialProfileDetails.profileList!.data!.patientInfo != null) {
+          initialProfileDetails.profileList!.data!.patientInfo != null && initialProfileDetails.profileList!.data!.patientSchedules!=null) {
         print("Navigating to HomeView");
         print("Profile List: ${initialProfileDetails.profileList}");
         print("Patient Info: ${initialProfileDetails.profileList!.data!.patientInfo}");
 
         Get.offAll(() => HomeView());
-      } else {
+      } else if(initialProfileDetails.profileList!=null && initialProfileDetails.profileList!.data!.patientInfo == null){
         print("Navigating to ProfileView");
         Get.offAll(() => ProfileView());
+      } else if(initialProfileDetails.profileList!=null && initialProfileDetails.profileList!.data!.patientSchedules==null){
+        Get.offAll(()=> PrimaryInformationView());
       }
 
       if( initialProfileDetails.profileList != null && initialProfileDetails.profileList!.data!.patientInfo != null){

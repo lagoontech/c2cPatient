@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:care2care/Screens_/Schedule/modal/medication_model.dart';
 import 'package:care2care/constants/api_urls.dart';
 import 'package:care2care/modals/Profile_modal.dart';
 import 'package:flutter/cupertino.dart';
@@ -14,11 +15,14 @@ import '../../HomeView/home_view.dart';
 import '../../Profile/modal/initilaProfileDetailsModal.dart' hide PatientInfo;
 
 class ScheduleController extends GetxController {
+
   final List<String> filters = [];
   final List<String> lunchFilters = [];
   final List<String> snacks = [];
   final List<String> dinner = [];
-  final List<String> meditations = [];
+  List<String> meditations = [];
+  List<MedicationModel> meditationDetails = [];
+  String ?selectedMedication;
   final List<String> hydration = [];
   final List<String> blood = [];
 
@@ -142,6 +146,7 @@ class ScheduleController extends GetxController {
   int? patientID;
 
   bool updating = false;
+  bool inserting = false;
 
   Future<void> fetchCommonDetails() async {
     token = await SharedPref().getToken();
@@ -171,7 +176,9 @@ class ScheduleController extends GetxController {
   }
 
   InsertPrimaryInformationAndScheduleApi() async {
-  /*  try {*/
+    inserting = true;
+    update();
+    try {
       String? patientIDStr = await SharedPref().getId();
       Map<String, dynamic> params = {
         'patient_id': int.parse(patientIDStr!),
@@ -183,7 +190,11 @@ class ScheduleController extends GetxController {
         "patient_lunchtime": lunchFilters.isNotEmpty ? lunchFilters.first : null, // Access as string
         "patient_dinnertime": dinner.isNotEmpty ? dinner.first : null, // Access as string
         "patient_snackstime": snacks.isNotEmpty ? snacks.first : null, // Access as string
-        "patient_medications": medidation,
+        "patient_medications": {
+          "Morning": meditationDetails.firstWhere((element) => element.time=="Morning").medicationDetails!.map((e) => e.text).toList(),
+          "Noon": meditationDetails.firstWhere((element) => element.time=="Noon").medicationDetails!.map((e) => e.text).toList(),
+          "Evening": meditationDetails.firstWhere((element) => element.time=="Evening").medicationDetails!.map((e) => e.text).toList()
+        },
         "patient_hydration": hydrationTEC.text,
         "patient_oralcare": oralSelection,
         "patient_bathing": bathingSelection,
@@ -217,9 +228,12 @@ class ScheduleController extends GetxController {
       } else {
         debugPrint("not Succeesfully");
       }
-   /* } catch (e) {
+    } catch (e) {
       debugPrint(e.toString());
-    }*/
+    }
+    inserting = false;
+    update();
+
   }
 
   updateInformationAndScheduleApi() async {
@@ -237,7 +251,11 @@ class ScheduleController extends GetxController {
         "patient_lunchtime": lunchFilters.isNotEmpty ? lunchFilters.first : null, // Access as string
         "patient_dinnertime": dinner.isNotEmpty ? dinner.first : null, // Access as string
         "patient_snackstime": snacks.isNotEmpty ? snacks.first : null, // Access as string
-        "patient_medications": medidation,
+        "patient_medications": {
+          "Morning": meditationDetails.firstWhere((element) => element.time=="Morning").medicationDetails!.map((e) => e.text).toList(),
+          "Noon": meditationDetails.firstWhere((element) => element.time=="Noon").medicationDetails!.map((e) => e.text).toList(),
+          "Evening": meditationDetails.firstWhere((element) => element.time=="Evening").medicationDetails!.map((e) => e.text).toList()
+        },
         "patient_hydration": hydrationTEC.text,
         "patient_oralcare": oralSelection,
         "patient_bathing": bathingSelection,
@@ -280,6 +298,17 @@ class ScheduleController extends GetxController {
   }
 
 
+  //
+  setInitialMedication(){
+
+    medidation = "Morning";
+    selectedMedication = "Morning";
+    meditationDetails = [
+      MedicationModel(time: "Morning",medicationDetails: []),
+      MedicationModel(time: "Noon",medicationDetails: []),
+      MedicationModel(time: "Evening",medicationDetails: []),
+    ];
+  }
 
   Future<void> fetchPrimaryInformationApi() async {
     /*  try {*/
@@ -334,7 +363,32 @@ class ScheduleController extends GetxController {
 
         if (patientSchedules!.patientMedications != null &&
             patientSchedules!.patientMedications!.isNotEmpty) {
-          medidation = patientSchedules!.patientMedications!;
+          medidation = "Morning";
+          meditationDetails = [
+            MedicationModel(time: "Morning",medicationDetails: []),
+            MedicationModel(time: "Noon",medicationDetails: []),
+            MedicationModel(time: "Evening",medicationDetails: []),
+          ];
+          var medicationValues = jsonDecode(patientSchedules!.patientMedications!);
+          medicationValues.keys.forEach((time) {
+            List<dynamic> ?details = medicationValues[time];
+            if(time == "Morning"){
+              details!.forEach((element) {
+                meditationDetails[0].medicationDetails!.add(TextEditingController(text:element.toString()));
+              });
+            }
+            if(time == "Noon"){
+              details!.forEach((element) {
+                meditationDetails[1].medicationDetails!.add(TextEditingController(text:element.toString()));
+              });
+            }
+            if(time == "Evening"){
+              details!.forEach((element) {
+                meditationDetails[2].medicationDetails!.add(TextEditingController(text:element.toString()));
+              });
+            }
+          });
+          selectedMedication = medidation;
           debugPrint(medidation);
           update();
         }
@@ -380,6 +434,11 @@ class ScheduleController extends GetxController {
             patientSchedules!.patientDinnertime!.isNotEmpty) {
           dinner.clear();
           dinner.add(patientSchedules!.patientDinnertime!);
+          update();
+        }
+        if (patientSchedules!.patientBloodsugar != null &&
+            patientSchedules!.patientBloodsugar!.isNotEmpty) {
+          bloodSugarTEC.text = patientSchedules!.patientBloodsugar!;
           update();
         }
         update();
