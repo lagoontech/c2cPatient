@@ -4,14 +4,13 @@ import 'package:care2care/ReusableUtils_/customLabel.dart';
 import 'package:care2care/ReusableUtils_/sizes.dart';
 import 'package:care2care/Screens_/HomeScreen/controller/home%20controller.dart';
 import 'package:custom_rating_bar/custom_rating_bar.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
-
 import '../../Notification/controller.dart';
 import '../../ReusableUtils_/appBar.dart';
+import '../../ReusableUtils_/loader.dart';
 import '../Profile/Controller/initila_profile_controller.dart';
 import '../caretakerList/careTakerListView.dart';
 
@@ -26,13 +25,20 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if(controller.profileList==null){
+      controller.fetchInitialUserDetails();
+    }
     return GetBuilder<InitialProfileDetails>(builder: (v) {
       if (v.profileList == null) {
         return HomeSkeletonLoader();
       }
-      String? name = controller.profileList!.data!.patientInfo!.firstName!;
-      String? fullImg = ('${controller.profileList!.profilePath}' +
-          ('${controller.profileList!.data!.profileImageUrl}'));
+      String? name;
+      String? fullImg;
+      if(controller.profileList!=null){
+         name = controller.profileList!.data!.patientInfo!.firstName!;
+         fullImg = ('${controller.profileList!.profilePath}' +
+            ('${controller.profileList!.data!.profileImageUrl}'));
+      }
       return RefreshIndicator(
         onRefresh: () async {
           await homeController.fetchAllCaretakersApi();
@@ -40,9 +46,9 @@ class HomePage extends StatelessWidget {
         },
         child: Scaffold(
           appBar: HomeAppBar(
-            username: name,
+            username: name!,
             subtitle: 'How is your Health?',
-            avatarUrl: fullImg,
+            avatarUrl: fullImg!,
           ),
           body: Container(
             decoration: const BoxDecoration(
@@ -207,7 +213,7 @@ class HomePage extends StatelessWidget {
                   ),
                   kHeight10,
                   GetBuilder<HomeController>(builder: (v) {
-                    return ListView.builder(
+                    return !v.isLoadingTopCareTakers?ListView.builder(
                       shrinkWrap: true,
                       physics: NeverScrollableScrollPhysics(),
                       itemCount: v.topCaretakers.length > 4
@@ -230,6 +236,16 @@ class HomePage extends StatelessWidget {
                           ),
                         );
                       },
+                    ): Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Padding(
+                        padding: EdgeInsets.only(top: 50.h),
+                        child: CustomCircularLoader(
+                          height: 50.h,
+                          width: 50.w,
+                          color: AppColors.primaryColor,
+                        ),
+                      ),
                     );
                   }),
                   //kHeight10,

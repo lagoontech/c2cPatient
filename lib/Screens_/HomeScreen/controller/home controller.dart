@@ -20,6 +20,7 @@ class HomeController extends GetxController {
   List<CaretakerData> topCaretakers = [];
   List<CaretakersListData> careTakers = [];
   bool isLoadingCareTakersList = false;
+  bool isLoadingTopCareTakers  = false;
   TextEditingController searchTEC = TextEditingController();
 
   double rating = 0.0;
@@ -115,6 +116,8 @@ class HomeController extends GetxController {
   //
   fetchTopCaretakers() async{
 
+    isLoadingTopCareTakers = true;
+    update();
     try{
       String? token = await SharedPref().getToken();
       var result = await http.get(Uri.parse(ApiUrls().topCaretakers),headers: {
@@ -129,6 +132,7 @@ class HomeController extends GetxController {
     }catch(e){
       print(e);
     }
+    isLoadingTopCareTakers = false;
     update();
 
   }

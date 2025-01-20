@@ -474,55 +474,60 @@ class _ScheduleViewState extends State<ScheduleView> {
                 kHeight15,
                 CustomLabel(text: "Oral Care"),
                 kHeight10,
-                GetBuilder<ScheduleController>(builder: (v) {
-                  return Row(
-                    children: [
-                      Expanded(
-                        child: SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Wrap(
-                              children: [
-                                CustomRadioButton(
-                                  selectedColor: AppColors.primaryColor,
-                                  unselectedColor: Colors.white,
-                                  value: 'Morning',
-                                  groupValue: sc.oralSelection,
-                                  label: 'Morning',
-                                  onChanged: (value) {
-                                    sc.oralSelection = value!;
-                                    sc.update();
-                                  },
-                                ),
-                                kWidth10,
-                                CustomRadioButton(
-                                  selectedColor: AppColors.primaryColor,
-                                  unselectedColor: Colors.white,
-                                  value: 'Noon',
-                                  groupValue: sc.oralSelection,
-                                  label: 'Noon',
-                                  onChanged: (value) {
-                                    sc.oralSelection = value!;
-                                    sc.update();
-                                  },
-                                ),
-                                kWidth10,
-                                CustomRadioButton(
-                                  selectedColor: AppColors.primaryColor,
-                                  unselectedColor: Colors.white,
-                                  value: 'Evening',
-                                  groupValue: sc.oralSelection,
-                                  label: 'Evening',
-                                  onChanged: (value) {
-                                    sc.oralSelection = value!;
-                                    sc.update();
-                                  },
-                                ),
-                              ],
-                            )),
-                      ),
-                    ],
-                  );
-                }),
+              GetBuilder<ScheduleController>(builder: (v) {
+                return Row(
+                  children: [
+                    Expanded(
+                      child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Wrap(
+                            children: [
+                              CustomChip(
+                                label: "Morning",
+                                isSelected: sc.selectedOralCareTimings.contains("Morning"),
+                                onSelected: (bool selected) {
+                                  print(selected);
+                                  if (selected) {
+                                    sc.selectedOralCareTimings.add("Morning");
+                                  } else{
+                                    sc.selectedOralCareTimings.remove("Morning");
+                                  }
+                                  v.update();
+                                },
+                              ),
+                              kWidth10,
+                              CustomChip(
+                                label: "Noon",
+                                isSelected: sc.selectedOralCareTimings.contains("Noon"),
+                                onSelected: (bool selected) {
+                                  if (selected) {
+                                    sc.selectedOralCareTimings.add("Noon");
+                                  }else{
+                                    sc.selectedOralCareTimings.remove("Noon");
+                                  }
+                                  v.update();
+                                },
+                              ),
+
+                              kWidth10,
+                              CustomChip(
+                                label: "Evening",
+                                isSelected: sc.selectedOralCareTimings.contains("Evening"),
+                                onSelected: (bool selected) {
+                                  if (selected) {
+                                    sc.selectedOralCareTimings.add("Evening");
+                                  }else{
+                                    sc.selectedOralCareTimings.remove("Evening");
+                                  }
+                                  v.update();
+                                },
+                              ),
+                            ],
+                          )),
+                    ),
+                  ],
+                );
+              }),
                 kHeight15,
                 CustomLabel(text: "Bathing"),
                 kHeight10,
@@ -534,39 +539,44 @@ class _ScheduleViewState extends State<ScheduleView> {
                             scrollDirection: Axis.horizontal,
                             child: Wrap(
                               children: [
-                                CustomRadioButton(
-                                  selectedColor: AppColors.primaryColor,
-                                  unselectedColor: Colors.white,
-                                  value: 'Morning',
-                                  groupValue: sc.bathingSelection,
-                                  label: 'Morning',
-                                  onChanged: (value) {
-                                    sc.bathingSelection = value!;
-                                    sc.update();
+                                CustomChip(
+                                  label: "Morning",
+                                  isSelected: sc.selectedBathingTimings.contains("Morning"),
+                                  onSelected: (bool selected) {
+                                    print(selected);
+                                    if (selected) {
+                                      sc.selectedBathingTimings.add("Morning");
+                                    } else{
+                                      sc.selectedBathingTimings.remove("Morning");
+                                    }
+                                    v.update();
                                   },
                                 ),
                                 kWidth10,
-                                CustomRadioButton(
-                                  selectedColor: AppColors.primaryColor,
-                                  unselectedColor: Colors.white,
-                                  value: 'Noon',
-                                  groupValue: sc.bathingSelection,
-                                  label: 'Noon',
-                                  onChanged: (value) {
-                                    sc.bathingSelection = value!;
-                                    sc.update();
+                                CustomChip(
+                                  label: "Noon",
+                                  isSelected: sc.selectedBathingTimings.contains("Noon"),
+                                  onSelected: (bool selected) {
+                                    if (selected) {
+                                      sc.selectedBathingTimings.add("Noon");
+                                    }else{
+                                      sc.selectedBathingTimings.remove("Noon");
+                                    }
+                                    v.update();
                                   },
                                 ),
+
                                 kWidth10,
-                                CustomRadioButton(
-                                  selectedColor: AppColors.primaryColor,
-                                  unselectedColor: Colors.white,
-                                  value: 'Evening',
-                                  groupValue: sc.bathingSelection,
-                                  label: 'Evening',
-                                  onChanged: (value) {
-                                    sc.bathingSelection = value!;
-                                    sc.update();
+                                CustomChip(
+                                  label: "Evening",
+                                  isSelected: sc.selectedBathingTimings.contains("Evening"),
+                                  onSelected: (bool selected) {
+                                    if (selected) {
+                                      sc.selectedBathingTimings.add("Evening");
+                                    }else{
+                                      sc.selectedBathingTimings.remove("Evening");
+                                    }
+                                    v.update();
                                   },
                                 ),
                               ],
@@ -705,39 +715,45 @@ class _ScheduleViewState extends State<ScheduleView> {
                             scrollDirection: Axis.horizontal,
                             child: Wrap(
                               children: [
-                                CustomRadioButton(
-                                  selectedColor: AppColors.primaryColor,
-                                  unselectedColor: Colors.white,
-                                  value: 'Morning',
-                                  groupValue: sc.dressingSelection,
-                                  label: 'Morning',
-                                  onChanged: (value) {
-                                    sc.dressingSelection = value!;
-                                    sc.update();
+                                CustomChip(
+                                  label: "Morning",
+                                  isSelected: sc.selectedBathingTimings.contains("Morning"),
+                                  onSelected: (bool selected) {
+                                    print(selected);
+                                    if (selected) {
+                                      sc.selectedDressingTimings.add("Morning");
+                                    } else{
+                                      sc.selectedDressingTimings.remove("Morning");
+                                    }
+                                    v.update();
                                   },
                                 ),
                                 kWidth10,
-                                CustomRadioButton(
-                                  selectedColor: AppColors.primaryColor,
-                                  unselectedColor: Colors.white,
-                                  value: 'Noon',
-                                  groupValue: sc.dressingSelection,
-                                  label: 'Noon',
-                                  onChanged: (value) {
-                                    sc.dressingSelection = value!;
-                                    sc.update();
+                                CustomChip(
+                                  label: "Noon",
+                                  isSelected: sc.selectedDressingTimings.contains("Noon"),
+                                  onSelected: (bool selected) {
+                                    print(selected);
+                                    if (selected) {
+                                      sc.selectedDressingTimings.add("Noon");
+                                    } else{
+                                      sc.selectedDressingTimings.remove("Noon");
+                                    }
+                                    v.update();
                                   },
                                 ),
                                 kWidth10,
-                                CustomRadioButton(
-                                  selectedColor: AppColors.primaryColor,
-                                  unselectedColor: Colors.white,
-                                  value: 'Evening',
-                                  groupValue: sc.dressingSelection,
-                                  label: 'Evening',
-                                  onChanged: (value) {
-                                    sc.dressingSelection = value!;
-                                    sc.update();
+                                CustomChip(
+                                  label: "Evening",
+                                  isSelected: sc.selectedDressingTimings.contains("Evening"),
+                                  onSelected: (bool selected) {
+                                    print(selected);
+                                    if (selected) {
+                                      sc.selectedDressingTimings.add("Evening");
+                                    } else{
+                                      sc.selectedDressingTimings.remove("Evening");
+                                    }
+                                    v.update();
                                   },
                                 ),
                               ],
@@ -785,27 +801,29 @@ class _ScheduleViewState extends State<ScheduleView> {
                             scrollDirection: Axis.horizontal,
                             child: Wrap(
                               children: [
-                                CustomRadioButton(
-                                  selectedColor: AppColors.primaryColor,
-                                  unselectedColor: Colors.white,
-                                  value: 'Morning',
-                                  groupValue: sc.walkingTime,
-                                  label: 'Morning',
-                                  onChanged: (value) {
-                                    sc.walkingTime = value!;
-                                    sc.update();
+                                CustomChip(
+                                  label: "Morning",
+                                  isSelected: sc.selectedWalkingTimings.contains("Morning"),
+                                  onSelected: (bool selected) {
+                                    if (selected) {
+                                      sc.selectedWalkingTimings.add("Morning");
+                                    } else{
+                                      sc.selectedWalkingTimings.remove("Morning");
+                                    }
+                                    v.update();
                                   },
                                 ),
                                 kWidth10,
-                                CustomRadioButton(
-                                  selectedColor: AppColors.primaryColor,
-                                  unselectedColor: Colors.white,
-                                  value: 'Evening',
-                                  groupValue: sc.walkingTime,
-                                  label: 'Evening',
-                                  onChanged: (value) {
-                                    sc.walkingTime = value!;
-                                    sc.update();
+                                CustomChip(
+                                  label: "Evening",
+                                  isSelected: sc.selectedWalkingTimings.contains("Evening"),
+                                  onSelected: (bool selected) {
+                                    if (selected) {
+                                      sc.selectedWalkingTimings.add("Evening");
+                                    } else{
+                                      sc.selectedWalkingTimings.remove("Evening");
+                                    }
+                                    v.update();
                                   },
                                 ),
                               ],

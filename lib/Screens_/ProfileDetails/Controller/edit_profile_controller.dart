@@ -2,26 +2,22 @@ import 'dart:convert';
 import 'package:care2care/Utils/date_utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 import 'package:http/http.dart' as http;
-import 'package:intl/intl.dart';
 import '../../../ReusableUtils_/toast2.dart';
 import '../../../constants/api_urls.dart';
 import '../../../modals/Profile_modal.dart';
 import '../../../sharedPref/sharedPref.dart';
-import '../../PrimaryInformation/primaryInformation_view.dart';
 
 class EditProfileController extends GetxController{
 
-  TextEditingController firstName = TextEditingController();
-  TextEditingController lastName = TextEditingController();
-  TextEditingController sexCT = TextEditingController();
-  TextEditingController emailCT = TextEditingController();
-  TextEditingController ageCT = TextEditingController();
-  TextEditingController dobCT = TextEditingController();
-  TextEditingController heightCT = TextEditingController();
-  TextEditingController weightCT = TextEditingController();
+  TextEditingController firstName  = TextEditingController();
+  TextEditingController lastName   = TextEditingController();
+  TextEditingController sexCT      = TextEditingController();
+  TextEditingController emailCT    = TextEditingController();
+  TextEditingController ageCT      = TextEditingController();
+  TextEditingController dobCT      = TextEditingController();
+  TextEditingController heightCT   = TextEditingController();
+  TextEditingController weightCT   = TextEditingController();
   TextEditingController locationCT = TextEditingController();
   TextEditingController nationalityCT = TextEditingController();
   TextEditingController addressCT = TextEditingController();

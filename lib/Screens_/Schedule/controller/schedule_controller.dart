@@ -7,7 +7,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart';
 import 'package:path/path.dart' as path;
 import '../../../ReusableUtils_/toast2.dart';
 import '../../../sharedPref/sharedPref.dart';
@@ -31,9 +30,7 @@ class ScheduleController extends GetxController {
     Diet(name: 'Clear Liquid Diet', id: 2),
     Diet(name: 'Full Liquid Diet', id: 3),
     Diet(name: 'Cardiac Diet (2 g sodium, low cholesterol, low-fat)', id: 4),
-    Diet(
-        name: 'Cardiac/Diabetic (2 g or 3 g sodium, low-cholesterol, low-fat)',
-        id: 5),
+    Diet(name: 'Cardiac/Diabetic (2 g or 3 g sodium, low-cholesterol, low-fat)', id: 5),
     Diet(name: 'Renal Diet', id: 6),
     Diet(name: 'Non Regular Diet', id: 7),
   ];
@@ -82,27 +79,27 @@ class ScheduleController extends GetxController {
   //ScheduleModal? scheduleModal;
   ProfileList? profile;
   final List<String> breakFast = [
-    '06.00 AM',
-    '06.30 AM',
-    '07.00 AM',
-    '07.30 AM',
-    '08.00 AM',
+    '06:00 AM',
+    '06:30 AM',
+    '07:00 AM',
+    '07:30 AM',
+    '08:00 AM',
   ];
   final List<String> lunchList = [
     '12:00 PM',
-    '12.30 PM',
-    '01.00 PM',
+    '12:30 PM',
+    '01:00 PM',
   ];
   final List<String> dinnerList = [
     '08:00 PM',
-    '08.30 PM',
-    '09.00 PM',
+    '08:30 PM',
+    '09:00 PM',
   ];
   final List<String> snackList = [
     '10:00 AM',
-    '04.30 PM',
-    '05.00 PM',
-    '05.30 PM',
+    '04:30 PM',
+    '05:00 PM',
+    '05:30 PM',
   ];
 
   final List<String> Hydration = [
@@ -120,6 +117,10 @@ class ScheduleController extends GetxController {
   var selectedHydration = "";
   var selectedOption = '';
   var oralSelection = '';
+  List<dynamic> selectedOralCareTimings = [];
+  List<dynamic> selectedBathingTimings  = [];
+  List<dynamic> selectedDressingTimings = [];
+  List<dynamic> selectedWalkingTimings = [];
   var ostomySelection = '';
   var bathingSelection = '';
   var dressingSelection = '';
@@ -148,6 +149,7 @@ class ScheduleController extends GetxController {
   bool updating = false;
   bool inserting = false;
 
+  //
   Future<void> fetchCommonDetails() async {
     token = await SharedPref().getToken();
     String? patientIDStr = await SharedPref().getId();
@@ -175,6 +177,7 @@ class ScheduleController extends GetxController {
     return '${hours.toString().padLeft(2, '0')}:${minutes}';
   }
 
+  //
   InsertPrimaryInformationAndScheduleApi() async {
     inserting = true;
     update();
@@ -196,11 +199,11 @@ class ScheduleController extends GetxController {
           "Evening": meditationDetails.firstWhere((element) => element.time=="Evening").medicationDetails!.map((e) => e.text).toList()
         },
         "patient_hydration": hydrationTEC.text,
-        "patient_oralcare": oralSelection,
-        "patient_bathing": bathingSelection,
-        "patient_dressing": dressingSelection,
+        "patient_oralcare": selectedOralCareTimings,
+        "patient_bathing": selectedBathingTimings,
+        "patient_dressing": selectedDressingTimings,
         "patient_toileting": toileting.text,
-        "patient_walkingtime": walkingTime, // This remains unchanged
+        "patient_walkingtime": selectedWalkingTimings, // This remains unchanged
         "patient_vitalsigns": {
           "blood_pressure": bp.text,
           "heart_rate": heartRate.text,
@@ -236,6 +239,7 @@ class ScheduleController extends GetxController {
 
   }
 
+  //
   updateInformationAndScheduleApi() async {
     updating = true;
     update();
@@ -257,11 +261,11 @@ class ScheduleController extends GetxController {
           "Evening": meditationDetails.firstWhere((element) => element.time=="Evening").medicationDetails!.map((e) => e.text).toList()
         },
         "patient_hydration": hydrationTEC.text,
-        "patient_oralcare": oralSelection,
-        "patient_bathing": bathingSelection,
-        "patient_dressing": dressingSelection,
+        "patient_oralcare": selectedOralCareTimings,
+        "patient_bathing": selectedBathingTimings,
+        "patient_dressing": selectedDressingTimings,
         "patient_toileting": toileting.text,
-        "patient_walkingtime": walkingTime, // This remains unchanged
+        "patient_walkingtime": selectedWalkingTimings, // This remains unchanged
         "patient_vitalsigns": {
           "blood_pressure": bp.text,
           "heart_rate": heartRate.text,
@@ -311,7 +315,7 @@ class ScheduleController extends GetxController {
   }
 
   Future<void> fetchPrimaryInformationApi() async {
-    /*  try {*/
+      try {
     String? token = await SharedPref().getToken();
     String? patientIDStr = await SharedPref().getId();
 
@@ -335,7 +339,7 @@ class ScheduleController extends GetxController {
         toileting.text = patientSchedules!.patientToileting!;
         temp.text = 120.toString();
         bp.text = patientSchedules!.patientVitalsigns!.bloodPressure!;
-        walkingTime = patientSchedules!.patientWalkingtime!;
+        selectedWalkingTimings = jsonDecode(patientSchedules!.patientWalkingtime!);
         heartRate.text =
             patientSchedules!.patientVitalsigns!.heartRate.toString();
         respiration.text =
@@ -395,18 +399,21 @@ class ScheduleController extends GetxController {
         if (patientSchedules!.patientOralcare != null &&
             patientSchedules!.patientOralcare!.isNotEmpty) {
           oralSelection = patientSchedules!.patientOralcare!;
+          selectedOralCareTimings = jsonDecode(patientSchedules!.patientOralcare!);
           debugPrint(medidation);
           update();
         }
         if (patientSchedules!.patientBathing != null &&
             patientSchedules!.patientBathing!.isNotEmpty) {
           bathingSelection = patientSchedules!.patientBathing!;
+          selectedBathingTimings = jsonDecode(patientSchedules!.patientBathing!);
           debugPrint(medidation);
           update();
         }
         if (patientSchedules!.patientDressing != null &&
             patientSchedules!.patientDressing!.isNotEmpty) {
           dressingSelection = patientSchedules!.patientDressing!;
+          selectedDressingTimings = jsonDecode(patientSchedules!.patientDressing!);
           debugPrint(medidation);
           update();
         }
@@ -450,9 +457,9 @@ class ScheduleController extends GetxController {
     } else {
       debugPrint("Status code: ${response.statusCode}");
     }
-    /*} catch (e) {
+    } catch (e) {
       debugPrint("Error: $e");
-    }*/
+    }
   }
 
   //imageUploadProcess

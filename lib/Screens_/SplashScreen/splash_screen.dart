@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:care2care/ReusableUtils_/AppColors.dart';
 import 'package:care2care/ReusableUtils_/sizes.dart';
 import 'package:care2care/Screens_/HomeView/home_view.dart';
@@ -15,6 +14,9 @@ import '../../ReusableUtils_/image_background.dart';
 import '../../ReusableUtils_/loader.dart';
 import '../Auth_screen/Sigin_screen/signIn_view.dart';
 import 'package:http/http.dart' as http;
+import '../PrimaryInformation/primaryInformation_view.dart';
+import '../Profile/Controller/initila_profile_controller.dart';
+import '../Profile/profile_view.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -24,13 +26,39 @@ class SplashScreen extends StatefulWidget {
 }
 
 class SplashScreenState extends State<SplashScreen> {
+
+  //
   @override
   void initState() {
     super.initState();
     tokenCheck();
   }
 
+  //
   tokenCheck() async {
+    InitialProfileDetails initialProfileDetails =
+    Get.put(InitialProfileDetails());
+    await initialProfileDetails.fetchInitialUserDetails();
+    if (initialProfileDetails.profileList != null &&
+        initialProfileDetails.profileList!.data!.patientInfo != null && initialProfileDetails.profileList!.data!.patientSchedules!=null) {
+      print("Navigating to HomeView");
+      print("Profile List: ${initialProfileDetails.profileList}");
+      print("Patient Info: ${initialProfileDetails.profileList!.data!.patientInfo}");
+
+      Get.offAll(() => HomeView());
+      return;
+    } else if(initialProfileDetails.profileList!=null && initialProfileDetails.profileList!.data!.patientInfo == null){
+      print("Navigating to ProfileView");
+      Get.offAll(() => ProfileView());
+      return;
+    } else if(initialProfileDetails.profileList!=null && initialProfileDetails.profileList!.data!.patientSchedules==null){
+      Get.offAll(()=> PrimaryInformationView());
+      return;
+    }
+
+    if( initialProfileDetails.profileList != null && initialProfileDetails.profileList!.data!.patientInfo != null){
+      onUserDetailsCompleted();
+    }
     bool isDetailsComplete = await SharedPref().getRegisterComplete();
     Future.delayed(const Duration(seconds: 1), () {
       if (isDetailsComplete) {
@@ -41,6 +69,11 @@ class SplashScreenState extends State<SplashScreen> {
     }).then((_){
       requestNotificationPermissions();
     });
+  }
+
+  //
+  void onUserDetailsCompleted() {
+    SharedPref().setRegisterComplete(true);
   }
 
   Future<void> requestNotificationPermissions() async {
