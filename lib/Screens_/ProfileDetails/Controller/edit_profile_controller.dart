@@ -88,7 +88,7 @@ class EditProfileController extends GetxController{
         firstName.text = initialUserDetails?.firstName ?? '';
         lastName.text = initialUserDetails?.lastName ?? '';
         emailCT.text = initialUserDetails?.email ?? '';
-        sexCT.text = initialUserDetails?.sex ?? '';
+        sexCT.text = initialUserDetails?.sex!.capitalizeFirst! ?? '';
         dobCT.text = DateUtils().dateOnlyFormat(initialUserDetails!.dob!)?? '';
         dob = initialUserDetails!.dob;
         ageCT.text = initialUserDetails?.age.toString() ?? '';
@@ -141,7 +141,7 @@ class EditProfileController extends GetxController{
         "patient_id": patientID,
         "first_name": firstName.text,
         "last_name": lastName.text,
-        "sex": sexCT.text,
+        "sex": sexCT.text.toLowerCase(),
         "age": ageCT.text,
         "email":emailCT.text,
         "dob": DateUtils().parsableDate(dob!),

@@ -190,10 +190,14 @@ class AccountInformation extends StatelessWidget {
                 Row(
                   children: [
                     Expanded(
-                        flex: 5,
-                        child: customTextField(context,
-                            controller: ec.sexCT,
-                            labelText: "Sex *")),
+                    flex: 5,
+                    child: customDropdown(context,
+                        value: ec.sexCT.text,
+                        items: ["Male","Female","Other"].map((e) =>
+                            DropdownMenuItem(child: Text(e),value: e,)).toList(),
+                        labelText: "Sex",onChanged: (v){
+                          ec.sexCT.text = v;
+                        })),
                     kWidth20,
                     Flexible(
                       flex: 5,
