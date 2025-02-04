@@ -19,8 +19,8 @@ class AccountInformation extends StatelessWidget {
   AccountInformation({super.key});
 
   final InitialProfileDetails getX = Get.put(InitialProfileDetails());
-  final ScheduleController sc = Get.put(ScheduleController());
   EditProfileController ec = Get.put(EditProfileController());
+  final ScheduleController sc = Get.put(ScheduleController());
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +66,11 @@ class AccountInformation extends StatelessWidget {
                             '${ec.profileList!.profilePath}${ec.profileList!.data!.profileImageUrl}';
                         return CircleAvatar(
                             radius: 20,
-                            child: CachedNetworkImage(imageUrl: imageURL));
+                            child: ClipRRect(
+                                borderRadius: BorderRadius.circular(60.r),
+                                child: Container(
+                                    width: 80.w,
+                                    child: CachedNetworkImage(imageUrl: imageURL,fit: BoxFit.fill))));
                       }),
                     ),
                     kWidth10,

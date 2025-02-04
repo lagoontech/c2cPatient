@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:care2care/Screens_/Profile/Controller/initila_profile_controller.dart';
+import 'package:care2care/Screens_/ProfileDetails/Controller/edit_profile_controller.dart';
 import 'package:care2care/Screens_/Schedule/modal/medication_model.dart';
 import 'package:care2care/constants/api_urls.dart';
 import 'package:care2care/modals/Profile_modal.dart';
@@ -24,6 +26,8 @@ class ScheduleController extends GetxController {
   String ?selectedMedication;
   final List<String> hydration = [];
   final List<String> blood = [];
+  EditProfileController profileController = Get.find<EditProfileController>();
+  InitialProfileDetails initialProfileDetails = Get.find<InitialProfileDetails>();
 
   var DietItems = [
     Diet(name: 'Regular Diet', id: 1),
@@ -511,6 +515,11 @@ class ScheduleController extends GetxController {
         final Map<String, dynamic> jsonResponse = jsonDecode(responseString);
         String newImageUrl = jsonResponse['image'];
         profile!.data!.profileImageUrl = newImageUrl;
+        profileController.profileList!.data!.profileImageUrl = newImageUrl;
+        profileController.update();
+        initialProfileDetails.profileList!.data!.profileImageUrl = newImageUrl;
+        initialProfileDetails.update();
+        showCustomToast(message: "Profile photo updated");
         print("newImageUrl$newImageUrl");
         print("uploadResponse$jsonResponse");
         update();

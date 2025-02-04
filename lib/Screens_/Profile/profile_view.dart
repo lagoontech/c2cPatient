@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:iconly/iconly.dart';
-
 import 'Controller/initila_profile_controller.dart';
 
 class ProfileView extends StatelessWidget {
