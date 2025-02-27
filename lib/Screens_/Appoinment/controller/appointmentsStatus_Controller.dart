@@ -185,10 +185,17 @@ class AppointmentStatusController extends GetxController {
           hasAppointment = app.caretaker!.caretakerInfo!.firstName!.toLowerCase().contains(
               searchTEC.text.toLowerCase());
         else if(displayDate!=null && searchTEC.text.isNotEmpty) {
-          hasAppointment = app.caretaker!.caretakerInfo!.firstName!.toLowerCase().contains(
-              searchTEC.text.toLowerCase()) && displayDate == DateUtils().dateOnlyFormat(app.appointmentDate!);
-        }else if(displayDate!=null){
-          hasAppointment = displayDate == DateUtils().dateOnlyFormat(app.appointmentDate!);
+          bool has = false;
+          has = app.caretaker!.caretakerInfo!.firstName!.toLowerCase().contains(
+              searchTEC.text.toLowerCase());
+          has = app.appointmentDates![0].isAtSameMomentAs(selectedDate!)
+              || app.appointmentDates!.last.isAtSameMomentAs(selectedDate!)
+              || (selectedDate!.isAfter(app.appointmentDates![0]) && selectedDate!.isBefore(app.appointmentDates!.last));
+          hasAppointment = has;
+        } else if(displayDate!=null){
+          hasAppointment = app.appointmentDates![0].isAtSameMomentAs(selectedDate!)
+              || app.appointmentDates!.last.isAtSameMomentAs(selectedDate!)
+              || (selectedDate!.isAfter(app.appointmentDates![0]) && selectedDate!.isBefore(app.appointmentDates!.last));
         }
         return hasAppointment;
       }
@@ -205,10 +212,17 @@ class AppointmentStatusController extends GetxController {
           hasAppointment = app.caretaker!.caretakerInfo!.firstName!.toLowerCase().contains(
               searchTEC.text.toLowerCase());
         else if(displayDate!=null && searchTEC.text.isNotEmpty) {
-          hasAppointment = app.caretaker!.caretakerInfo!.firstName!.toLowerCase().contains(
-              searchTEC.text.toLowerCase()) && displayDate == DateUtils().dateOnlyFormat(app.appointmentDate!);
-        }else if(displayDate!=null){
-          hasAppointment = displayDate == DateUtils().dateOnlyFormat(app.appointmentDate!);
+          bool has = false;
+          has = app.caretaker!.caretakerInfo!.firstName!.toLowerCase().contains(
+              searchTEC.text.toLowerCase());
+          has = app.appointmentDates![0].isAtSameMomentAs(selectedDate!)
+              || app.appointmentDates!.last.isAtSameMomentAs(selectedDate!)
+               || (selectedDate!.isAfter(app.appointmentDates![0]) && selectedDate!.isBefore(app.appointmentDates!.last));
+          hasAppointment = has;
+        } else if(displayDate!=null){
+          hasAppointment = app.appointmentDates![0].isAtSameMomentAs(selectedDate!)
+              || app.appointmentDates!.last.isAtSameMomentAs(selectedDate!)
+              || (selectedDate!.isAfter(app.appointmentDates![0]) && selectedDate!.isBefore(app.appointmentDates!.last));
         }
         return hasAppointment;
       }
@@ -218,13 +232,20 @@ class AppointmentStatusController extends GetxController {
       searchedAppointments = ApprovedAppointment.where((app) {
         var hasAppointment = false;
         if(displayDate==null)
-        hasAppointment = app.caretaker!.caretakerInfo!.firstName!.toLowerCase().contains(
-            searchTEC.text.toLowerCase());
-        else if(displayDate!=null && searchTEC.text.isNotEmpty) {
           hasAppointment = app.caretaker!.caretakerInfo!.firstName!.toLowerCase().contains(
-              searchTEC.text.toLowerCase()) && displayDate == DateUtils().dateOnlyFormat(app.appointmentDate!);
-        }else if(displayDate!=null){
-          hasAppointment = displayDate == DateUtils().dateOnlyFormat(app.appointmentDate!);
+              searchTEC.text.toLowerCase());
+        else if(displayDate!=null && searchTEC.text.isNotEmpty) {
+          bool has = false;
+          has = app.caretaker!.caretakerInfo!.firstName!.toLowerCase().contains(
+              searchTEC.text.toLowerCase());
+          has = app.appointmentDates![0].isAtSameMomentAs(selectedDate!)
+              || app.appointmentDates!.last.isAtSameMomentAs(selectedDate!)
+              || (selectedDate!.isAfter(app.appointmentDates![0]) && selectedDate!.isBefore(app.appointmentDates!.last));
+          hasAppointment = has;
+        } else if(displayDate!=null){
+          hasAppointment = app.appointmentDates![0].isAtSameMomentAs(selectedDate!)
+              || app.appointmentDates!.last.isAtSameMomentAs(selectedDate!)
+              || (selectedDate!.isAfter(app.appointmentDates![0]) && selectedDate!.isBefore(app.appointmentDates!.last));
         }
         return hasAppointment;
       }
@@ -238,10 +259,17 @@ class AppointmentStatusController extends GetxController {
           hasAppointment = app.caretaker!.caretakerInfo!.firstName!.toLowerCase().contains(
               searchTEC.text.toLowerCase());
         else if(displayDate!=null && searchTEC.text.isNotEmpty) {
-          hasAppointment = app.caretaker!.caretakerInfo!.firstName!.toLowerCase().contains(
-              searchTEC.text.toLowerCase()) && displayDate == DateUtils().dateOnlyFormat(app.appointmentDate!);
-        }else if(displayDate!=null){
-          hasAppointment = displayDate == DateUtils().dateOnlyFormat(app.appointmentDate!);
+          bool has = false;
+          has = app.caretaker!.caretakerInfo!.firstName!.toLowerCase().contains(
+              searchTEC.text.toLowerCase());
+          has = app.appointmentDates![0].isAtSameMomentAs(selectedDate!)
+              || app.appointmentDates!.last.isAtSameMomentAs(selectedDate!)
+              || (selectedDate!.isAfter(app.appointmentDates![0]) && selectedDate!.isBefore(app.appointmentDates!.last));
+          hasAppointment = has;
+        } else if(displayDate!=null){
+          hasAppointment = app.appointmentDates![0].isAtSameMomentAs(selectedDate!)
+              || app.appointmentDates!.last.isAtSameMomentAs(selectedDate!)
+              || (selectedDate!.isAfter(app.appointmentDates![0]) && selectedDate!.isBefore(app.appointmentDates!.last));
         }
         return hasAppointment;
       }).toList();

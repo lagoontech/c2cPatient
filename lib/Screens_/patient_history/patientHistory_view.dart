@@ -1,13 +1,11 @@
 import 'package:care2care/ReusableUtils_/AppColors.dart';
 import 'package:care2care/ReusableUtils_/appBar.dart';
-import 'package:care2care/ReusableUtils_/customButton.dart';
 import 'package:care2care/ReusableUtils_/image_background.dart';
 import 'package:care2care/Screens_/RatingScreen/rating_screen.dart';
 import 'package:flutter/material.dart' hide DateUtils;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-
 import '../../ReusableUtils_/custom_textfield.dart';
 import '../../Utils/date_utils.dart';
 import '../Appoinment/controller/appointmentsStatus_Controller.dart';
@@ -33,7 +31,6 @@ class _PatientHistoryViewState extends State<PatientHistoryView> {
   void showPatientDetailsDialog(
     BuildContext context,
     String name,
-    String date,
     String time,
     String imgUrl,
     String status,
@@ -75,7 +72,6 @@ class _PatientHistoryViewState extends State<PatientHistoryView> {
                       "Caretaker: $name",
                       style: TextStyle(fontSize: 18.sp),
                     ),
-                    Text("Date: $date"),
                     Text("Time: $time"),
                     Text(
                         "Status: ${status[0].toUpperCase()}${status.substring(1)}"),
@@ -348,11 +344,6 @@ class _PatientHistoryViewState extends State<PatientHistoryView> {
                                     showPatientDetailsDialog(
                                       context,
                                       patientInfo!.firstName!,
-                                      DateFormat('dd MMM yyyy').format(controller
-                                          .serviceHistory!
-                                          .data!
-                                          .appointment!
-                                          .appointmentDate!),
                                       '${DateFormat('h:mm a').format(DateTime.parse('1970-01-01 ${completed.appointmentStartTime}'))} - ${DateFormat('h:mm a').format(DateTime.parse('1970-01-01 ${completed.appointmentEndTime!}'))}',
                                       '${controller.appointmentStatus!.profilePath}${completed.caretaker!.profileImageUrl}',
                                       completed.serviceStatus ?? '',
@@ -440,6 +431,7 @@ class _PatientHistoryViewState extends State<PatientHistoryView> {
                                                     ),
                                                   ),
                                                 ),
+
                                               ],
                                             ),
                                           ),
@@ -452,15 +444,26 @@ class _PatientHistoryViewState extends State<PatientHistoryView> {
                                               children: [
 
                                                 Text(
-                                                  DateFormat('dd-MM-yyyy').format(
+                                                  DateFormat('MMM dd').format(
                                                       DateTime.parse(completed
-                                                          .appointmentDate
+                                                          .appointmentDates![0]
                                                           .toString())),
                                                   style: TextStyle(
                                                     fontSize: 12.sp,
                                                     color: Colors.grey.shade500, // Color for the value
                                                   ),
                                                 ),
+                                               completed.appointmentDates!.length> 1
+                                                   ? Text(
+                                                  " To "+DateFormat('MMM dd').format(
+                                                      DateTime.parse(completed
+                                                          .appointmentDates!.last
+                                                          .toString())),
+                                                  style: TextStyle(
+                                                    fontSize: 12.sp,
+                                                    color: Colors.grey.shade500, // Color for the value
+                                                  ),
+                                                ) : SizedBox(),
                                               ],
                                             ),
                                           ),
@@ -551,11 +554,6 @@ class _PatientHistoryViewState extends State<PatientHistoryView> {
                                                           showPatientDetailsDialog(
                                                             context,
                                                             patientInfo!.firstName!,
-                                                            DateFormat('dd MMM yyyy').format(controller
-                                                                .serviceHistory!
-                                                                .data!
-                                                                .appointment!
-                                                                .appointmentDate!),
                                                             '${DateFormat('h:mm a').format(DateTime.parse('1970-01-01 ${completed.appointmentStartTime}'))} - ${DateFormat('h:mm a').format(DateTime.parse('1970-01-01 ${completed.appointmentEndTime!}'))}',
                                                             '${controller.appointmentStatus!.profilePath}${completed.caretaker!.profileImageUrl}',
                                                             completed.serviceStatus ?? '',
@@ -623,10 +621,7 @@ class _PatientHistoryViewState extends State<PatientHistoryView> {
                                                         careTakerId: completed.caretakerId,
                                                         name: completed.caretaker!
                                                             .caretakerInfo!.firstName,
-                                                        appointmentDate: DateFormat('dd-MM-yyyy').format(
-                                                            DateTime.parse(completed
-                                                                .appointmentDate
-                                                                .toString())),
+                                                        appointmentDates: completed.appointmentDates,
                                                         appointmentTime: '${completed.appointmentStartTime} - ${completed.appointmentEndTime}',
                                                       ));
                                                     },

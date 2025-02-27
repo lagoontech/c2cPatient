@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:care2care/ReusableUtils_/AppColors.dart';
+import 'package:intl/intl.dart';
 
 class AppointmentsContainer extends StatelessWidget {
   final String imageUrl;
@@ -86,6 +87,11 @@ class AppointmentsContainer extends StatelessWidget {
                         size: 15.sp,
                         color: AppColors.primaryColor,
                       ),
+                      SizedBox(width: 4.w),
+                      Text(DateFormat("MMM dd").format(appointmentDates![0])),
+                      appointmentDates!.length>1
+                          ? Text(" To ${DateFormat("MMM dd").format(appointmentDates!.last)}")
+                          : SizedBox(),
                       SizedBox(width: 10.w),
 
                       SizedBox(width: 10.w),

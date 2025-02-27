@@ -8,6 +8,7 @@ import 'package:custom_rating_bar/custom_rating_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import '../../ReusableUtils_/appBar.dart';
 
 class RatingScreen extends StatelessWidget {
@@ -15,14 +16,14 @@ class RatingScreen extends StatelessWidget {
    RatingScreen({
      super.key,
      this.name,
-     this.appointmentDate,
+     this.appointmentDates,
      this.appointmentTime,
      this.careTakerId
    });
 
    String ?name;
    String ?appointmentTime;
-   String ?appointmentDate;
+   List<DateTime> ?appointmentDates;
    int ?careTakerId;
 
    RatingController rc = Get.put(RatingController());
@@ -49,7 +50,7 @@ class RatingScreen extends StatelessWidget {
                 padding: EdgeInsets.symmetric(horizontal: 8.w,vertical: 8.h),
                 child: AppointmentsContainer(
                     imageUrl: "",
-                    //appointmentDate: appointmentDate!,
+                    appointmentDates: appointmentDates!,
                     appointmentTime: appointmentTime!,
                     doctorName: name!,
                     doctorDesignation: ""

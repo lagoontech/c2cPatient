@@ -149,7 +149,9 @@ class _ApprovedDetailScreenState extends State<ApprovedDetailScreen> {
       appBar: CustomAppBar(
         appbarBackgroundColor: AppColors.primaryColor,
         leading: IconButton(
-          onPressed: () {},
+          onPressed: () {
+            Get.back();
+          },
           icon: const Icon(Icons.arrow_back_ios),
         ),
         title: "Appoint Req",
@@ -224,7 +226,8 @@ class _ApprovedDetailScreenState extends State<ApprovedDetailScreen> {
                         return widget.dates!.any((date) => isSameDay(date, day)); // Highlight appointment dates
                       },
                       headerStyle: HeaderStyle(
-                          formatButtonVisible: false
+                          formatButtonVisible: false,
+                        titleCentered: true
                       ),
                       calendarStyle: CalendarStyle(
                         outsideDaysVisible: false,
