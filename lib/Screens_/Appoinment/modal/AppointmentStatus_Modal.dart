@@ -46,6 +46,7 @@ class StatusData {
   int? patientId;
   int? caretakerId;
   DateTime? appointmentDate;
+  List<DateTime> ?appointmentDates;
   String? appointmentStartTime;
   String? appointmentEndTime;
   String? serviceStatus;
@@ -69,6 +70,7 @@ class StatusData {
     this.createdAt,
     this.updatedAt,
     this.caretaker,
+    this.appointmentDates
   });
 
   factory StatusData.fromJson(Map<String, dynamic> json) => StatusData(
@@ -77,6 +79,9 @@ class StatusData {
     patientId: json["patient_id"],
     caretakerId: json["caretaker_id"],
     appointmentDate: json["appointment_date"] == null ? null : DateTime.parse(json["appointment_date"]),
+    appointmentDates: json["appointment_dates"] == null
+    ? []
+    : List.from(jsonDecode(json["appointment_dates"])).map((e) => DateTime.parse(e)).toList(),
     appointmentStartTime: json["appointment_start_time"],
     appointmentEndTime: json["appointment_end_time"],
     serviceStatus: json["service_status"],

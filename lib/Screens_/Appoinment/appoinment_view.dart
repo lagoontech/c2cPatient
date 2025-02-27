@@ -174,15 +174,14 @@ class AppointmentView extends StatelessWidget {
                                               paymentStatus: requested.paymentStatus,
                                               imgUrl: '${controller.appointmentStatus!.profilePath}${requested.caretaker?.profileImageUrl}',
                                               name: requested.caretaker!.caretakerInfo!.firstName,
-                                              date: DateFormat('dd/MM/yyyy').format(requested.appointmentDate!),
+                                              dates: requested.appointmentDates,
                                               status: requested.serviceStatus,
                                               time: "${requested.appointmentStartTime} - ${requested.appointmentEndTime}",
                                             ));
                                       },
                                       child: AppointmentsContainer(
                                         action: '',
-                                        appointmentDate: DateFormat('dd/MM/yyyy')
-                                            .format(requested.appointmentDate!),
+                                        appointmentDates: requested.appointmentDates,
                                         appointmentTime:
                                             "${DateUtils().displayTime(requested.appointmentStartTime)} - ${DateUtils().displayTime(requested.appointmentEndTime)}",
                                         doctorName: requested.caretaker?.caretakerInfo
@@ -250,9 +249,7 @@ class AppointmentView extends StatelessWidget {
                                                     imgUrl:
                                                         '${controller.appointmentStatus!.profilePath}${approved.caretaker?.profileImageUrl}',
                                                     name: '${approved.caretaker!.caretakerInfo!.firstName} ${approved.caretaker!.caretakerInfo!.lastName}',
-                                                    date: DateFormat('dd/MM/yyyy')
-                                                        .format(approved
-                                                            .appointmentDate!),
+                                                    dates: approved.appointmentDates,
                                                     status: approved.serviceStatus,
                                                     time:
                                                         "From ${DateFormat('h:mm a').format(DateTime.parse('1970-01-01 ${approved.appointmentStartTime}'))} - To ${DateFormat('h:mm a').format(DateTime.parse('1970-01-01 ${approved.appointmentEndTime}'))}",
@@ -261,9 +258,7 @@ class AppointmentView extends StatelessWidget {
                                               },
                                               child: AppointmentsContainer(
                                                 statusColor: Colors.green,
-                                                appointmentDate:
-                                                    DateFormat('dd/MM/yyyy').format(
-                                                        approved.appointmentDate!),
+                                                appointmentDates: approved.appointmentDates,
                                                 appointmentTime:
                                                 "${DateUtils().displayTime(approved.appointmentStartTime)} - ${DateUtils().displayTime(approved.appointmentEndTime)}",
                                                 doctorName: approved.caretaker
@@ -376,8 +371,7 @@ class AppointmentView extends StatelessWidget {
                                       },
                                       action: "Reschedule",
                                       actionIcon: EneftyIcons.refresh_outline,
-                                      appointmentDate: DateFormat('dd/MM/yyyy')
-                                          .format(cancelled.appointmentDate!),
+                                      appointmentDates: cancelled.appointmentDates,
                                       appointmentTime:
                                       "${DateUtils().displayTime(cancelled.appointmentStartTime)} - ${DateUtils().displayTime(cancelled.appointmentEndTime)}",
                                       doctorName: cancelled

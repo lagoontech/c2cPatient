@@ -69,11 +69,11 @@ class RatingReviewView extends StatelessWidget {
             child: Column(
               children: [
                 kHeight10,
-                const AppointmentsContainer(
+                AppointmentsContainer(
                     action: "Completed",
                     actionColor: AppColors.secondaryColor,
                     statusColor: AppColors.secondaryColor,
-                    appointmentDate: "21/08/2024",
+                    //appointmentDate: "21/08/2024",
                     appointmentTime: "01:15 PM",
                     doctorName: "Habbeeban ",
                     doctorDesignation: "Neurologiest",

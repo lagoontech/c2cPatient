@@ -4,6 +4,7 @@ import 'package:care2care/ReusableUtils_/image_background.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:table_calendar/table_calendar.dart';
 import '../../ReusableUtils_/appBar.dart';
 import '../../ReusableUtils_/customButton.dart';
 import '../../ReusableUtils_/customLabel.dart';
@@ -193,7 +194,7 @@ class _RequestDetailsScreenState extends State<RequestDetailsScreen> {
 
 class RequestDetailsScreen2 extends StatefulWidget {
   final String? name;
-  final String? date;
+  List<DateTime> ?dates;
   final String? time;
   final String? status;
   final String? imgUrl;
@@ -209,7 +210,7 @@ class RequestDetailsScreen2 extends StatefulWidget {
       this.status,
       this.time,
       this.serviceCharge,
-      this.date,
+      this.dates,
       this.paymentStatus,
       this.careTakerId,
       this.appointmentId})
@@ -226,7 +227,7 @@ class _RequestDetailsScreen2State extends State<RequestDetailsScreen2> {
   @override
   Widget build(BuildContext context) {
     return CustomBackground(
-      bottomNavBar:      GetBuilder<AppointmentStatusController>(builder: (v) {
+      bottomNavBar: GetBuilder<AppointmentStatusController>(builder: (v) {
         return Padding(
           padding:  EdgeInsets.only(bottom: 12.r),
           child: CustomButton(
@@ -238,7 +239,7 @@ class _RequestDetailsScreen2State extends State<RequestDetailsScreen2> {
                 serviceCharge: widget.serviceCharge,
                 status: widget.status,
                 imgUrl: widget.imgUrl,
-                date: widget.date,
+                //date: widget.date,
                 name: widget.name,
                 time: widget.time,
                 paymentStatus: widget.paymentStatus,
@@ -309,10 +310,23 @@ class _RequestDetailsScreen2State extends State<RequestDetailsScreen2> {
                     fontSize: 17,
                   ),
                   kHeight5,
-                  Text(
-                    '${widget.date ?? DateTime.now()}',
-                    style:
-                        TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
+                  TableCalendar(
+                      focusedDay: widget.dates!.first,
+                      selectedDayPredicate: (day) {
+                        return widget.dates!.any((date) => isSameDay(date, day)); // Highlight appointment dates
+                      },
+                      headerStyle: HeaderStyle(
+                        titleCentered: true,
+                        formatButtonVisible: false
+                      ),
+                      calendarStyle: CalendarStyle(
+                        outsideDaysVisible: false,
+                        selectedDecoration: BoxDecoration(
+                          color: AppColors.primaryColor,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                      firstDay: widget.dates!.first, lastDay: DateTime(2050)
                   ),
                   Divider(
                       height: 12, thickness: 1.5, color: Colors.grey.shade300),

@@ -3,21 +3,18 @@ import 'package:care2care/ReusableUtils_/appBar.dart';
 import 'package:care2care/ReusableUtils_/customButton.dart';
 import 'package:care2care/ReusableUtils_/customLabel.dart';
 import 'package:care2care/ReusableUtils_/image_background.dart';
+import 'package:care2care/ReusableUtils_/loader.dart';
 import 'package:care2care/ReusableUtils_/sizes.dart';
 import 'package:care2care/Screens_/CareTakerInformation/Controller/careTaker_controller.dart';
 import 'package:care2care/Screens_/HomeScreen/controller/home%20controller.dart';
 import 'package:enefty_icons/enefty_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_date_range_picker/flutter_date_range_picker.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:iconly/iconly.dart';
 import 'package:intl/intl.dart';
 import 'package:readmore/readmore.dart';
-import '../../ReusableUtils_/Sliding_date.dart';
-import '../../ReusableUtils_/customChips.dart';
-import '../../ReusableUtils_/toast2.dart';
 import '../caretakerList/careTakerListView.dart';
 
 class CaretakerInformation extends StatefulWidget {
@@ -71,6 +68,12 @@ class _CaretakerInformationState extends State<CaretakerInformation> {
 
   @override
   Widget build(BuildContext context) {
+
+    if(controller.caretakerId == null){
+      controller.caretakerId = widget.careTakerId;
+      controller.getUnavailableDates();
+    }
+
     return CustomBackground(
       appBar: CustomAppBar(
         actions: [
@@ -169,7 +172,7 @@ class _CaretakerInformationState extends State<CaretakerInformation> {
                         icon: const Icon(IconlyLight.calendar)),
                   ],
                 ),
-                GetBuilder<CareTakerController>(builder: (v) {
+                /*GetBuilder<CareTakerController>(builder: (v) {
                   return CustomEasyDateTimeLine(
                     disabledDates: v.getDisabledDates(),
                     selectedDate: v.appointmentDate,
@@ -179,7 +182,47 @@ class _CaretakerInformationState extends State<CaretakerInformation> {
                       v.update();
                     },
                   );
-                }),
+                }),*/
+
+                //
+                GetBuilder<CareTakerController>(
+                    builder: (vc){
+                      return !vc.blockingDates?DateRangePickerWidget(
+                        doubleMonth: false,
+                        maximumDateRangeLength: 30,
+                        minimumDateRangeLength: 2,
+                        disabledDates: vc.unavailableDates,
+                        theme: CalendarTheme(
+                          selectedColor: AppColors.primaryColor,
+                          inRangeColor: AppColors.primaryColor.withOpacity(0.3),
+                          inRangeTextStyle: TextStyle(color: Colors.black),
+                          selectedTextStyle: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                          todayTextStyle: TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
+                          defaultTextStyle: TextStyle(color: Colors.black),
+                          disabledTextStyle: TextStyle(color: Colors.grey),
+                          radius: 8.0,
+                          tileSize: 48.sp,
+                        ),
+                        height: 340.h,
+                        onDateRangeChanged: (v){
+                          vc.selectedRange = v;
+                          vc.calculateNumberOfDays();
+                        },
+                      ) : SizedBox(
+                          height: 200.h,
+                          child: CustomCircularLoader(
+                              color: AppColors.primaryColor
+                          )
+                      );
+                    }
+                ),
+
+                GetBuilder<CareTakerController>(
+                  builder: (vc) {
+                    return Text("Number of days - ${controller.numberOfDays}");
+                  }
+                ),
+
                 kHeight10,
                 Container(
                   height: MediaQuery.of(context).size.height * 0.17,

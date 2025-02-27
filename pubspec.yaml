@@ -61,6 +61,8 @@ dependencies:
   dio:
   path_provider:
   open_filex:
+  table_calendar:
+  flutter_date_range_picker:
 
 dev_dependencies:
   flutter_test:

@@ -141,9 +141,8 @@ class HomeController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    fetchAllCaretakersApi();
+    //fetchAllCaretakersApi();
     fetchTopCaretakers();
     getCareTakers();
-    // TODO: implement onInit
   }
 }

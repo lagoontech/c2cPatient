@@ -204,7 +204,7 @@ class CaretakerInfo2 {
     primaryContactNumber: json["primary_contact_number"],
     secondaryContactNumber: json["secondary_contact_number"],
     serviceCharge: json["service_charge"],
-    totalPatientsAttended: json["total_patients_attended"],
+    totalPatientsAttended: json["total_patients_attended"] ?? "",
     createdAt: DateTime.parse(json["created_at"]),
     updatedAt: DateTime.parse(json["updated_at"]),
   );
@@ -261,7 +261,7 @@ class PatientAppointment {
     id: json["id"],
     patientId: json["patient_id"],
     caretakerId: json["caretaker_id"],
-    appointmentDate: DateTime.parse(json["appointment_date"]),
+    appointmentDate: DateTime.parse(json["appointment_date"] ?? DateTime.now().toString()),
     appointmentStartTime: json["appointment_start_time"],
     appointmentEndTime: json["appointment_end_time"],
     serviceStatus: serviceStatusValues.map[json["service_status"]]!,

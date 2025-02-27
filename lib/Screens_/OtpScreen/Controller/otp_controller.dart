@@ -32,12 +32,15 @@ class OtpController extends GetxController {
     update();
     /*try {*/
     var result = await http.post(Uri.parse(ApiUrls().checkOtp),
-        body: {"mobilenum": phoneNumber, "otp": otpTEC.text});
+        body: {
+          "mobilenum": phoneNumber,
+          "otp": otpTEC.text});
     if (result.statusCode == 200) {
       var response = jsonDecode(result.body);
       debugPrint(response.toString());
       var token = response['token'];
-      var savedToken = SharedPref().saveToken(token);
+      var savedToken = await SharedPref().saveToken(token);
+      await initialProfileDetails.fetchCommonDetails();
       debugPrint("userToken${savedToken}");
       bool locationIsEnabled = await Geolocator.isLocationServiceEnabled();
       await initialProfileDetails.fetchInitialUserDetails();

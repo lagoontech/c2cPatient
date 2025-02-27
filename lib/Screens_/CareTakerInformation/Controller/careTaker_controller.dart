@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'package:care2care/ReusableUtils_/AppColors.dart';
 import 'package:care2care/ReusableUtils_/toast2.dart';
+import 'package:care2care/Utils/date_utils.dart';
 import 'package:care2care/constants/api_urls.dart';
 import 'package:care2care/sharedPref/sharedPref.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide DateUtils;
+import 'package:flutter_date_range_picker/flutter_date_range_picker.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
@@ -20,6 +22,12 @@ class CareTakerController extends GetxController {
   List<CaretakerInfo> completedAppointments = [];
   List<CaretakerInfo> cancelledAppointments = [];
   List<DateTime>? disabledDates = [];
+  int ?caretakerId;
+  List<DateTime> unavailableDates = [];
+  bool blockingDates = false;
+  DateRange ?selectedRange;
+  int numberOfDays = 0;
+
 
   bookAppointmentApi({int? careTakerId}) async {
     isAppointmentLoading = true;
@@ -32,7 +40,8 @@ class CareTakerController extends GetxController {
       String formattedEndTime = DateFormat('HH:mm:ss').format(toTime!);
       Map<String, dynamic> payload = {
         "caretaker_id": careTakerId,
-        "appointment_date": formattedAppointmentDate,
+        "appointment_start_date": DateUtils().serverFormat(selectedRange!.start),
+        "appointment_end_date": DateUtils().serverFormat(selectedRange!.end),
         "appointment_start_time": formattedStartTime,
         "appointment_end_time": formattedEndTime
       };
@@ -66,9 +75,56 @@ class CareTakerController extends GetxController {
     update();
   }
 
+  //
+  calculateNumberOfDays(){
+
+    int blockedDates = 0;
+
+    unavailableDates.forEach((element) {
+      if(element.isAfter(selectedRange!.start) && element.isBefore(selectedRange!.end)){
+        blockedDates++;
+      }
+    });
+
+    if(selectedRange!.start == selectedRange!.end){
+      numberOfDays = 1;
+      return;
+    }
+    numberOfDays = selectedRange!.end.difference(selectedRange!.start).inDays + 1 - blockedDates;
+    update();
+  }
+
+  //
+  getUnavailableDates() async{
+
+    blockingDates = true;
+    update();
+    try{
+      var result = await http.get(
+          Uri.parse(ApiUrls().unavailableDates+"$caretakerId"),
+          headers: {
+            'Authorization': 'Bearer ${await SharedPref().getToken()}'
+          }
+      );
+      if(result.statusCode == 200){
+        var dateList = jsonDecode(result.body)["unavailable_dates"] as List;
+        dateList.forEach((element) {
+          unavailableDates.add(DateTime.parse(element));
+        });
+      }
+    }catch(e){
+
+    }
+    blockingDates = false;
+    update();
+
+  }
+
+  //
   DateTime? fromTime = DateTime.now().copyWith(hour: 9, minute: 0);
   DateTime? toTime = DateTime.now().copyWith(hour: 18, minute: 0);
 
+  //
   Future<void> pickFromTime(BuildContext context) async {
     TimeOfDay? pickedTime = await showTimePicker(
       context: context,
@@ -114,4 +170,11 @@ class CareTakerController extends GetxController {
 
     return disabledDates;
   }
+
+  @override
+  void onInit() {
+    super.onInit();
+    getUnavailableDates();
+  }
+
 }

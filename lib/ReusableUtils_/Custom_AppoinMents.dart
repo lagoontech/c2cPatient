@@ -6,7 +6,7 @@ import 'package:care2care/ReusableUtils_/AppColors.dart';
 class AppointmentsContainer extends StatelessWidget {
   final String imageUrl;
   final Color? statusColor;
-  final String appointmentDate;
+  List<DateTime> ?appointmentDates;
   final String appointmentTime;
   final String doctorName;
   final String doctorDesignation;
@@ -15,13 +15,12 @@ class AppointmentsContainer extends StatelessWidget {
   final IconData? actionIcon;
   final VoidCallback ? actionTap;
 
-  const AppointmentsContainer(
+  AppointmentsContainer(
       {super.key,
 
       required this.imageUrl,
       this.statusColor,
-      this.actionColor,
-      required this.appointmentDate,
+      this.actionColor, this.appointmentDates,
       required this.appointmentTime,
       required this.doctorName,
       required this.doctorDesignation,
@@ -88,15 +87,7 @@ class AppointmentsContainer extends StatelessWidget {
                         color: AppColors.primaryColor,
                       ),
                       SizedBox(width: 10.w),
-                      Text(
-                        appointmentDate ?? '',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.w500,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
+
                       SizedBox(width: 10.w),
                       Text(
                         '\u2022',

@@ -9,13 +9,14 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_state_manager/src/simple/get_state.dart';
+import 'package:table_calendar/table_calendar.dart';
 
 import '../../ReusableUtils_/customButton.dart';
 import '../Paymentmethod/controller/paymentMethod_controller.dart';
 
 class ApprovedDetailScreen extends StatefulWidget {
   final String? name;
-  final String? date;
+  List<DateTime>? dates;
   final String? time;
   final String? status;
   final String? imgUrl;
@@ -34,7 +35,7 @@ class ApprovedDetailScreen extends StatefulWidget {
         this.name,
         this.status,
         this.time,
-        this.date,
+        this.dates,
         this.notes,
         this.fromTime,
         this.Totime,
@@ -127,7 +128,7 @@ class _ApprovedDetailScreenState extends State<ApprovedDetailScreen> {
                           appointmentId: widget.appointmentId,
                           caretakerId: widget.careTakerId,
                           careTakerName: widget.name,
-                          bookingDate: widget.date,
+                          //bookingDate: widget.date,
                           bookingFromTime: widget.fromTime,
                           bookingToTime: widget.Totime,
                         );
@@ -217,10 +218,22 @@ class _ApprovedDetailScreenState extends State<ApprovedDetailScreen> {
                     fontSize: 17.sp,
                   ),
                   kHeight5,
-                  Text(
-                    '${widget.date ?? DateTime.now()}',
-                    style: TextStyle(
-                        fontSize: 16.sp, fontWeight: FontWeight.normal),
+                  TableCalendar(
+                      focusedDay: widget.dates!.first,
+                      selectedDayPredicate: (day) {
+                        return widget.dates!.any((date) => isSameDay(date, day)); // Highlight appointment dates
+                      },
+                      headerStyle: HeaderStyle(
+                          formatButtonVisible: false
+                      ),
+                      calendarStyle: CalendarStyle(
+                        outsideDaysVisible: false,
+                        selectedDecoration: BoxDecoration(
+                          color: AppColors.primaryColor,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                      firstDay: widget.dates!.first, lastDay: DateTime(2050)
                   ),
 
                   // Divider with height 5

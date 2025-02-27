@@ -116,7 +116,7 @@ class PatientInfo {
   DateTime? dob;
   double? height;
   double? weight;
-  double? bmi;
+  dynamic? bmi;
   String? location;
   String? nationality;
   String? address;

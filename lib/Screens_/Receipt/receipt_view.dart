@@ -41,7 +41,7 @@ class ReceiptView extends StatelessWidget {
             children: [
               AppointmentsContainer(
                 imageUrl: 'assets/images/Rectangle 4482.png',
-                appointmentDate: '23-08-2024',
+                //appointmentDate: '23-08-2024',
                 appointmentTime: '09-00AM',
                 doctorName: 'HrBeena',
                 doctorDesignation: 'Orthopedic',

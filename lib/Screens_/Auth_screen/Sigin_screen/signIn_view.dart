@@ -185,8 +185,8 @@ class LoginScreen extends StatelessWidget {
                         v.update();
                         print(countryCode);
                       },
-                      initialSelection: 'IN',
-                      favorite: ['+91', 'FR'],
+                      initialSelection: 'US',
+                      favorite: ['+1', 'FR'],
                       showCountryOnly: false,
                       showOnlyCountryWhenClosed: false,
                       alignLeft: false,
@@ -203,7 +203,6 @@ class LoginScreen extends StatelessWidget {
               ),
               SizedBox(height: 40.h),
               GetBuilder<LoginController>(builder: (v) {
-                print(v.phoneCT.text);
                 return CustomButton(
                   isLoading: v.isLoading,
                   width: MediaQuery.of(context).size.width * 0.8,

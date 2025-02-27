@@ -7,6 +7,13 @@ class DateUtils{
   }
 
   //
+  String serverFormat(DateTime date){
+
+    return "${date.year}-${date.month<10?"0${date.month}":date.month}-${date.day}";
+
+  }
+
+  //
   String dateOnlyFormat(DateTime date){
 
     return "${date.month}-${date.day}-${date.year}";

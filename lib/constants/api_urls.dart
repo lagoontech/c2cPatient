@@ -59,4 +59,6 @@ class ApiUrls {
 
   String addReview = '$baseUrl/api/patients/patient/reviews/add';
 
+  String unavailableDates = "$baseUrl/api/patients/patient/unavailable-dates/";
+
 }

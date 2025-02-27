@@ -8,9 +8,9 @@ import '../Screens_/HomeScreen/controller/home controller.dart';
 import '../Screens_/Profile/Controller/initila_profile_controller.dart';
 
 class SharedPref {
-  saveToken(String token) async {
+  Future<bool> saveToken(String token) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('token', token);
+    return await prefs.setString('token', token);
     debugPrint('Token saved: $token');
   }
 

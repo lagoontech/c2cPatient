@@ -62,7 +62,7 @@ class MyApp extends StatelessWidget {
         navigatorObservers: [
           FirebaseAnalyticsObserver(analytics: FirebaseAnalytics.instance),
         ],
-        home:  SplashScreen(),
+        home: SplashScreen(),
       );
     });
   }

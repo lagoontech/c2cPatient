@@ -49,7 +49,7 @@ class RatingScreen extends StatelessWidget {
                 padding: EdgeInsets.symmetric(horizontal: 8.w,vertical: 8.h),
                 child: AppointmentsContainer(
                     imageUrl: "",
-                    appointmentDate: appointmentDate!,
+                    //appointmentDate: appointmentDate!,
                     appointmentTime: appointmentTime!,
                     doctorName: name!,
                     doctorDesignation: ""
