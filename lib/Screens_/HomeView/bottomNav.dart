@@ -1,4 +1,5 @@
 import 'package:awesome_bottom_bar/awesome_bottom_bar.dart';
+import 'package:care2care/Screens_/Appoinment/controller/appointmentsStatus_Controller.dart';
 import 'package:care2care/Screens_/HomeView/Controller/bottomNav_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -23,6 +24,14 @@ class BottomNavBar extends StatelessWidget {
       colorSelected: AppColors.primaryColor,
       onTap: (index) {
         bn.currentIndex = index;
+        if(index == 2){
+          try{
+            AppointmentStatusController controller = Get.find<AppointmentStatusController>();
+            controller.fetchAppointments();
+          }catch(e){
+            print(e);
+          }
+        }
         bn.update();
       },
      // animated: true,

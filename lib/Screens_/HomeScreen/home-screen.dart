@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:care2care/ReusableUtils_/AppColors.dart';
 import 'package:care2care/ReusableUtils_/customLabel.dart';
 import 'package:care2care/ReusableUtils_/sizes.dart';
+import 'package:care2care/Screens_/CareTakerInformation/CareTaker_information.dart';
 import 'package:care2care/Screens_/HomeScreen/controller/home%20controller.dart';
 import 'package:custom_rating_bar/custom_rating_bar.dart';
 import 'package:flutter/material.dart';
@@ -226,13 +227,32 @@ class HomePage extends StatelessWidget {
                         var data = v.topCaretakers[index].caretakerInfo;
                         return Padding(
                           padding: EdgeInsets.symmetric(vertical: 5.h),
-                          child: CustomCareTakers(
-                            name: '${data.firstName} ${data.lastName}',
-                            age:data.age,
-                            //initial: 2,
-                            imageUrl: '${path}${imgUrl}',
-                            amount:data. serviceCharge,
-                            rating: v.topCaretakers[index].averageRating,
+                          child: GestureDetector(
+                            onTap: (){
+                              Get.to(()=> CaretakerInformation(
+                                charge: data.serviceCharge,
+                                careTakerId: data.caretakerId,
+                                doctorName: data.firstName,
+                                doctorDesignation: 'Care Taker',
+                                doctorState: data.address,
+                                gender: data.sex,
+                                about: data.about,
+                                totalPatient:
+                                data.totalPatientsAttended.toString(),
+                                experience:
+                                data.yearOfExperiences.toString(),
+                                rating: v.topCaretakers[index].averageRating,
+                                imageUrl: '${path}${imgUrl}',
+                              ));
+                            },
+                            child: CustomCareTakers(
+                              name: '${data.firstName} ${data.lastName}',
+                              age:data.age,
+                              //initial: 2,
+                              imageUrl: '${path}${imgUrl}',
+                              amount:data. serviceCharge,
+                              rating: v.topCaretakers[index].averageRating,
+                            ),
                           ),
                         );
                       },

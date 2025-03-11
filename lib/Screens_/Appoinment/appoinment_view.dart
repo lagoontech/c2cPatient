@@ -1,5 +1,6 @@
 import 'package:care2care/ReusableUtils_/appBar.dart';
 import 'package:care2care/ReusableUtils_/image_background.dart';
+import 'package:care2care/Screens_/patient_history/completed_appointment_details.dart';
 import 'package:care2care/Utils/date_utils.dart';
 import 'package:enefty_icons/enefty_icons.dart';
 import 'package:flutter/material.dart' hide DateUtils;
@@ -31,7 +32,11 @@ class AppointmentView extends StatelessWidget {
           bottom: TabBar(
             onTap: (v){
               controller.currentTab = v;
+              if(controller.searchTEC.text.isNotEmpty || controller.selectedDate!=null)
               controller.searchAppointments();
+              else {
+                controller.fetchAppointments();
+              }
             },
             tabs: [
               Tab(text: "Requested"),
@@ -345,43 +350,53 @@ class AppointmentView extends StatelessWidget {
 
                                   return Padding(
                                     padding: EdgeInsets.symmetric(vertical: 3.h),
-                                    child: AppointmentsContainer(
-                                      actionTap: () {
-                                        Get.to(() => CaretakerInformation(
-                                              careTakerId: cancelled.caretakerId,
-                                              gender: cancelled
-                                                  .caretaker!.caretakerInfo!.sex,
-                                              charge: cancelled.caretaker!
-                                                  .caretakerInfo!.serviceCharge,
-                                              doctorDesignation: "Care Taker",
-                                              doctorState: cancelled.caretaker!
-                                                  .caretakerInfo!.nationality,
-                                              totalPatient: cancelled
-                                                  .caretaker!
-                                                  .caretakerInfo!
-                                                  .totalPatientsAttended,
-                                              experience: cancelled.caretaker!
-                                                  .caretakerInfo!.yearOfExperiences,
-                                              doctorName: cancelled.caretaker!
-                                                  .caretakerInfo!.firstName,
-                                              imageUrl:
-                                                  '${data}${cancelled.caretaker!.profileImageUrl}',
-                                              rating: "2",
-                                            ));
+                                    child: GestureDetector(
+                                      onTap: (){
+                                        Get.to(()=> CompletedAppointmentDetails(
+                                          caretakerId: cancelled.caretakerId,
+                                          appointmentId: cancelled.id,
+                                          patientId: cancelled.patientId,
+                                          appointmentDates: cancelled.appointmentDates,
+                                        ));
                                       },
-                                      action: "Reschedule",
-                                      actionIcon: EneftyIcons.refresh_outline,
-                                      appointmentDates: cancelled.appointmentDates,
-                                      appointmentTime:
-                                      "${DateUtils().displayTime(cancelled.appointmentStartTime)} - ${DateUtils().displayTime(cancelled.appointmentEndTime)}",
-                                      doctorName: cancelled
-                                              .caretaker?.caretakerInfo?.firstName ??
-                                          "Unknown",
-                                      doctorDesignation: cancelled
-                                              .caretaker?.caretakerInfo?.location ??
-                                          "Neurologist",
-                                      imageUrl:
-                                          '${controller.appointmentStatus!.profilePath}${cancelled.caretaker?.profileImageUrl}',
+                                      child: AppointmentsContainer(
+                                        actionTap: () {
+                                          Get.to(() => CaretakerInformation(
+                                                careTakerId: cancelled.caretakerId,
+                                                gender: cancelled
+                                                    .caretaker!.caretakerInfo!.sex,
+                                                charge: cancelled.caretaker!
+                                                    .caretakerInfo!.serviceCharge,
+                                                doctorDesignation: "Care Taker",
+                                                doctorState: cancelled.caretaker!
+                                                    .caretakerInfo!.nationality,
+                                                totalPatient: cancelled
+                                                    .caretaker!
+                                                    .caretakerInfo!
+                                                    .totalPatientsAttended,
+                                                experience: cancelled.caretaker!
+                                                    .caretakerInfo!.yearOfExperiences,
+                                                doctorName: cancelled.caretaker!
+                                                    .caretakerInfo!.firstName,
+                                                imageUrl:
+                                                    '${data}${cancelled.caretaker!.profileImageUrl}',
+                                                rating: "2",
+                                              ));
+                                        },
+                                        action: "Reschedule",
+                                        actionIcon: EneftyIcons.refresh_outline,
+                                        appointmentDates: cancelled.appointmentDates,
+                                        appointmentTime:
+                                        "${DateUtils().displayTime(cancelled.appointmentStartTime)} - ${DateUtils().displayTime(cancelled.appointmentEndTime)}",
+                                        doctorName: cancelled
+                                                .caretaker?.caretakerInfo?.firstName ??
+                                            "Unknown",
+                                        doctorDesignation: cancelled
+                                                .caretaker?.caretakerInfo?.location ??
+                                            "Neurologist",
+                                        imageUrl:
+                                            '${controller.appointmentStatus!.profilePath}${cancelled.caretaker?.profileImageUrl}',
+                                      ),
                                     ),
                                   );
                                 },

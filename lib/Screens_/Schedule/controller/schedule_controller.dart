@@ -26,7 +26,7 @@ class ScheduleController extends GetxController {
   String ?selectedMedication;
   final List<String> hydration = [];
   final List<String> blood = [];
-  EditProfileController profileController = Get.find<EditProfileController>();
+  EditProfileController profileController = Get.put(EditProfileController());
   InitialProfileDetails initialProfileDetails = Get.find<InitialProfileDetails>();
 
   var DietItems = [

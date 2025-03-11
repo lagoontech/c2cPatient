@@ -54,6 +54,7 @@ class CaretakerData {
   List<CaretakerDocument> caretakerDocuments;
   List<PatientAppointment> patientAppointments;
   List<PatientReview> patientReviews;
+  String ?about;
 
   CaretakerData({
     required this.id,
@@ -69,6 +70,7 @@ class CaretakerData {
     required this.caretakerDocuments,
     required this.patientAppointments,
     required this.patientReviews,
+    this.about
   });
 
   factory CaretakerData.fromJson(Map<String, dynamic> json) => CaretakerData(
@@ -155,6 +157,7 @@ class CaretakerInfo2 {
   DateTime dob;
   String medicalLicense;
   String location;
+  String ?about;
   String nationality;
   String address;
   String yearOfExperiences;
@@ -176,6 +179,7 @@ class CaretakerInfo2 {
     required this.dob,
     required this.medicalLicense,
     required this.location,
+    this.about,
     required this.nationality,
     required this.address,
     required this.yearOfExperiences,
@@ -200,6 +204,7 @@ class CaretakerInfo2 {
     location: json["location"],
     nationality: json["nationality"],
     address: json["address"],
+    about: json["aboutme"] ?? "",
     yearOfExperiences: json["year_of_experiences"],
     primaryContactNumber: json["primary_contact_number"],
     secondaryContactNumber: json["secondary_contact_number"],

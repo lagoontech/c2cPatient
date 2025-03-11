@@ -31,10 +31,12 @@ Widget customTextField(BuildContext context,
       TextStyle? labelStyle,
       TextStyle? hintStyle,
       TextStyle? textStyle,
+      bool enabled = true
     }) {
   return Container(
     height: height,
     child: TextFormField(
+      enabled: enabled,
       minLines: maxLines,
       onChanged: onChanged,
       cursorWidth: 2,
@@ -55,7 +57,8 @@ Widget customTextField(BuildContext context,
       textCapitalization: textCapitalization ?? TextCapitalization.words,
       onSaved: onSaved,
       decoration: InputDecoration(
-        disabledBorder: InputBorder.none,
+        disabledBorder: const OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.grey, width: 0.3)),
         focusedErrorBorder: const OutlineInputBorder(
             borderSide: BorderSide(color: Colors.grey, width: 0.3)),
         isDense: true,
@@ -69,7 +72,7 @@ Widget customTextField(BuildContext context,
         errorText: errorText,
         hintStyle: hintStyle ?? TextStyle(
             color: Colors.grey,
-            fontSize: 16,
+            fontSize: 12.sp,
             fontWeight: FontWeight.w400,
             fontFamily: "verdana_regular"
         ),

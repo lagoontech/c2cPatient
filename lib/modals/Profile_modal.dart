@@ -323,6 +323,10 @@ class PatientSchedules {
   String? patientSnackstime;
   String? patientLunchtime;
   String? patientDinnertime;
+  String? patientLunch;
+  String? patientBreakfast;
+  String? patientSnack;
+  String? patientDinner;
   String? patientMedications;
   String? patientHydration;
   String? patientOralcare;
@@ -354,6 +358,10 @@ class PatientSchedules {
     this.patientToileting,
     this.patientWalkingtime,
     this.patientVitalsigns,
+    this.patientDinner,
+    this.patientLunch,
+    this.patientSnack,
+    this.patientBreakfast,
     this.patientBloodsugar,
     this.createdAt,
     this.updatedAt,
@@ -374,8 +382,12 @@ class PatientSchedules {
       patientBreakfasttime: json["patient_breakfasttime"],
       patientSnackstime: json['patient_snackstime'],
       patientLunchtime: json["patient_lunchtime"],
+      patientLunch: json["patient_lunchtime_details"],
+      patientSnack: json["patient_snackstime_details"],
+      patientBreakfast: json["patient_breakfasttime_details"],
+      patientDinner: json["patient_dinnertime_details"],
       patientDinnertime: json["patient_dinnertime"],
-      patientMedications: json["patient_medications"],
+      patientMedications: json["patient_medications_details"] ?? json["patient_medications"],
       patientHydration: json["patient_hydration"],
       patientOralcare: json["patient_oralcare"],
       patientBathing: json["patient_bathing"],
