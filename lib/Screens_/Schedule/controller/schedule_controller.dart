@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:care2care/Screens_/Profile/Controller/initila_profile_controller.dart';
 import 'package:care2care/Screens_/ProfileDetails/Controller/edit_profile_controller.dart';
 import 'package:care2care/Screens_/Schedule/modal/medication_model.dart';
+import 'package:care2care/Screens_/SplashScreen/splash_screen.dart';
 import 'package:care2care/constants/api_urls.dart';
 import 'package:care2care/modals/Profile_modal.dart';
 import 'package:flutter/cupertino.dart';
@@ -27,7 +28,7 @@ class ScheduleController extends GetxController {
   final List<String> hydration = [];
   final List<String> blood = [];
   EditProfileController profileController = Get.put(EditProfileController());
-  InitialProfileDetails initialProfileDetails = Get.find<InitialProfileDetails>();
+  InitialProfileDetails initialProfileDetails = Get.put(InitialProfileDetails());
 
   var DietItems = [
     Diet(name: 'Regular Diet', id: 1),
@@ -229,7 +230,7 @@ class ScheduleController extends GetxController {
 
       if (res.statusCode == 200) {
         onUserDetailsCompleted();
-        Get.offAll(() => HomeView());
+        Get.offAll(() => SplashScreen());
         print(res.body);
         debugPrint("succssfully");
       } else {

@@ -35,7 +35,7 @@ class HomePage extends StatelessWidget {
       }
       String? name;
       String? fullImg;
-      if(controller.profileList!=null){
+      if(controller.profileList!=null && controller.profileList!.data!=null && controller.profileList!.data!.patientInfo!=null){
          name = controller.profileList!.data!.patientInfo!.firstName!;
          fullImg = ('${controller.profileList!.profilePath}' +
             ('${controller.profileList!.data!.profileImageUrl}'));
@@ -47,9 +47,9 @@ class HomePage extends StatelessWidget {
         },
         child: Scaffold(
           appBar: HomeAppBar(
-            username: name!,
+            username: name ?? "",
             subtitle: 'How is your Health?',
-            avatarUrl: fullImg!,
+            avatarUrl: fullImg ?? "",
           ),
           body: Container(
             decoration: const BoxDecoration(

@@ -717,7 +717,7 @@ class _ScheduleViewState extends State<ScheduleView> {
                               children: [
                                 CustomChip(
                                   label: "Morning",
-                                  isSelected: sc.selectedBathingTimings.contains("Morning"),
+                                  isSelected: sc.selectedDressingTimings.contains("Morning"),
                                   onSelected: (bool selected) {
                                     print(selected);
                                     if (selected) {

@@ -96,7 +96,7 @@ class ProfileDetails extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 SizedBox(height: 5),
-                                Text(
+                                v.profileList!.data!=null && v.profileList!.data!.patientInfo!=null?Text(
                                   '${v.profileList!.data!.patientInfo!.firstName!} ${v.profileList!.data!.patientInfo!.lastName}',
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
@@ -105,9 +105,9 @@ class ProfileDetails extends StatelessWidget {
                                     fontWeight: FontWeight.bold,
                                     color: Colors.black,
                                   ),
-                                ),
+                                ):SizedBox(),
                                 SizedBox(height: 4),
-                                Text(
+                                v.profileList!.data!=null && v.profileList!.data!.patientInfo!=null?Text(
                                   '${v.profileList!.data!.patientInfo!.email}',
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
@@ -115,7 +115,7 @@ class ProfileDetails extends StatelessWidget {
                                     fontSize: 14,
                                     color: Colors.black54,
                                   ),
-                                ),
+                                ):SizedBox(),
                               ],
                             ),
                           ),
