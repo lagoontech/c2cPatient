@@ -1,9 +1,12 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:care2care/ReusableUtils_/toast2.dart';
+import 'package:care2care/Screens_/Appoinment/controller/appointmentsStatus_Controller.dart';
 import 'package:care2care/Screens_/Profile/Controller/initila_profile_controller.dart';
 import 'package:care2care/constants/api_urls.dart';
 import 'package:care2care/sharedPref/sharedPref.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_paypal/flutter_paypal.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
@@ -145,6 +148,113 @@ class PayMethodController extends GetxController {
     update();
   }
 
+  Map paypalSuccessParams = {};
+
+  //
+  paypalPayment(BuildContext context,
+      {String amount = "",
+       String careTaker = "",
+        String bookingFromTime = "",
+        String bookingToTime = "",
+        String bookingDate = "",
+        String?appointmentId,
+        caretakerId,
+      }
+      ){
+
+    print(amount);
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (BuildContext context) => UsePaypal(
+            sandboxMode: true,
+            clientId:
+            "AdTTYCnzHPwRjMNqlWJ2MSFhEc4PuxwG-usjKKZcAasgZp_JK-RrJZjtfCyAJfCYbL8nJAR2sX8pdH4t",
+            secretKey:
+            "EBMbfVxpN3H2FGamt93MJTggnM79k-EozWD2H2asrPB8lyMOcKW0OrFSpNxNCgNa2ApBfdhxEu_IAtme",
+            returnURL: "https://samplesite.com/return",
+            cancelURL: "https://samplesite.com/cancel",
+            transactions: [
+              {
+                "amount": {
+                  "total": "10.12",
+                  "currency": "USD",
+                  "details": {
+                    "subtotal": "10.12",
+                    "shipping": '0',
+                    "shipping_discount": 0
+                  }
+                },
+                "description":
+                "The payment transaction description.",
+                // "payment_options": {
+                //   "allowed_payment_method":
+                //       "INSTANT_FUNDING_SOURCE"
+                // },
+                "item_list": {
+                  "items": [
+                    {
+                      "name": "A demo product",
+                      "quantity": 1,
+                      "price": '10.12',
+                      "currency": "USD"
+                    }
+                  ],
+
+                  // shipping address is not required though
+                  "shipping_address": {
+                    "recipient_name": "Jane Foster",
+                    "line1": "Travis County",
+                    "line2": "",
+                    "city": "Austin",
+                    "country_code": "US",
+                    "postal_code": "73301",
+                    "phone": "+00000000",
+                    "state": "Texas"
+                  },
+                }
+              }
+            ],
+            note: "Contact us for any questions on your order.",
+            onSuccess: (Map params) async {
+              log(params.toString());
+              paypalSuccessParams = params;
+              Get.back();
+              Future.delayed(Duration(milliseconds: 500),(){
+                Get.to(() => PaymentSuccessful(
+                  payId: params["paymentId"],
+                  careTakerName: careTaker,
+                  bookingDate: bookingDate,
+                  bookingFromTime: bookingFromTime,
+                  bookingToTime: bookingToTime,
+                  amount:amount ,
+                ));
+              });
+              confirmPayment(
+                  appointmentId: appointmentId ?? "",
+                  caretakerId: caretakerId.toString());
+            },
+            onError: (error) {
+              print("onError: $error");
+            },
+            onCancel: (params) {
+              print('cancelled: $params');
+            }),
+      ),
+    );
+
+  }
+
+  //
+  updatePayment(){
+
+    try{
+
+    }catch(e){
+
+    }
+
+  }
+
   showPaymentSheet(
     BuildContext context,
     String? careTakerName,
@@ -164,7 +274,7 @@ class PayMethodController extends GetxController {
 
             appointmentId: appointmentId.toString(),
             caretakerId: caretakerId.toString(),
-            paymentIntentId: intentId.toString());
+            );
         Get.to(() => PaymentSuccessful(
               payId: intentId.toString(),
               careTakerName: careTakerName,
@@ -200,7 +310,6 @@ class PayMethodController extends GetxController {
   Future<void> confirmPayment({
     required String appointmentId,
     required String caretakerId,
-    required String paymentIntentId,
   }) async {
     try {
       String? token = await SharedPref().getToken();
@@ -209,7 +318,13 @@ class PayMethodController extends GetxController {
       Map<String, dynamic> payload = {
         "appointment_id": appointmentId,
         "caretaker_id": caretakerId,
-        "payment_intent_id": paymentIntentId
+        "payment_status": paypalSuccessParams["status"],
+        "amount_paid": paypalSuccessParams["data"]["transactions"][0]["amount"]["total"],
+        "payer_id": paypalSuccessParams["payerID"],
+        "paypal_order_id": paypalSuccessParams["paymentId"],
+        "payer_name": paypalSuccessParams["data"]["payer"]["payer_info"]["first_name"] +  paypalSuccessParams["data"]["payer"]["payer_info"]["last_name"],
+        "payer_email": paypalSuccessParams["data"]["payer"]["payer_info"]["email"],
+        "currency": paypalSuccessParams["data"]["transactions"][0]["amount"]["currency"]
       };
 
       // Make the POST request
@@ -225,6 +340,8 @@ class PayMethodController extends GetxController {
       // Check the response status
       if (response.statusCode == 200) {
         var responseData = jsonDecode(response.body);
+        AppointmentStatusController controller = Get.find();
+        controller.fetchAppointments();
       } else {
         print("Server error: ${response.body}");
       }

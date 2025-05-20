@@ -244,8 +244,8 @@ class PatientAppointment {
   DateTime appointmentDate;
   String appointmentStartTime;
   String appointmentEndTime;
-  ServiceStatus serviceStatus;
-  PaymentStatus paymentStatus;
+  ServiceStatus ?serviceStatus;
+  PaymentStatus ?paymentStatus;
   DateTime createdAt;
   DateTime updatedAt;
 
@@ -256,8 +256,6 @@ class PatientAppointment {
     required this.appointmentDate,
     required this.appointmentStartTime,
     required this.appointmentEndTime,
-    required this.serviceStatus,
-    required this.paymentStatus,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -269,8 +267,6 @@ class PatientAppointment {
     appointmentDate: DateTime.parse(json["appointment_date"] ?? DateTime.now().toString()),
     appointmentStartTime: json["appointment_start_time"],
     appointmentEndTime: json["appointment_end_time"],
-    serviceStatus: serviceStatusValues.map[json["service_status"]]!,
-    paymentStatus: paymentStatusValues.map[json["payment_status"]]!,
     createdAt: DateTime.parse(json["created_at"]),
     updatedAt: DateTime.parse(json["updated_at"]),
   );

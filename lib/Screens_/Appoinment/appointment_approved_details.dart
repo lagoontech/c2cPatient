@@ -7,10 +7,7 @@ import 'package:care2care/ReusableUtils_/sizes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_state_manager/src/simple/get_state.dart';
 import 'package:table_calendar/table_calendar.dart';
-
 import '../../ReusableUtils_/customButton.dart';
 import '../Paymentmethod/controller/paymentMethod_controller.dart';
 
@@ -121,7 +118,7 @@ class _ApprovedDetailScreenState extends State<ApprovedDetailScreen> {
                         v.update();
 
                         // Initialize payment
-                        await v.paymentSheetInitialization(
+                        /*await v.paymentSheetInitialization(
                           context,
                           totalAmount.toString(),
                           "USD",
@@ -131,6 +128,15 @@ class _ApprovedDetailScreenState extends State<ApprovedDetailScreen> {
                           //bookingDate: widget.date,
                           bookingFromTime: widget.fromTime,
                           bookingToTime: widget.Totime,
+                        );*/
+                        v.paypalPayment(
+                            context,
+                            appointmentId: widget.appointmentId.toString(),
+                            caretakerId: widget.careTakerId,
+                            amount: totalAmount.toString(),
+                            careTaker: widget.name ?? "",
+                            bookingToTime: widget.Totime ?? "",
+                            bookingFromTime: widget.fromTime ?? ""
                         );
 
                         // Set loading state to false after initialization
@@ -220,23 +226,25 @@ class _ApprovedDetailScreenState extends State<ApprovedDetailScreen> {
                     fontSize: 17.sp,
                   ),
                   kHeight5,
-                  TableCalendar(
-                      focusedDay: widget.dates!.first,
-                      selectedDayPredicate: (day) {
-                        return widget.dates!.any((date) => isSameDay(date, day)); // Highlight appointment dates
-                      },
-                      headerStyle: HeaderStyle(
-                          formatButtonVisible: false,
-                        titleCentered: true
-                      ),
-                      calendarStyle: CalendarStyle(
-                        outsideDaysVisible: false,
-                        selectedDecoration: BoxDecoration(
-                          color: AppColors.primaryColor,
-                          shape: BoxShape.circle,
+                  IgnorePointer(
+                    child: TableCalendar(
+                        focusedDay: widget.dates!.first,
+                        selectedDayPredicate: (day) {
+                          return widget.dates!.any((date) => isSameDay(date, day)); // Highlight appointment dates
+                        },
+                        headerStyle: HeaderStyle(
+                            formatButtonVisible: false,
+                          titleCentered: true
                         ),
-                      ),
-                      firstDay: widget.dates!.first, lastDay: DateTime(2050)
+                        calendarStyle: CalendarStyle(
+                          outsideDaysVisible: false,
+                          selectedDecoration: BoxDecoration(
+                            color: AppColors.primaryColor,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                        firstDay: widget.dates!.first, lastDay: DateTime(2050)
+                    ),
                   ),
 
                   // Divider with height 5

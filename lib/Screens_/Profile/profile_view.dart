@@ -17,7 +17,10 @@ class ProfileView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomBackground(
-        appBar: CustomAppBar(title: "Profile", actions: [
+        appBar: CustomAppBar(
+            title: "Profile",
+            leading: SizedBox(),
+            actions: [
           GetBuilder<InitialProfileDetails>(
               init: InitialProfileDetails(),
               builder: (v) {

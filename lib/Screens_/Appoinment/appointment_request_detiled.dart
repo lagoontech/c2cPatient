@@ -310,23 +310,25 @@ class _RequestDetailsScreen2State extends State<RequestDetailsScreen2> {
                     fontSize: 17,
                   ),
                   kHeight5,
-                  TableCalendar(
-                      focusedDay: widget.dates!.first,
-                      selectedDayPredicate: (day) {
-                        return widget.dates!.any((date) => isSameDay(date, day)); // Highlight appointment dates
-                      },
-                      headerStyle: HeaderStyle(
-                        titleCentered: true,
-                        formatButtonVisible: false
-                      ),
-                      calendarStyle: CalendarStyle(
-                        outsideDaysVisible: false,
-                        selectedDecoration: BoxDecoration(
-                          color: AppColors.primaryColor,
-                          shape: BoxShape.circle,
+                  IgnorePointer(
+                    child: TableCalendar(
+                        focusedDay: widget.dates!.first,
+                        selectedDayPredicate: (day) {
+                          return widget.dates!.any((date) => isSameDay(date, day)); // Highlight appointment dates
+                        },
+                        headerStyle: HeaderStyle(
+                          titleCentered: true,
+                          formatButtonVisible: false
                         ),
-                      ),
-                      firstDay: widget.dates!.first, lastDay: DateTime(2050)
+                        calendarStyle: CalendarStyle(
+                          outsideDaysVisible: false,
+                          selectedDecoration: BoxDecoration(
+                            color: AppColors.primaryColor,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                        firstDay: widget.dates!.first, lastDay: DateTime(2050)
+                    ),
                   ),
                   Divider(
                       height: 12, thickness: 1.5, color: Colors.grey.shade300),

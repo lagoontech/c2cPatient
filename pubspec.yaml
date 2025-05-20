@@ -63,6 +63,7 @@ dependencies:
   open_filex:
   table_calendar:
   flutter_date_range_picker:
+  flutter_paypal: ^0.2.1
 
 dev_dependencies:
   flutter_test:

@@ -43,7 +43,7 @@ class ApiUrls {
 
   String paymentGateWay = '$baseUrl/api/patients/patient/payment';
 
-  String confirmPayment = '$baseUrl/api/patients/patient/payment/confirm';
+  String confirmPayment = '$baseUrl/api/patients/patient/update-payment-status';
 
   String cancelRequest = '$baseUrl/api/patients/patient/cancel-appointment';
 
