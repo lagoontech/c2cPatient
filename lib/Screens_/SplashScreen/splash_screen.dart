@@ -19,7 +19,9 @@ import '../Profile/Controller/initila_profile_controller.dart';
 import '../Profile/profile_view.dart';
 
 class SplashScreen extends StatefulWidget {
-  const SplashScreen({super.key});
+   SplashScreen({super.key,this.fromSchedule});
+
+  bool ?fromSchedule;
 
   @override
   SplashScreenState createState() => SplashScreenState();
@@ -36,6 +38,7 @@ class SplashScreenState extends State<SplashScreen> {
 
   //
   tokenCheck() async {
+    widget.fromSchedule = false;
     InitialProfileDetails initialProfileDetails =
     Get.put(InitialProfileDetails());
     await initialProfileDetails.fetchInitialUserDetails();
@@ -96,6 +99,11 @@ class SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+
+    if(widget.fromSchedule!=null && widget.fromSchedule!){
+      tokenCheck();
+    }
+
     return CustomBackground(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceAround,

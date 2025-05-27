@@ -105,7 +105,7 @@ class AppointmentView extends StatelessWidget {
                                 ),)
                                     : Center(child: Text("Select a date",style: TextStyle(
                                     color: Colors.grey,
-                                    fontSize: 16,
+                                    fontSize: 13.sp,
                                     fontWeight: FontWeight.w400,
                                     fontFamily: "verdana_regular"
                                 ),));

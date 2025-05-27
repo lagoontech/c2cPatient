@@ -230,7 +230,7 @@ class ScheduleController extends GetxController {
 
       if (res.statusCode == 200) {
         onUserDetailsCompleted();
-        Get.offAll(() => SplashScreen());
+        Get.offAll(() => SplashScreen(fromSchedule: true));
         print(res.body);
         debugPrint("succssfully");
       } else {

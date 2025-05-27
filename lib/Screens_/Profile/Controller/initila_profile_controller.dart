@@ -5,6 +5,7 @@ import 'package:care2care/ReusableUtils_/toast2.dart';
 import 'package:care2care/Screens_/Document_Upload/controller/document_upload_controller.dart';
 import 'package:care2care/constants/api_urls.dart';
 import 'package:care2care/sharedPref/sharedPref.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
@@ -61,15 +62,38 @@ class InitialProfileDetails extends GetxController {
   void onInit() {
     super.onInit();
     fetchCommonDetails();
+    fillTestDetails();
     heightCT.addListener(calculateBMI);
     weightCT.addListener(calculateBMI);
     fetchInitialUserDetails();
+  }
+
+  //
+  fillTestDetails(){
+
+    if(kDebugMode) {
+      firstName.text = "Anlin";
+      lastName.text = "Jude";
+      dob = DateTime(1997, 7, 23);
+      dobCT.text = "1997-07-23";
+      calculateAge(dob!);
+      sexCT.text = "male";
+      primaryContactNameCT.text = "Sheikh";
+      emailCT.text = "anlin.jude.7@gmail.com";
+      heightCT.text = "170";
+      weightCT.text = "65";
+      calculateBMI();
+      addressCT.text = "Nagercoil, TamilNadu";
+      primaryContactNumberCT.text = "9500001098";
+    }
+
   }
 
   // Method to fetch token and patientID once and store them
   Future<void> fetchCommonDetails() async {
     token = await SharedPref().getToken();
     String? patientIDStr = await SharedPref().getId();
+    print("pateibt id --> $patientIDStr");
     if (patientIDStr != null) {
       patientID = int.parse(patientIDStr);
     }
@@ -99,6 +123,7 @@ class InitialProfileDetails extends GetxController {
         (today.month == birthDate.month && today.day < birthDate.day)) {
       age--;
     }
+    print(age);
     return age;
   }
 
