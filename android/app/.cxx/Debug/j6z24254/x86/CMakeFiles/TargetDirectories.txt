@@ -1,0 +1,2 @@
+C:/Users/anlin/Git Projects/c2cPatient/android/app/.cxx/Debug/j6z24254/x86/CMakeFiles/edit_cache.dir
+C:/Users/anlin/Git Projects/c2cPatient/android/app/.cxx/Debug/j6z24254/x86/CMakeFiles/rebuild_cache.dir

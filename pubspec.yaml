@@ -1,7 +1,7 @@
 name: care2care
 description: "A new Flutter project."
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
-version: 1.0.0+1
+version: 1.0.2+2
 
 environment:
   sdk: ">=3.3.0 <4.0.0"
@@ -15,7 +15,7 @@ dependencies:
   cupertino_icons: ^1.0.8
   get:
   flutter_staggered_animations:
-  shared_preferences:
+  shared_preferences: ^2.5.3
   flutter_screenutil:
   google_fonts:
   flutter_spinkit:
@@ -38,18 +38,18 @@ dependencies:
   flutter_hot_toast: ^0.0.3
   firebase_core:
   firebase_auth:
-  google_sign_in:
-  fluttertoast: ^8.2.8
+  google_sign_in: ^7.2.0
+  fluttertoast: ^9.0.0
   permission_handler:
   location:
   geolocator:
   geocoding:
   intl:
-  image_picker:
+  image_picker: ^1.2.0
   mime:
   cached_network_image:
   shimmer:
-  file_picker:
+  file_picker: ^10.3.3
   flutter_tts:
   googleapis_auth:
   firebase_messaging:
@@ -59,8 +59,8 @@ dependencies:
   flutter_rating_bar:
   pull_to_refresh:
   dio:
-  path_provider:
-  open_filex:
+  path_provider: ^2.1.5
+  open_filex: ^4.7.0
   table_calendar:
   flutter_date_range_picker:
   flutter_paypal: ^0.2.1

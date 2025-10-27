@@ -16,7 +16,7 @@ class LoginController extends GetxController {
 
   TextEditingController phoneCT = TextEditingController();
   FocusNode focusNode = FocusNode();
-  GoogleSignIn googleSignIn = GoogleSignIn();
+  GoogleSignIn googleSignIn = GoogleSignIn.instance;
   bool isLoading = false;
   CountryCode? countryCode = CountryCode.fromDialCode('+91');
   String? fcmToken;
@@ -102,9 +102,9 @@ class LoginController extends GetxController {
       return;
     }
 
-    //try {
+    try {
     var result = await http.post(Uri.parse(ApiUrls().loginorRegister),
-        body: {'mobilenum': phoneCT.text, 'fcm_token': fcmToken});
+        body: {'mobilenum': phoneCT.text,'country_code': "${countryCode!.dialCode}",'fcm_token': fcmToken});
     print("phoneCT $phoneCT");
     if (result.statusCode == 201 || result.statusCode == 200) {
       var responseBody = jsonDecode(result.body);
@@ -118,9 +118,9 @@ class LoginController extends GetxController {
             phone: phoneCT.text,
           ));
     }
-    /* } catch (e) {
+     } catch (e) {
       print(e);
-    }*/
+    }
     isLoading = false;
     update();
     print("---->$isLoading");
@@ -128,10 +128,10 @@ class LoginController extends GetxController {
 
   googleSignInAccount() async {
     try {
-      GoogleSignInAccount? acc = await googleSignIn.signIn();
-      GoogleSignInAuthentication accAuth = await acc!.authentication;
+      GoogleSignInAccount? acc = await googleSignIn.authenticate();
+      GoogleSignInAuthentication accAuth = await acc.authentication;
       AuthCredential authCredential = GoogleAuthProvider.credential(
-        accessToken: accAuth.accessToken,
+        accessToken: accAuth.idToken,
         idToken: accAuth.idToken,
       );
 

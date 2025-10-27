@@ -544,7 +544,7 @@ class _ScheduleUpdateState extends State<ScheduleUpdate> {
 
                             kHeight15,
 
-                            ListView.builder(
+                            sc.meditationDetails.isNotEmpty?ListView.builder(
                             itemCount: sc.meditationDetails.firstWhere((element) => element.time == sc.selectedMedication!).medicationDetails!.length,
                             shrinkWrap: true,
                             physics: NeverScrollableScrollPhysics(),
@@ -577,7 +577,7 @@ class _ScheduleUpdateState extends State<ScheduleUpdate> {
                                                       ],
                                                     ),
                                                   );
-                                                }),
+                                                }) : SizedBox(),
 
                             kHeight15,
 
