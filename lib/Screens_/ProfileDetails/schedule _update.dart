@@ -583,6 +583,7 @@ class _ScheduleUpdateState extends State<ScheduleUpdate> {
 
                             CustomButton(
                                 onPressed: (){
+                                  print(sc.selectedMedication);
                                   sc.meditationDetails.firstWhere((element) => element.time == sc.selectedMedication!).medicationDetails!.add(TextEditingController());
                                   sc.update();
                                 },

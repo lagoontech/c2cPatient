@@ -1,0 +1,2 @@
+/Users/lagoonsmacmini/Documents/GitHub/c2cPatient/android/app/.cxx/Debug/f2c4i6j1/x86/CMakeFiles/edit_cache.dir
+/Users/lagoonsmacmini/Documents/GitHub/c2cPatient/android/app/.cxx/Debug/f2c4i6j1/x86/CMakeFiles/rebuild_cache.dir

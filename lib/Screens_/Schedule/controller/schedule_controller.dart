@@ -343,12 +343,12 @@ class ScheduleController extends GetxController {
         activityCT.text = patientSchedules!.patientActivitytype!;
         toileting.text = patientSchedules!.patientToileting!;
         temp.text = 120.toString();
-        bp.text = patientSchedules!.patientVitalsigns!.bloodPressure!;
+        bp.text = patientSchedules!.patientVitalsigns!.bloodPressure ?? "";
         selectedWalkingTimings = jsonDecode(patientSchedules!.patientWalkingtime!);
         heartRate.text =
             patientSchedules!.patientVitalsigns!.heartRate.toString();
         respiration.text =
-            patientSchedules!.patientVitalsigns!.respiratoryRate!;
+            patientSchedules!.patientVitalsigns!.respiratoryRate ?? "";
 
         //DietPlan
 
@@ -400,6 +400,12 @@ class ScheduleController extends GetxController {
           selectedMedication = medidation;
           debugPrint(medidation);
           update();
+        }else{
+          meditationDetails = [
+            MedicationModel(time: "Morning",medicationDetails: []),
+            MedicationModel(time: "Noon",medicationDetails: []),
+            MedicationModel(time: "Evening",medicationDetails: []),
+          ];
         }
         if (patientSchedules!.patientOralcare != null &&
             patientSchedules!.patientOralcare!.isNotEmpty) {
@@ -462,8 +468,8 @@ class ScheduleController extends GetxController {
     } else {
       debugPrint("Status code: ${response.statusCode}");
     }
-    } catch (e) {
-      debugPrint("Error: $e");
+    } catch (e,s) {
+      debugPrint("Error: $s");
     }
   }
 

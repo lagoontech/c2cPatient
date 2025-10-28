@@ -691,6 +691,7 @@ class _ScheduleViewState extends State<ScheduleView> {
                             kHeight15,
                             CustomButton(
                                 onPressed: () {
+                                  print(sc.selectedMedication);
                                   sc.meditationDetails
                                       .firstWhere((element) =>
                                           element.time ==
