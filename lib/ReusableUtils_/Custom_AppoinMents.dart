@@ -1,113 +1,132 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:care2care/ReusableUtils_/AppColors.dart';
 import 'package:intl/intl.dart';
+import 'package:care2care/ReusableUtils_/AppColors.dart';
+import 'package:care2care/Utils/screen_utils.dart';
 
 class AppointmentsContainer extends StatelessWidget {
   final String imageUrl;
   final Color? statusColor;
-  List<DateTime> ?appointmentDates;
+  final List<DateTime>? appointmentDates;
   final String appointmentTime;
   final String doctorName;
   final String doctorDesignation;
   final String? action;
   final Color? actionColor;
   final IconData? actionIcon;
-  final VoidCallback ? actionTap;
+  final VoidCallback? actionTap;
 
-  AppointmentsContainer(
-      {super.key,
-
-      required this.imageUrl,
-      this.statusColor,
-      this.actionColor, this.appointmentDates,
-      required this.appointmentTime,
-      required this.doctorName,
-      required this.doctorDesignation,
-      this.action,
-        this.actionTap,
-      this.actionIcon});
+  const AppointmentsContainer({
+    super.key,
+    required this.imageUrl,
+    this.statusColor,
+    this.appointmentDates,
+    required this.appointmentTime,
+    required this.doctorName,
+    required this.doctorDesignation,
+    this.action,
+    this.actionTap,
+    this.actionColor,
+    this.actionIcon,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final bool isiPad = isiPadLayout(context);
+    final double containerHeight = isiPad ? 185.h : 160.h;
+
     return Container(
-      height: MediaQuery.of(context).size.height * 0.20,
-      width: MediaQuery.of(context).size.width,
+      height: containerHeight,
+      width: double.infinity,
       decoration: BoxDecoration(
-          // color: AppColors.primaryColor.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(10.r),
-          border: Border.all(width: 0.2, color: Colors.grey)),
+        borderRadius: BorderRadius.circular(12.r),
+        border: Border.all(color: Colors.grey.shade300, width: 0.6),
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 4,
+            offset: const Offset(1, 1),
+          ),
+        ],
+      ),
       child: Row(
         children: [
-          // Left border strip
+          // Left colored strip
           Container(
-            height: MediaQuery.of(context).size.height * 0.20,
-            width: MediaQuery.of(context).size.width * 0.02,
+            width: 6.w,
+            height: double.infinity,
             decoration: BoxDecoration(
               color: statusColor ?? AppColors.primaryColor,
               borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(10.r),
-                topLeft: Radius.circular(10.r),
+                topLeft: Radius.circular(12.r),
+                bottomLeft: Radius.circular(12.r),
               ),
             ),
           ),
+
+          // Main content
           Expanded(
             child: Padding(
-              padding: EdgeInsets.all(10.r),
-              // Adjusted padding inside the container
+              padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.03,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Appointments Details",
-                          style: TextStyle(
-                            color: Colors.grey,
-                            fontSize: 16.sp,
-                          ),
+                  // Header row
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Appointment Details",
+                        style: TextStyle(
+                          color: Colors.grey.shade700,
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w500,
                         ),
-                        IconButton(
-                          padding: EdgeInsets.zero,
-                          onPressed: () {},
-                          icon: const Icon(Icons.more_vert_outlined),
-                        ),
-                      ],
-                    ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.more_vert_outlined),
+                        onPressed: () {},
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
+                      ),
+                    ],
                   ),
-                  SizedBox(height: 8.h),
+
+                  SizedBox(height: 6.h),
+
+                  // Date and time row
                   Row(
                     children: [
-                       Icon(
+                      Icon(
                         Icons.access_time,
-                        size: 15.sp,
+                        size: 16.sp,
                         color: AppColors.primaryColor,
                       ),
-                      SizedBox(width: 4.w),
-                      Text(DateFormat("MMM dd").format(appointmentDates![0])),
-                      appointmentDates!.length>1
-                          ? Text(" To ${DateFormat("MMM dd").format(appointmentDates!.last)}")
-                          : SizedBox(),
-                      SizedBox(width: 10.w),
-
-                      SizedBox(width: 10.w),
+                      SizedBox(width: 6.w),
                       Text(
-                        '\u2022',
+                        _buildDateRange(),
                         style: TextStyle(
-                          fontSize: 20.sp,
+                          fontSize: 13.sp,
+                          fontWeight: FontWeight.w400,
+                          color: Colors.black87,
                         ),
                       ),
                       SizedBox(width: 10.w),
-                      Expanded(
+                      Text(
+                        '•',
+                        style: TextStyle(
+                          fontSize: 18.sp,
+                          color: Colors.black45,
+                        ),
+                      ),
+                      SizedBox(width: 10.w),
+                      Flexible(
                         child: Text(
-                          appointmentTime ?? '',
+                          appointmentTime,
                           style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 14.sp,
+                            fontSize: 13.sp,
+                            color: Colors.black87,
                             fontWeight: FontWeight.w500,
                           ),
                           overflow: TextOverflow.ellipsis,
@@ -115,77 +134,72 @@ class AppointmentsContainer extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const Divider(),
-                  SizedBox(height: 5.h),
-                  Expanded(
-                    child: SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.07,
-                      width: MediaQuery.of(context).size.width,
-                      child: Row(
-                        children: [
-                          CircleAvatar(
-                            radius: 28.r,
-                            backgroundImage: NetworkImage(imageUrl ?? ''),
-                          ),
-                          SizedBox(width: 12.w),
-                          Expanded(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  doctorName ?? '',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 15.sp,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                Text(
-                                  doctorDesignation ?? '',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 12.sp,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ],
-                            ),
-                          ),
-                          Expanded(
-                            child: Align(
-                              alignment: Alignment.bottomRight,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  actionIcon != null
-                                      ? Icon(
-                                          actionIcon,
-                                          size: 20.sp,
-                                          color: AppColors.secondaryColor,
-                                        )
-                                      : SizedBox(),
-                                  SizedBox(width: 5.w),
-                                  InkWell(
-                                    onTap: actionTap,
-                                    child: Text(
-                                      action ?? '',
-                                      style: TextStyle(
-                                        fontSize: 12.sp,
-                                        color: actionColor,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
+
+                  SizedBox(height: 10.h),
+                  Divider(color: Colors.grey.shade300, height: 1.h),
+                  SizedBox(height: 10.h),
+
+                  // Doctor info and action row
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      CircleAvatar(
+                        radius: 25.r,
+                        backgroundImage: NetworkImage(imageUrl),
                       ),
-                    ),
-                  )
+                      SizedBox(width: 10.w),
+                      Expanded(
+                        flex: 2,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              doctorName,
+                              style: TextStyle(
+                                fontSize: 15.sp,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black87,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            Text(
+                              doctorDesignation,
+                              style: TextStyle(
+                                fontSize: 12.sp,
+                                color: Colors.black54,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
+                      ),
+                      if (action != null) ...[
+                        const Spacer(),
+                        InkWell(
+                          onTap: actionTap,
+                          child: Row(
+                            children: [
+                              if (actionIcon != null)
+                                Icon(actionIcon,
+                                    size: 18.sp,
+                                    color:
+                                    actionColor ?? AppColors.secondaryColor),
+                              if (actionIcon != null) SizedBox(width: 5.w),
+                              Text(
+                                action!,
+                                style: TextStyle(
+                                  fontSize: 12.sp,
+                                  fontWeight: FontWeight.w500,
+                                  color: actionColor ?? AppColors.secondaryColor,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
                 ],
               ),
             ),
@@ -193,5 +207,14 @@ class AppointmentsContainer extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  String _buildDateRange() {
+    if (appointmentDates == null || appointmentDates!.isEmpty) return '';
+    if (appointmentDates!.length == 1) {
+      return DateFormat("MMM dd").format(appointmentDates!.first);
+    } else {
+      return "${DateFormat("MMM dd").format(appointmentDates!.first)} → ${DateFormat("MMM dd").format(appointmentDates!.last)}";
+    }
   }
 }

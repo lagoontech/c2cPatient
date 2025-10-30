@@ -118,8 +118,8 @@ class LoginController extends GetxController {
             phone: phoneCT.text,
           ));
     }
-     } catch (e) {
-      print(e);
+     } catch (e,s) {
+      print(s);
     }
     isLoading = false;
     update();

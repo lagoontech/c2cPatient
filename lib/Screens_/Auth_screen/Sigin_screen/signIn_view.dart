@@ -105,7 +105,7 @@ class _MobileEmailState extends State<MobileEmail> {
                   ),
                 ),
                 kHeight20,
-                GetBuilder<LoginController>(builder: (v) {
+                /*GetBuilder<LoginController>(builder: (v) {
                   return InkWell(
                     onTap: () {
                       v.googleSignInAccount();
@@ -117,7 +117,7 @@ class _MobileEmailState extends State<MobileEmail> {
                       ),
                     ),
                   );
-                })
+                })*/
               ],
             ),
           )
