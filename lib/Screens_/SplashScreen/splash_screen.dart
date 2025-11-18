@@ -1,25 +1,21 @@
-import 'dart:convert';
 import 'package:care2care/ReusableUtils_/AppColors.dart';
 import 'package:care2care/ReusableUtils_/sizes.dart';
 import 'package:care2care/Screens_/HomeView/home_view.dart';
 import 'package:care2care/sharedPref/sharedPref.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart'; // Import GetX
-import 'package:googleapis_auth/auth_io.dart';
 import '../../ReusableUtils_/image_background.dart';
 import '../../ReusableUtils_/loader.dart';
 import '../Auth_screen/Sigin_screen/signIn_view.dart';
-import 'package:http/http.dart' as http;
 import '../PrimaryInformation/primaryInformation_view.dart';
 import '../Profile/Controller/initila_profile_controller.dart';
 import '../Profile/profile_view.dart';
 
 class SplashScreen extends StatefulWidget {
-   SplashScreen({super.key,this.fromSchedule});
+   SplashScreen({super.key,this.fromSchedule = false});
 
   bool ?fromSchedule;
 
@@ -38,6 +34,11 @@ class SplashScreenState extends State<SplashScreen> {
 
   //
   tokenCheck() async {
+    if(widget.fromSchedule!){
+      await Future.delayed(Duration(milliseconds: 1500));
+      Get.offAll(() => HomeView());
+      return;
+    }
     widget.fromSchedule = false;
     InitialProfileDetails initialProfileDetails =
     Get.put(InitialProfileDetails());
