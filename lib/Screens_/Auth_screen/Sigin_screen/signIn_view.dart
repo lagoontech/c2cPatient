@@ -76,7 +76,7 @@ class _MobileEmailState extends State<MobileEmail> {
                   );
                 }),
                 SizedBox(height: 40.h),
-                Padding(
+/*                Padding(
                   padding: EdgeInsets.symmetric(horizontal: 8.w),
                   child: SizedBox(
                     height: 20.h,
@@ -103,7 +103,7 @@ class _MobileEmailState extends State<MobileEmail> {
                       ],
                     ),
                   ),
-                ),
+                )*/
                 kHeight20,
                 /*GetBuilder<LoginController>(builder: (v) {
                   return InkWell(

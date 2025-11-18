@@ -70,7 +70,9 @@ class AppointmentView extends StatelessWidget {
                         controller: controller.searchTEC,
                         borderColor: AppColors.primaryColor,
                         labelText: "",
-                        prefix: Icon(Icons.search),
+                        prefix: Align(
+                            alignment: Alignment.centerRight,
+                            child: Icon(Icons.search)),
                       ),
                     ),
                   ),
@@ -107,7 +109,7 @@ class AppointmentView extends StatelessWidget {
                                     color: Colors.grey,
                                     fontSize: 13.sp,
                                     fontWeight: FontWeight.w400,
-                                    fontFamily: "verdana_regular"
+                                    //fontFamily: "verdana_regular"
                                 ),));
 
                               }

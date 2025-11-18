@@ -120,12 +120,20 @@ class _ScheduleUpdateState extends State<ScheduleUpdate> {
               kHeight20,
               GetBuilder<ScheduleController>(builder: (v) {
                 return customTextField(context,
+                    isDense: false,
+                    borderColor: Colors.black,
+                    borderWidth: 0.2,
+                    borderRadius: 12.r,
                     labelText: 'Activity Type', controller: sc.activityCT);
               }),
               kHeight20,
               GetBuilder<ScheduleController>(builder: (v) {
                 return customTextField(context,
+                    isDense: false,
                     labelText: ' Past Surgical History',
+                    borderRadius: 12.r,
+                    borderColor: Colors.black,
+                    borderWidth: 0.2,
                     controller: sc.pastSurgicalCT);
               }),
               kHeight15,
@@ -366,6 +374,10 @@ class _ScheduleUpdateState extends State<ScheduleUpdate> {
               CustomLabel(text: "Hydration(Water)"),
               kHeight10,
               customTextField(context,
+                  borderRadius: 12.r,
+                  borderColor: Colors.black,
+                  borderWidth: 0.2,
+                  isDense: false,
                   controller: sc.hydrationTEC, labelText: "Hydration"),
               kHeight15,
               CustomLabel(text: "Oral Care"),
@@ -558,6 +570,10 @@ class _ScheduleUpdateState extends State<ScheduleUpdate> {
                                                           flex: 3,
                                                           child: customTextField(
                                                               context,
+                                                              borderRadius: 12.r,
+                                                              borderColor: Colors.black,
+                                                              borderWidth: 0.2,
+                                                              isDense: false,
                                                               controller: sc.meditationDetails.firstWhere((element) => element.time == sc.selectedMedication!).medicationDetails![index],
                                                               hint: "Enter details",
                                                               labelText: "${sc.selectedMedication!} medication ${index+1}"
@@ -732,19 +748,35 @@ class _ScheduleUpdateState extends State<ScheduleUpdate> {
                     children: [
                       Expanded(
                           child: customTextField(context,
+                              borderRadius: 12.r,
+                              borderColor: Colors.black,
+                              borderWidth: 0.2,
+                              isDense: false,
                               controller: sc.temp, labelText: "Temperature")),
                       kWidth10,
                       Expanded(
                           child: customTextField(context,
+                              borderRadius: 12.r,
+                              borderColor: Colors.black,
+                              borderWidth: 0.2,
+                              isDense: false,
                               labelText: "Pulse", controller: sc.heartRate)),
                       kWidth10,
                       Expanded(
                           child: customTextField(context,
                               controller: sc.respiration,
+                              borderRadius: 12.r,
+                              borderColor: Colors.black,
+                              borderWidth: 0.2,
+                              isDense: false,
                               labelText: "Respirations")),
                       kWidth10,
                       Expanded(
                           child: customTextField(context,
+                              borderRadius: 12.r,
+                              borderColor: Colors.black,
+                              borderWidth: 0.2,
+                              isDense: false,
                               controller: sc.bp, labelText: "BP")),
                     ],
                   ),
@@ -756,8 +788,14 @@ class _ScheduleUpdateState extends State<ScheduleUpdate> {
               kHeight10,
               GetBuilder<ScheduleController>(builder: (v) {
                 return customTextField(context,
+                    borderRadius: 12.r,
+                    borderColor: Colors.black,
+                    borderWidth: 0.2,
+                    isDense: false,
                     controller: sc.bloodSugarTEC, labelText: "Blood Sugar");
               }),
+              kHeight10,
+              kHeight10,
               kHeight10,
 
             ],

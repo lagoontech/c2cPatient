@@ -4,6 +4,7 @@ import 'package:care2care/Screens_/Profile/Controller/initila_profile_controller
 import 'package:care2care/Screens_/ProfileDetails/Controller/edit_profile_controller.dart';
 import 'package:care2care/Screens_/Schedule/modal/medication_model.dart';
 import 'package:care2care/Screens_/SplashScreen/splash_screen.dart';
+import 'package:care2care/Utils/response_utils.dart';
 import 'package:care2care/constants/api_urls.dart';
 import 'package:care2care/modals/Profile_modal.dart';
 import 'package:flutter/cupertino.dart';
@@ -290,14 +291,14 @@ class ScheduleController extends GetxController {
           "Authorization": "Bearer $token",
         },
       );
-
+      var response = jsonDecode(res.body);
       if (res.statusCode == 200) {
         onUserDetailsCompleted();
         Get.back();
         showCustomToast(message: "Updated successfully");
         debugPrint("succssfully");
       } else {
-        debugPrint("not Succeesfully");
+        ResponseUtils().showErrorToast(res.body,statusCode: res.statusCode);
       }
     } catch (e) {
       debugPrint(e.toString());

@@ -30,8 +30,10 @@ Widget customTextField(BuildContext context,
       String? errorText,
       TextStyle? labelStyle,
       TextStyle? hintStyle,
+      double borderWidth = 1,
       TextStyle? textStyle,
-      bool enabled = true
+      bool enabled = true,
+      bool isDense = true
     }) {
   return Container(
     height: height,
@@ -53,17 +55,18 @@ Widget customTextField(BuildContext context,
       validator: validator,
       autovalidateMode: AutovalidateMode.always,
       keyboardType: textInputType ?? TextInputType.text,
-      style: textStyle ??  TextStyle(fontSize: 15.sp, color: Colors.black),
+      style: textStyle ??  TextStyle(fontSize: 14.sp, color: Colors.black),
       textCapitalization: textCapitalization ?? TextCapitalization.words,
       onSaved: onSaved,
       decoration: InputDecoration(
+        prefixIconConstraints: BoxConstraints(maxWidth: 36.w,minHeight: double.infinity,minWidth: 36.w),
         disabledBorder: const OutlineInputBorder(
             borderSide: BorderSide(color: Colors.grey, width: 0.3)),
         focusedErrorBorder: const OutlineInputBorder(
             borderSide: BorderSide(color: Colors.grey, width: 0.3)),
-        isDense: true,
+        isDense: isDense,
         filled: true,
-        contentPadding: contentPadding ?? EdgeInsets.symmetric(vertical: 6.h, horizontal: 10.w),
+        contentPadding: contentPadding ?? EdgeInsets.symmetric(vertical: 4.h, horizontal: 4.w),
         fillColor: fillColor ?? Colors.white.withOpacity(0.2),
         counterText: "",
         prefixIcon: prefix ,
@@ -74,35 +77,35 @@ Widget customTextField(BuildContext context,
             color: Colors.grey,
             fontSize: 13.sp,
             fontWeight: FontWeight.w400,
-            fontFamily: "verdana_regular"
+            //fontFamily: "verdana_regular"
         ),
         labelText: labelText ?? 'Email/Mobile',
         labelStyle: labelStyle ?? TextStyle(
             color: Colors.black,
             fontSize: 16,
             fontWeight: FontWeight.w400,
-            fontFamily: "verdana_regular"
+            //fontFamily: "verdana_regular"
         ),
         floatingLabelBehavior: FloatingLabelBehavior.always, // Always show the label
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(borderRadius ?? 10.0),
           borderSide: BorderSide(
             color: borderColor ?? Colors.grey, // Default to showing the border
-            width: 1.0,
+            width: borderWidth,
           ),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(borderRadius ?? 10.0),
           borderSide: BorderSide(
             color: borderColor ?? Colors.grey, // Default to showing the border
-            width: 1.0,
+            width: borderWidth,
           ),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(borderRadius ?? 10.0),
           borderSide: BorderSide(
             color: borderColor ?? Colors.blue, // Show blue border when focused
-            width: 1.0,
+            width: borderWidth,
           ),
         ),
       ),
