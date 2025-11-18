@@ -26,11 +26,11 @@ class ProfileList {
     this.profilePath
   });
 
-  factory ProfileList.fromJson(Map<String, dynamic> json) => ProfileList(
+  factory ProfileList.fromJson(Map<String, dynamic> json,{bool isReport = false}) => ProfileList(
     success: json["success"],
     status: json["status"],
     type: json["type"],
-    data: json["data"] == null ? null : Data.fromJson(json["data"]),
+    data: json["data"] == null ? null : Data.fromJson(json["data"],isReport: isReport),
     profilePath: json["profile_path"],
   );
 
@@ -70,7 +70,7 @@ class Data {
     this.patientDocuments
   });
 
-  factory Data.fromJson(Map<String, dynamic> json) => Data(
+  factory Data.fromJson(Map<String, dynamic> json,{bool isReport = false}) => Data(
     id: json["id"],
     mobilenum: json["mobilenum"],
     otp: json["otp"],
@@ -80,7 +80,9 @@ class Data {
     updatedAt: json["updated_at"] == null ? null : DateTime.parse(json["updated_at"]),
     patientInfo: json["patient_info"] == null ? null : PatientInfo.fromJson(json["patient_info"]),
     caretakerInfo: json["caretaker_info"] == null ? null : CaretakerInfo.fromJson(json["caretaker_info"]),
-    patientSchedules: json["patient_schedules"] == null ? null : PatientSchedules.fromJson(json["patient_schedules"]),
+    patientSchedules: isReport
+        ? PatientSchedules.fromJson(json)
+        : json["patient_schedules"] == null ? null : PatientSchedules.fromJson(json["patient_schedules"]),
     patientDocuments: json["patient_documents"] == null
         ? []
         : List<PatientDocument>.from(json["patient_documents"]

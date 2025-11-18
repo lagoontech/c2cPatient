@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:care2care/constants/api_urls.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -150,7 +151,8 @@ class CompletedAppointmentDetailsController extends GetxController{
 
       if (res.statusCode == 200) {
         var data = json.decode(res.body);
-        profile = ProfileList.fromJson(data);
+        log(data.toString());
+        profile = ProfileList.fromJson(data,isReport: true);
         if (profile!.data != null && profile!.data!.patientSchedules != null) {
           patientSchedules = profile!.data!.patientSchedules!;
           pastSurgicalCT.text =

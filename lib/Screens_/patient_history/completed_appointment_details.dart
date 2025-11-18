@@ -70,6 +70,15 @@ class CompletedAppointmentDetails extends StatelessWidget {
                                     child: Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: TableCalendar(
+                                        enabledDayPredicate: (v){
+                                          bool isAppointmentDate = false;
+                                          appointmentDates!.forEach((element) {
+                                            if(DateFormat("MMM dd yyyy").format(element) == DateFormat("MMM dd yyyy").format(v)){
+                                              isAppointmentDate = true;
+                                            }
+                                          });
+                                          return isAppointmentDate;
+                                        },
                                         calendarBuilders: CalendarBuilders(
                                           selectedBuilder: (context,date,d1){
                                             return Container(
@@ -87,14 +96,13 @@ class CompletedAppointmentDetails extends StatelessWidget {
                                           },
                                           defaultBuilder: (context, date, _) {
                                             bool isAppointmentDate = false;
-                                            print(DateFormat("MMM dd").format(date));
                                             appointmentDates!.forEach((element) {
-                                              if(DateFormat("MMM dd").format(element) == DateFormat("MMM dd").format(date)){
+                                              if(DateFormat("MMM dd yyyy").format(element) == DateFormat("MMM dd yyyy").format(date)){
                                                 isAppointmentDate = true;
                                               }
                                             });
                                             Color ?cellColor;
-                                            if (isAppointmentDate && DateFormat("MMM dd").format(sc.selectedDate!) == DateFormat("MMM dd").format(date)) {
+                                            if (isAppointmentDate && DateFormat("MMM dd yyyy").format(sc.selectedDate!) == DateFormat("MMM dd yyyy").format(date)) {
                                               cellColor = Colors.green;
                                             } else if (isAppointmentDate) {
                                               cellColor = AppColors.primaryColor;
