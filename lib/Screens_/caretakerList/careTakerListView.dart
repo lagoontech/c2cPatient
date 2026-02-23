@@ -5,13 +5,11 @@ import 'package:care2care/ReusableUtils_/image_background.dart';
 import 'package:care2care/ReusableUtils_/sizes.dart';
 import 'package:custom_rating_bar/custom_rating_bar.dart';
 import 'package:enefty_icons/enefty_icons.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:iconly/iconly.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-
 import '../../ReusableUtils_/AppColors.dart';
 import '../../Utils/screen_utils.dart';
 import '../CareTakerInformation/CareTaker_information.dart';
@@ -61,16 +59,20 @@ class CaretakerList extends StatelessWidget {
                 padding: EdgeInsets.symmetric(
                     horizontal: 10.h,
                     vertical: 12.h),
-                child: customTextField(
-                    context,
-                    onChanged: (v){
-                      ct.debounceSearch();
-                    },
-                    hint: "Search caretakers",
-                    controller: ct.searchTEC,
-                    borderColor: AppColors.primaryColor,
-                    labelText: "",
-                    prefix: Icon(Icons.search),
+                child: SizedBox(
+                  height: kToolbarHeight,
+                  child: customTextField(
+                      context,
+                      onChanged: (v){
+                        ct.debounceSearch();
+                      },
+                      hint: "Search caretakers",
+                    hintStyle: TextStyle(fontSize: 14.sp),
+                      controller: ct.searchTEC,
+                      borderColor: AppColors.primaryColor,
+                      labelText: "",
+                      prefix: Icon(Icons.search),
+                  ),
                 ),
               ),
 

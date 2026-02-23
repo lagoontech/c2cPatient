@@ -133,6 +133,8 @@ class PatientInfo {
   dynamic moreinfo;
   DateTime? createdAt;
   DateTime? updatedAt;
+  String ?weightUnit;
+  String ?heightUnit;
 
   PatientInfo({
     this.id,
@@ -160,6 +162,8 @@ class PatientInfo {
     this.moreinfo,
     this.createdAt,
     this.updatedAt,
+    this.weightUnit,
+    this.heightUnit
   });
 
   factory PatientInfo.fromJson(Map<String, dynamic> json) => PatientInfo(
@@ -188,6 +192,8 @@ class PatientInfo {
     moreinfo: json["moreinfo"],
     createdAt: json["created_at"] == null ? null : DateTime.parse(json["created_at"]),
     updatedAt: json["updated_at"] == null ? null : DateTime.parse(json["updated_at"]),
+    weightUnit: json["weight_unit"],
+    heightUnit: json["height_unit"]
   );
 
   Map<String, dynamic> toJson() => {

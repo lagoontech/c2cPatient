@@ -1,3 +1,4 @@
+import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:care2care/ReusableUtils_/appBar.dart';
@@ -180,6 +181,7 @@ class AccountInformation extends StatelessWidget {
                         context,
                         controller: ec.firstName,
                         labelText: "First Name *",
+                        isDense: false
                       ),
                     ),
                     kWidth20,
@@ -187,6 +189,7 @@ class AccountInformation extends StatelessWidget {
                       context,
                       controller: ec.lastName,
                       labelText: "Last Name *",
+                        isDense: false
                     ))
                   ],
                 ),
@@ -207,7 +210,9 @@ class AccountInformation extends StatelessWidget {
                       flex: 5,
                       child: customTextField(context,
                           controller: ec.ageCT,
-                          labelText: "Age"),
+                          labelText: "Age",
+                          isDense: false
+                      ),
                     ),
                   ],
                 ),
@@ -216,12 +221,14 @@ class AccountInformation extends StatelessWidget {
                   context,
                   controller: ec.emailCT,
                   labelText: "Email *",
+                    isDense: false
                 ),
                 kHeight15,
                 customTextField(
                   context,
                   controller: ec.dobCT,
                   readOnly: true,
+                    isDense: false,
                   onTap: (){
                     selectDob(context);
                   },
@@ -231,32 +238,60 @@ class AccountInformation extends StatelessWidget {
                 Row(
                   children: [
                     Expanded(
-                        flex: 5,
+                        flex: 3,
                         child: customTextField(context,
                             controller: ec.heightCT,
+                            isDense: false,
                             onChanged: (v){
                           ec.calculateBMI();
                             },
                             labelText: "Height")),
-                    kWidth20,
+                    kWidth15,
+                    Expanded(
+                      flex: 2,
+                      child: DropdownButtonFormField(
+                          value: v.heightUnit,
+                          items: ["cm","inches"].map((e) => DropdownMenuItem(child: Text(e),value: e,)).toList(),
+                          onChanged: (val){
+                            v.heightUnit = val.toString();
+                            ec.calculateBMI();
+                          }
+                      ),
+                    )
+                  ],
+                ),
+                kHeight15,
+                Row(
+                  children: [
                     Flexible(
                       flex: 5,
                       child: customTextField(context,
                           controller: ec.weightCT,
+                          isDense: false,
                           onChanged: (v){
-                        ec.calculateBMI();
+                            ec.calculateBMI();
                           },
                           labelText: "Weight"),
                     ),
-                    kWidth20,
-                    Flexible(
-                      flex: 5,
-                      child: customTextField(context,
-                          controller: ec.bmiCT,
-                          labelText: "BMI"),
-                    ),
+                    kWidth15,
+                    Expanded(
+                      flex: 2,
+                      child: DropdownButtonFormField(
+                          value: v.weightUnit,
+                          items: ["kg","pounds"].map((e) => DropdownMenuItem(child: Text(e),value: e,)).toList(),
+                          onChanged: (val){
+                            v.weightUnit = val.toString();
+                            ec.calculateBMI();
+                          }
+                      ),
+                    )
                   ],
                 ),
+                kHeight15,
+                customTextField(context,
+                    controller: ec.bmiCT,
+                    isDense: false,
+                    labelText: "BMI"),
                 kHeight15,
                 Row(
                   children: [
@@ -264,6 +299,7 @@ class AccountInformation extends StatelessWidget {
                         flex: 5,
                         child: customTextField(context,
                             controller: ec.locationCT,
+                            isDense: false,
                             labelText: "Location")),
                     kWidth15,
                     Flexible(
@@ -286,6 +322,7 @@ class AccountInformation extends StatelessWidget {
                   context,
                   controller: ec.nationalityCT,
                   labelText: "Nationality",
+                    isDense: false
                 ),
                 kHeight15,
                 customTextField(
@@ -293,24 +330,29 @@ class AccountInformation extends StatelessWidget {
                   controller: ec.addressCT,
                   maxLines: 3,
                   labelText: "Address",
+                    isDense: false
                 ),
                 kHeight20,
                 customTextField(
                   context,
                   controller: ec.diagnosisCT,
                   labelText: "Diagnosis",
+                    isDense: false
                 ),
                 kHeight20,
                 customTextField(context,
                     labelText: "Primary Care Provider Name",
+                    isDense: false,
                     controller: ec.primary_care_giver_nameCT),
                 kHeight20,
                 customTextField(context,
                     labelText: "Primary Contact Name *",
+                    isDense: false,
                     controller: ec.primaryContactNameCT),
                 kHeight20,
                 customTextField(context,
                     labelText: "Secondary Contact Name",
+                    isDense: false,
                     controller: ec.secondaryNameCT),
                 kHeight20,
                 Row(
@@ -320,6 +362,7 @@ class AccountInformation extends StatelessWidget {
                       child: customTextField(context,
                           textInputType: TextInputType.phone,
                           labelText: "Primary Contact Number *",
+                          isDense: false,
                           controller: ec.primaryContactNumberCT),
                     ),
                     kWidth15,
@@ -328,6 +371,7 @@ class AccountInformation extends StatelessWidget {
                       child: customTextField(context,
                           textInputType: TextInputType.phone,
                           labelText: "Secondary Contact Number",
+                          isDense: false,
                           controller: ec.secondaryNumberCT),
                     )
                   ],
@@ -335,12 +379,14 @@ class AccountInformation extends StatelessWidget {
                 kHeight20,
                 customTextField(context,
                     labelText: "Specialist (DR) Name",
+                    isDense: false,
                     controller: ec.specialist_nameCT),
                 kHeight20,
                 customTextField(
                   context,
                   controller: ec.specialListNumberCT,
                   textInputType: TextInputType.phone,
+                  isDense: false,
                   labelText: "Specialist (DR) Phone Number",
                 ),
                 kHeight20,
@@ -348,6 +394,7 @@ class AccountInformation extends StatelessWidget {
                   context,
                   maxLines: 3,
                   controller: ec.moreInfoCT,
+                  isDense: false,
                   labelText: "More Info",
                 ),  kHeight20,  kHeight20,
               ],

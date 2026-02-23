@@ -88,6 +88,7 @@ class CareTakerController extends GetxController {
 
     if(selectedRange!.start == selectedRange!.end){
       numberOfDays = 1;
+      update();
       return;
     }
     numberOfDays = selectedRange!.end.difference(selectedRange!.start).inDays + 1 - blockedDates;

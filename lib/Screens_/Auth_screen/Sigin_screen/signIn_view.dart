@@ -176,29 +176,32 @@ class LoginScreen extends StatelessWidget {
               SizedBox(height: 20.h),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 22.r),
-                child: customTextField(
-                  context,
-                  prefix: GetBuilder<LoginController>(builder: (v) {
-                    return CountryCodePicker(
-                      onChanged: (countryCode) {
-                        v.countryCode = countryCode;
-                        v.update();
-                        print(countryCode);
-                      },
-                      initialSelection: 'US',
-                      favorite: ['+1', 'FR'],
-                      showCountryOnly: false,
-                      showOnlyCountryWhenClosed: false,
-                      alignLeft: false,
-                      flagDecoration: BoxDecoration(shape: BoxShape.circle),
-                    );
-                  }),
-                  controller: lc.phoneCT,
-                  textStyle: TextStyle(
-                    fontSize: 17.sp,
+                child: SizedBox(
+                  height: kToolbarHeight,
+                  child: customTextField(
+                    context,
+                    prefix: GetBuilder<LoginController>(builder: (v) {
+                      return CountryCodePicker(
+                        onChanged: (countryCode) {
+                          v.countryCode = countryCode;
+                          v.update();
+                          print(countryCode);
+                        },
+                        initialSelection: 'US',
+                        favorite: ['+1', 'FR'],
+                        showCountryOnly: false,
+                        showOnlyCountryWhenClosed: false,
+                        alignLeft: false,
+                        flagDecoration: BoxDecoration(shape: BoxShape.circle),
+                      );
+                    }),
+                    controller: lc.phoneCT,
+                    textStyle: TextStyle(
+                      fontSize: 17.sp,
+                    ),
+                    labelText: 'Phone',
+                    readOnly: true,
                   ),
-                  labelText: 'Phone',
-                  readOnly: true,
                 ),
               ),
               SizedBox(height: 40.h),

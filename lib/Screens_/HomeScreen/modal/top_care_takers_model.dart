@@ -336,7 +336,7 @@ class PatientReview {
     caretakerId: json["caretaker_id"],
     status: json["status"],
     rating: json["rating"],
-    reviewMsg: json["review_msg"],
+    reviewMsg: json["review_msg"] ?? "",
     createdAt: DateTime.parse(json["created_at"]),
     updatedAt: DateTime.parse(json["updated_at"]),
   );

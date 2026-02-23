@@ -129,8 +129,8 @@ class HomeController extends GetxController {
         profilePath = welcomeFromJson(result.body).profilePath;
         print('topCaretakers-->${topCaretakers.length}');
       }
-    }catch(e){
-      print(e);
+    }catch(e,s){
+      print(s);
     }
     isLoadingTopCareTakers = false;
     update();

@@ -38,24 +38,24 @@ class _ScheduleUpdateState extends State<ScheduleUpdate> {
                 padding: EdgeInsets.only(right: 18.r),
                 child: sc.updating
                     ? Center(
-                        child: SizedBox(
-                          height: 20.h,
-                          width: 23.w,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 1,
-                            color: AppColors.primaryColor,
-                          ),
-                        ),
-                      )
+                  child: SizedBox(
+                    height: 20.h,
+                    width: 23.w,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 1,
+                      color: AppColors.primaryColor,
+                    ),
+                  ),
+                )
                     : InkWell(
-                        onTap: () {
-                         sc.updateInformationAndScheduleApi();
-                        },
-                        child: Icon(
-                          IconlyLight.tick_square,
-                          color: AppColors.primaryColor,
-                        ),
-                      ),
+                  onTap: () {
+                    sc.updateInformationAndScheduleApi();
+                  },
+                  child: Icon(
+                    IconlyLight.tick_square,
+                    color: AppColors.primaryColor,
+                  ),
+                ),
               );
             }),
       ]),
@@ -73,14 +73,17 @@ class _ScheduleUpdateState extends State<ScheduleUpdate> {
               GetBuilder<ScheduleController>(builder: (controller) {
                 return CustomDropdown.multiSelect(
                   closedHeaderPadding: EdgeInsets.all(
-                      MediaQuery.of(context).size.width * 0.06 * 0.5),
+                      MediaQuery
+                          .of(context)
+                          .size
+                          .width * 0.06 * 0.5),
                   decoration: CustomDropdownDecoration(
                       closedBorder:
-                          Border.all(width: 0.2, color: Colors.black)),
+                      Border.all(width: 0.2, color: Colors.black)),
                   items: controller.DietItems,
                   initialItems: controller.DietItems.where((item) =>
-                          controller.diet.any((dietItem) =>
-                              dietItem.name == item.name)) // Match by ID
+                      controller.diet.any((dietItem) =>
+                      dietItem.name == item.name)) // Match by ID
                       .toList(),
                   onListChanged: (List<Diet> value) {
                     if (!ListEquality().equals(controller.diet, value)) {
@@ -100,15 +103,19 @@ class _ScheduleUpdateState extends State<ScheduleUpdate> {
               GetBuilder<ScheduleController>(builder: (controller) {
                 return CustomDropdown.multiSelect(
                   closedHeaderPadding: EdgeInsets.all(
-                      MediaQuery.of(context).size.width * 0.06 * 0.5),
+                      MediaQuery
+                          .of(context)
+                          .size
+                          .width * 0.06 * 0.5),
                   decoration: CustomDropdownDecoration(
                       closedBorder:
-                          Border.all(width: 0.2, color: Colors.black)),
+                      Border.all(width: 0.2, color: Colors.black)),
                   items: controller.medicalHistory,
                   initialItems: controller.medicalHistory
-                      .where((item) => controller.medicalHistoryList.any(
-                          (dietItem) =>
-                              dietItem.name == item.name)) // Match by ID
+                      .where((item) =>
+                      controller.medicalHistoryList.any(
+                              (dietItem) =>
+                          dietItem.name == item.name)) // Match by ID
                       .toList(),
                   onListChanged: (List<MedicalHistory> value) {
                     controller.medicalHistoryList = value;
@@ -124,7 +131,8 @@ class _ScheduleUpdateState extends State<ScheduleUpdate> {
                     borderColor: Colors.black,
                     borderWidth: 0.2,
                     borderRadius: 12.r,
-                    labelText: 'Activity Type', controller: sc.activityCT);
+                    labelText: 'Activity Type',
+                    controller: sc.activityCT);
               }),
               kHeight20,
               GetBuilder<ScheduleController>(builder: (v) {
@@ -140,235 +148,82 @@ class _ScheduleUpdateState extends State<ScheduleUpdate> {
               kHeight15,
               CustomLabel(
                 text: "Food Timing",
-                color: AppColors.primaryColor,
               ),
               kHeight15,
-              CustomLabel(text: "Break Fast"),
-              kHeight10,
-              Row(
-                children: [
-                  Expanded(
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: GetBuilder<ScheduleController>(
-                        init: sc,
-                        builder: (v) {
-                          String? selectedBreakfastTime =
-                              v.patientSchedules?.patientBreakfasttime;
-                          String? formattedSelectedBreakfastTime;
-                          if (selectedBreakfastTime != null) {
-                            final timeParts = selectedBreakfastTime.split(':');
-                            final hour = int.parse(timeParts[0]);
-                            final minute = timeParts[1];
-                            formattedSelectedBreakfastTime =
-                                (hour % 12).toString().padLeft(2, '0') +
-                                    '.' +
-                                    minute +
-                                    (hour < 12 ? ' AM' : ' PM');
+
+              GetBuilder<ScheduleController>(
+                builder: (v) {
+                  return !v.loadingInfo?GridView.count(
+                    crossAxisCount: 2,
+                    shrinkWrap: true,
+                    crossAxisSpacing: 12,
+                    mainAxisSpacing: 12,
+                    childAspectRatio: 1.5,
+                    physics: const NeverScrollableScrollPhysics(),
+                    children: [
+
+                      MealTimeCard(
+                        title: "Breakfast",
+                        icon: "🌅",
+                        time: v.formatTime(v.patientSchedules!.patientBreakfasttime ?? "--"),
+                        onTap: () async {
+                          final result = await showTimePickerDialog(context);
+                          if (result != null && result.toString().isNotEmpty) {
+                            v.patientSchedules?.patientBreakfasttime = result;
+                            v.filters.clear();
+                            v.filters.add(result);
+                            v.update();
                           }
-
-                          return Wrap(
-                            spacing: 8.0,
-                            children: v.breakFast.map((String time) {
-                              bool isSelected =
-                                  time == formattedSelectedBreakfastTime ||
-                                      v.filters.contains(time);
-                              return CustomChip(
-                                label: time,
-                                isSelected: isSelected,
-                                onSelected: (bool selected) {
-                                  if (selected) {
-                                    v.filters.clear();
-                                    v.patientSchedules?.patientBreakfasttime =
-                                        null;
-                                    v.filters.add(time);
-                                    v.update();
-                                  } else {
-                                    v.filters.remove(time);
-                                  }
-
-                                  // Update the controller and UI
-                                  v.update();
-
-                                },
-                              );
-                            }).toList(),
-                          );
                         },
                       ),
-                    ),
-                  ),
-                ],
-              ),
-              kHeight15,
-              CustomLabel(text: "Lunch"),
-              kHeight10,
-              Row(
-                children: [
-                  Expanded(
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: GetBuilder<ScheduleController>(builder: (v) {
-                        String? selectedBreakfastTime =
-                            v.patientSchedules?.patientLunchtime;
-                        String? formattedSelectedBreakfastTime;
-                        if (selectedBreakfastTime != null) {
-                          final timeParts = selectedBreakfastTime.split(':');
-                          final hour = int.parse(timeParts[0]);
-                          final minute = timeParts[1];
-                          formattedSelectedBreakfastTime =
-                              (hour % 12).toString().padLeft(2, '0') +
-                                  '.' +
-                                  minute +
-                                  (hour < 12 ? ' AM' : ' PM');
-                        }
-                        return Wrap(
-                          spacing: 8.0,
-                          children: v.lunchList.map((String name) {
-                            bool isSelected =
-                                name == formattedSelectedBreakfastTime ||
-                                    v.lunchFilters.contains(name);
-                            return CustomChip(
-                              label: name,
-                              isSelected: isSelected,
-                              onSelected: (bool selected) {
-                                setState(() {
-                                  if (selected) {
-                                    v.lunchFilters.clear();
-                                    v.patientSchedules!.patientLunchtime = null;
-                                    v.lunchFilters.add(name);
-                                  } else {
-                                    v.lunchFilters.remove(name);
-                                  }
-                                });
-                              },
-                            );
-                          }).toList(),
-                        );
-                      }),
-                    ),
-                  ),
-                ],
-              ),
-              kHeight15,
-              CustomLabel(text: "Snacks"),
-              kHeight10,
-              Row(
-                children: [
-                  Expanded(
-                    child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: GetBuilder<ScheduleController>(
-                          builder: (v) {
-                            String selectedSnackTime = v.patientSchedules
-                                        ?.patientSnackstime?.isNotEmpty ==
-                                    true
-                                ? v.patientSchedules!.patientSnackstime!
-                                : "06:00"; // Default to "06:00"
 
-                            String formattedSelectedSnackTime =
-                                "06:00"; // Default value in case of errors
+                      MealTimeCard(
+                        title: "Lunch",
+                        icon: "🍛",
+                        time: v.formatTime(v.patientSchedules!.patientLunchtime ?? "--"),
+                        onTap: () async {
+                          final result = await showTimePickerDialog(context);
+                          if (result != null && result.toString().isNotEmpty) {
+                            v.patientSchedules?.patientLunchtime = result;
+                            v.lunchFilters.clear();
+                            v.lunchFilters.add(result);
+                            v.update();
+                          }
+                        },
+                      ),
 
-                            // Safely split and format the time, ensuring it doesn't cause index errors
-                            if (selectedSnackTime.contains(':')) {
-                              final timeParts = selectedSnackTime.split(':');
-                              if (timeParts.length == 2) {
-                                final hour = int.tryParse(timeParts[0]) ?? 0;
-                                final minute = timeParts[1];
-                                formattedSelectedSnackTime =
-                                    (hour % 12 == 0 ? 12 : hour % 12)
-                                            .toString()
-                                            .padLeft(2, '0') +
-                                        '.' +
-                                        minute +
-                                        (hour < 12 ? ' AM' : ' PM');
-                              }
-                            }
+                      MealTimeCard(
+                        title: "Snacks",
+                        icon: "☕",
+                        time: v.formatTime(v.patientSchedules!.patientSnackstime ?? "--"),
+                        onTap: () async {
+                          final result = await showTimePickerDialog(context);
+                          if (result != null && result.toString().isNotEmpty) {
+                            v.patientSchedules?.patientSnackstime = result;
+                            v.snacks.clear();
+                            v.snacks.add(result);
+                            v.update();
+                          }
+                        },
+                      ),
 
-                            return Wrap(
-                              spacing: 8.0,
-                              children: v.snackList.map((String name) {
-                                // Ensure that the list is not empty or out of bounds
-                                bool isSelected =
-                                    name == formattedSelectedSnackTime ||
-                                        v.snacks.contains(name);
-
-                                return CustomChip(
-                                  label: name,
-                                  isSelected: isSelected,
-                                  onSelected: (bool selected) {
-                                    // Safely update snacks list
-                                    if (selected) {
-                                      v.snacks.clear();
-                                      v.snacks.add(name);
-                                      v.patientSchedules!.patientSnackstime =
-                                          name; // Update snack time
-                                      v.update(); // Rebuild GetX state
-                                    } else {
-                                      v.snacks.remove(name);
-                                      v.patientSchedules!.patientSnackstime =
-                                          null; // Clear snack time
-                                      v.update();
-                                    }
-                                  },
-                                );
-                              }).toList(),
-                            );
-                          },
-                        )),
-                  ),
-                ],
-              ),
-              kHeight15,
-              CustomLabel(text: "Dinner"),
-              kHeight10,
-              Row(
-                children: [
-                  Expanded(
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: GetBuilder<ScheduleController>(builder: (v) {
-                        String? selectedBreakfastTime =
-                            v.patientSchedules?.patientDinnertime;
-                        String? formattedSelectedBreakfastTime;
-                        if (selectedBreakfastTime != null) {
-                          final timeParts = selectedBreakfastTime.split(':');
-                          final hour = int.parse(timeParts[0]);
-                          final minute = timeParts[1];
-                          formattedSelectedBreakfastTime =
-                              (hour % 12).toString().padLeft(2, '0') +
-                                  '.' +
-                                  minute +
-                                  (hour < 12 ? ' AM' : ' PM');
-                        }
-                        return Wrap(
-                          spacing: 8.0,
-                          children: sc.dinnerList.map((String name) {
-                            bool isSelected =
-                                name == formattedSelectedBreakfastTime ||
-                                    v.dinner.contains(name);
-                            return CustomChip(
-                              label: name,
-                              isSelected: isSelected,
-                              onSelected: (bool selected) {
-                                setState(() {
-                                  if (selected) {
-                                    v.dinner.clear();
-                                    v.patientSchedules?.patientDinnertime =
-                                        null;
-                                    v.dinner.add(name);
-                                  } else {
-                                    sc.dinner.remove(name);
-                                  }
-                                });
-                              },
-                            );
-                          }).toList(),
-                        );
-                      }),
-                    ),
-                  ),
-                ],
+                      MealTimeCard(
+                        title: "Dinner",
+                        icon: "🌙",
+                        time: v.formatTime(v.patientSchedules!.patientDinnertime ?? "--"),
+                        onTap: () async {
+                          final result = await showTimePickerDialog(context);
+                          if (result != null && result.toString().isNotEmpty) {
+                            v.patientSchedules?.patientDinnertime = result;
+                            v.dinner.clear();
+                            v.dinner.add(result);
+                            v.update();
+                          }
+                        },
+                      ),
+                    ],
+                  ) : SizedBox();
+                },
               ),
               kHeight15,
               CustomLabel(text: "Hydration(Water)"),
@@ -378,7 +233,8 @@ class _ScheduleUpdateState extends State<ScheduleUpdate> {
                   borderColor: Colors.black,
                   borderWidth: 0.2,
                   isDense: false,
-                  controller: sc.hydrationTEC, labelText: "Hydration"),
+                  controller: sc.hydrationTEC,
+                  labelText: "Hydration"),
               kHeight15,
               CustomLabel(text: "Oral Care"),
               kHeight10,
@@ -392,13 +248,15 @@ class _ScheduleUpdateState extends State<ScheduleUpdate> {
                             children: [
                               CustomChip(
                                 label: "Morning",
-                                isSelected: sc.selectedOralCareTimings.contains("Morning"),
+                                isSelected: sc.selectedOralCareTimings.contains(
+                                    "Morning"),
                                 onSelected: (bool selected) {
                                   print(selected);
                                   if (selected) {
                                     sc.selectedOralCareTimings.add("Morning");
-                                  } else{
-                                    sc.selectedOralCareTimings.remove("Morning");
+                                  } else {
+                                    sc.selectedOralCareTimings.remove(
+                                        "Morning");
                                   }
                                   v.update();
                                 },
@@ -406,11 +264,12 @@ class _ScheduleUpdateState extends State<ScheduleUpdate> {
                               kWidth10,
                               CustomChip(
                                 label: "Noon",
-                                isSelected: sc.selectedOralCareTimings.contains("Noon"),
+                                isSelected: sc.selectedOralCareTimings.contains(
+                                    "Noon"),
                                 onSelected: (bool selected) {
                                   if (selected) {
                                     sc.selectedOralCareTimings.add("Noon");
-                                  }else{
+                                  } else {
                                     sc.selectedOralCareTimings.remove("Noon");
                                   }
                                   v.update();
@@ -420,12 +279,14 @@ class _ScheduleUpdateState extends State<ScheduleUpdate> {
                               kWidth10,
                               CustomChip(
                                 label: "Evening",
-                                isSelected: sc.selectedOralCareTimings.contains("Evening"),
+                                isSelected: sc.selectedOralCareTimings.contains(
+                                    "Evening"),
                                 onSelected: (bool selected) {
                                   if (selected) {
                                     sc.selectedOralCareTimings.add("Evening");
-                                  }else{
-                                    sc.selectedOralCareTimings.remove("Evening");
+                                  } else {
+                                    sc.selectedOralCareTimings.remove(
+                                        "Evening");
                                   }
                                   v.update();
                                 },
@@ -449,12 +310,13 @@ class _ScheduleUpdateState extends State<ScheduleUpdate> {
                             children: [
                               CustomChip(
                                 label: "Morning",
-                                isSelected: sc.selectedBathingTimings.contains("Morning"),
+                                isSelected: sc.selectedBathingTimings.contains(
+                                    "Morning"),
                                 onSelected: (bool selected) {
                                   print(selected);
                                   if (selected) {
                                     sc.selectedBathingTimings.add("Morning");
-                                  } else{
+                                  } else {
                                     sc.selectedBathingTimings.remove("Morning");
                                   }
                                   v.update();
@@ -463,11 +325,12 @@ class _ScheduleUpdateState extends State<ScheduleUpdate> {
                               kWidth10,
                               CustomChip(
                                 label: "Noon",
-                                isSelected: sc.selectedBathingTimings.contains("Noon"),
+                                isSelected: sc.selectedBathingTimings.contains(
+                                    "Noon"),
                                 onSelected: (bool selected) {
                                   if (selected) {
                                     sc.selectedBathingTimings.add("Noon");
-                                  }else{
+                                  } else {
                                     sc.selectedBathingTimings.remove("Noon");
                                   }
                                   v.update();
@@ -477,11 +340,12 @@ class _ScheduleUpdateState extends State<ScheduleUpdate> {
                               kWidth10,
                               CustomChip(
                                 label: "Evening",
-                                isSelected: sc.selectedBathingTimings.contains("Evening"),
+                                isSelected: sc.selectedBathingTimings.contains(
+                                    "Evening"),
                                 onSelected: (bool selected) {
                                   if (selected) {
                                     sc.selectedBathingTimings.add("Evening");
-                                  }else{
+                                  } else {
                                     sc.selectedBathingTimings.remove("Evening");
                                   }
                                   v.update();
@@ -549,65 +413,84 @@ class _ScheduleUpdateState extends State<ScheduleUpdate> {
                 );
               }),
               GetBuilder<ScheduleController>(
-                  builder: (v){
-                    return sc.selectedMedication!=null
+                  builder: (v) {
+                    return sc.selectedMedication != null
                         ? Column(
-                          children: [
+                      children: [
 
-                            kHeight15,
+                        kHeight15,
 
-                            sc.meditationDetails.isNotEmpty?ListView.builder(
-                            itemCount: sc.meditationDetails.firstWhere((element) => element.time == sc.selectedMedication!).medicationDetails!.length,
+                        sc.meditationDetails.isNotEmpty ? ListView.builder(
+                            itemCount: sc.meditationDetails
+                                .firstWhere((element) =>
+                            element.time == sc.selectedMedication!)
+                                .medicationDetails!
+                                .length,
                             shrinkWrap: true,
                             physics: NeverScrollableScrollPhysics(),
-                            itemBuilder: (context,index){
-                                                  return Padding(
-                                                    padding: EdgeInsets.only(top: 16.h),
-                                                    child: Row(
-                                                      children: [
+                            itemBuilder: (context, index) {
+                              return Padding(
+                                padding: EdgeInsets.only(top: 16.h),
+                                child: Row(
+                                  children: [
 
-                                                        Expanded(
-                                                          flex: 3,
-                                                          child: customTextField(
-                                                              context,
-                                                              borderRadius: 12.r,
-                                                              borderColor: Colors.black,
-                                                              borderWidth: 0.2,
-                                                              isDense: false,
-                                                              controller: sc.meditationDetails.firstWhere((element) => element.time == sc.selectedMedication!).medicationDetails![index],
-                                                              hint: "Enter details",
-                                                              labelText: "${sc.selectedMedication!} medication ${index+1}"
-                                                          ),
-                                                        ),
+                                    Expanded(
+                                      flex: 3,
+                                      child: customTextField(
+                                          context,
+                                          borderRadius: 12.r,
+                                          borderColor: Colors.black,
+                                          borderWidth: 0.2,
+                                          isDense: false,
+                                          controller: sc.meditationDetails
+                                              .firstWhere((element) =>
+                                          element.time ==
+                                              sc.selectedMedication!)
+                                              .medicationDetails![index],
+                                          hint: "Enter details",
+                                          labelText: "${sc
+                                              .selectedMedication!} medication ${index +
+                                              1}"
+                                      ),
+                                    ),
 
-                                                        Expanded(
-                                                          flex: 1,
-                                                          child: IconButton(
-                                                            onPressed: (){
-                                                              sc.meditationDetails.firstWhere((element) => element.time == sc.selectedMedication!).medicationDetails!.removeAt(index);
-                                                              sc.update();
-                                                              },
-                                                            icon: Icon(Icons.remove),
-                                                        )),
+                                    Expanded(
+                                        flex: 1,
+                                        child: IconButton(
+                                          onPressed: () {
+                                            sc.meditationDetails
+                                                .firstWhere((element) =>
+                                            element.time ==
+                                                sc.selectedMedication!)
+                                                .medicationDetails!
+                                                .removeAt(index);
+                                            sc.update();
+                                          },
+                                          icon: Icon(Icons.remove),
+                                        )),
 
-                                                      ],
-                                                    ),
-                                                  );
-                                                }) : SizedBox(),
+                                  ],
+                                ),
+                              );
+                            }) : SizedBox(),
 
-                            kHeight15,
+                        kHeight15,
 
-                            CustomButton(
-                                onPressed: (){
-                                  print(sc.selectedMedication);
-                                  sc.meditationDetails.firstWhere((element) => element.time == sc.selectedMedication!).medicationDetails!.add(TextEditingController());
-                                  sc.update();
-                                },
-                                text: "Add medication detail"
-                            ),
+                        CustomButton(
+                            onPressed: () {
+                              print(sc.selectedMedication);
+                              sc.meditationDetails
+                                  .firstWhere((element) =>
+                              element.time == sc.selectedMedication!)
+                                  .medicationDetails!
+                                  .add(TextEditingController());
+                              sc.update();
+                            },
+                            text: "Add medication detail"
+                        ),
 
-                          ],
-                        ) : SizedBox();
+                      ],
+                    ) : SizedBox();
                   }
               ),
               kHeight15,
@@ -623,13 +506,15 @@ class _ScheduleUpdateState extends State<ScheduleUpdate> {
                             children: [
                               CustomChip(
                                 label: "Morning",
-                                isSelected: sc.selectedDressingTimings.contains("Morning"),
+                                isSelected: sc.selectedDressingTimings.contains(
+                                    "Morning"),
                                 onSelected: (bool selected) {
                                   print(selected);
                                   if (selected) {
                                     sc.selectedDressingTimings.add("Morning");
-                                  } else{
-                                    sc.selectedDressingTimings.remove("Morning");
+                                  } else {
+                                    sc.selectedDressingTimings.remove(
+                                        "Morning");
                                   }
                                   v.update();
                                 },
@@ -637,12 +522,13 @@ class _ScheduleUpdateState extends State<ScheduleUpdate> {
                               kWidth10,
                               CustomChip(
                                 label: "Noon",
-                                isSelected: sc.selectedDressingTimings.contains("Noon"),
+                                isSelected: sc.selectedDressingTimings.contains(
+                                    "Noon"),
                                 onSelected: (bool selected) {
                                   print(selected);
                                   if (selected) {
                                     sc.selectedDressingTimings.add("Noon");
-                                  } else{
+                                  } else {
                                     sc.selectedDressingTimings.remove("Noon");
                                   }
                                   v.update();
@@ -651,13 +537,15 @@ class _ScheduleUpdateState extends State<ScheduleUpdate> {
                               kWidth10,
                               CustomChip(
                                 label: "Evening",
-                                isSelected: sc.selectedDressingTimings.contains("Evening"),
+                                isSelected: sc.selectedDressingTimings.contains(
+                                    "Evening"),
                                 onSelected: (bool selected) {
                                   print(selected);
                                   if (selected) {
                                     sc.selectedDressingTimings.add("Evening");
-                                  } else{
-                                    sc.selectedDressingTimings.remove("Evening");
+                                  } else {
+                                    sc.selectedDressingTimings.remove(
+                                        "Evening");
                                   }
                                   v.update();
                                 },
@@ -679,17 +567,17 @@ class _ScheduleUpdateState extends State<ScheduleUpdate> {
                     focusColor: Colors.white,
                     focusedBorder: OutlineInputBorder(
                       borderSide:
-                          const BorderSide(color: Colors.black, width: 0.3),
+                      const BorderSide(color: Colors.black, width: 0.3),
                       borderRadius: BorderRadius.circular(8.r),
                     ),
                     border: OutlineInputBorder(
                       borderSide:
-                          const BorderSide(color: Colors.black, width: 0.3),
+                      const BorderSide(color: Colors.black, width: 0.3),
                       borderRadius: BorderRadius.circular(8.r),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderSide:
-                          const BorderSide(color: Colors.black, width: 0.3),
+                      const BorderSide(color: Colors.black, width: 0.3),
                       borderRadius: BorderRadius.circular(8.r),
                     ),
                     hintStyle: const TextStyle(color: Colors.grey),
@@ -709,11 +597,12 @@ class _ScheduleUpdateState extends State<ScheduleUpdate> {
                             children: [
                               CustomChip(
                                 label: "Morning",
-                                isSelected: sc.selectedWalkingTimings.contains("Morning"),
+                                isSelected: sc.selectedWalkingTimings.contains(
+                                    "Morning"),
                                 onSelected: (bool selected) {
                                   if (selected) {
                                     sc.selectedWalkingTimings.add("Morning");
-                                  } else{
+                                  } else {
                                     sc.selectedWalkingTimings.remove("Morning");
                                   }
                                   v.update();
@@ -722,11 +611,12 @@ class _ScheduleUpdateState extends State<ScheduleUpdate> {
                               kWidth10,
                               CustomChip(
                                 label: "Evening",
-                                isSelected: sc.selectedWalkingTimings.contains("Evening"),
+                                isSelected: sc.selectedWalkingTimings.contains(
+                                    "Evening"),
                                 onSelected: (bool selected) {
                                   if (selected) {
                                     sc.selectedWalkingTimings.add("Evening");
-                                  } else{
+                                  } else {
                                     sc.selectedWalkingTimings.remove("Evening");
                                   }
                                   v.update();
@@ -752,7 +642,8 @@ class _ScheduleUpdateState extends State<ScheduleUpdate> {
                               borderColor: Colors.black,
                               borderWidth: 0.2,
                               isDense: false,
-                              controller: sc.temp, labelText: "Temperature")),
+                              controller: sc.temp,
+                              labelText: "Temperature")),
                       kWidth10,
                       Expanded(
                           child: customTextField(context,
@@ -760,7 +651,8 @@ class _ScheduleUpdateState extends State<ScheduleUpdate> {
                               borderColor: Colors.black,
                               borderWidth: 0.2,
                               isDense: false,
-                              labelText: "Pulse", controller: sc.heartRate)),
+                              labelText: "Pulse",
+                              controller: sc.heartRate)),
                       kWidth10,
                       Expanded(
                           child: customTextField(context,
@@ -777,7 +669,8 @@ class _ScheduleUpdateState extends State<ScheduleUpdate> {
                               borderColor: Colors.black,
                               borderWidth: 0.2,
                               isDense: false,
-                              controller: sc.bp, labelText: "BP")),
+                              controller: sc.bp,
+                              labelText: "BP")),
                     ],
                   ),
                   SizedBox(height: 10),
@@ -792,7 +685,8 @@ class _ScheduleUpdateState extends State<ScheduleUpdate> {
                     borderColor: Colors.black,
                     borderWidth: 0.2,
                     isDense: false,
-                    controller: sc.bloodSugarTEC, labelText: "Blood Sugar");
+                    controller: sc.bloodSugarTEC,
+                    labelText: "Blood Sugar");
               }),
               kHeight10,
               kHeight10,
@@ -800,6 +694,76 @@ class _ScheduleUpdateState extends State<ScheduleUpdate> {
 
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  //
+  Future<dynamic> showTimePickerDialog(BuildContext context) async {
+
+    var result =  await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
+    if(result!=null && result is TimeOfDay){
+      //with am pm
+      return "${result.hourOfPeriod.toString().padLeft(2, '0')}.${result.minute.toString().padLeft(2, '0')} ${result.period == DayPeriod.am ? 'AM' : 'PM'}";
+    }
+    return "";
+  }
+
+}
+
+class MealTimeCard extends StatelessWidget {
+  final String title;
+  final String icon;
+  final String? time;
+  final VoidCallback onTap;
+
+  const MealTimeCard({
+    super.key,
+    required this.title,
+    required this.icon,
+    required this.time,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.all(6.w),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(14.w),
+          color: AppColors.primaryColor.withOpacity(0.08),
+          border: Border.all(
+            color: AppColors.primaryColor.withOpacity(0.2),
+          ),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(icon, style: TextStyle(fontSize: 22.sp)),
+            SizedBox(height: 6.h),
+            Text(
+              title,
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            SizedBox(height: 6.h),
+            Text(
+              time ?? "Select Time",
+              style: TextStyle(
+                color: time == null
+                    ? Colors.grey
+                    : AppColors.primaryColor,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
         ),
       ),
     );

@@ -123,12 +123,17 @@ class _CaretakerInformationState extends State<CaretakerInformation> {
                   ],
                 ),
                 kHeight10,
-                CustomLabel(
-                  text: "About",
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.bold,
-                ),
-                kHeight10,
+                widget.about!=null && widget.about!.isNotEmpty
+                    ? Column(
+                      children: [
+                        CustomLabel(
+                                          text: "About",
+                                          fontSize: 16.sp,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                        kHeight10,
+                      ],
+                    ) : SizedBox(),
                 ReadMoreText(
                   widget.about ?? "",
                   trimMode: TrimMode.Line,
@@ -139,7 +144,6 @@ class _CaretakerInformationState extends State<CaretakerInformation> {
                   moreStyle:
                       TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                 ),
-                kHeight10,
                 Divider(),
                 CustomLabel(
                   text: "Working Hours",
@@ -191,6 +195,7 @@ class _CaretakerInformationState extends State<CaretakerInformation> {
                         doubleMonth: false,
                         maximumDateRangeLength: 30,
                         minimumDateRangeLength: 2,
+                        minDate: DateTime.now().subtract(Duration(days: 1)),
                         disabledDates: vc.unavailableDates,
                         theme: CalendarTheme(
                           selectedColor: AppColors.primaryColor,
@@ -203,9 +208,10 @@ class _CaretakerInformationState extends State<CaretakerInformation> {
                           radius: 8.0,
                           tileSize: 48.sp,
                         ),
-                        height: 340.h,
+                        height: 300.h,
                         onDateRangeChanged: (v){
                           vc.selectedRange = v;
+                          print(vc.selectedRange!.end);
                           vc.calculateNumberOfDays();
                         },
                       ) : SizedBox(

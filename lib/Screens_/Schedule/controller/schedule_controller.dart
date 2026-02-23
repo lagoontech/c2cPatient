@@ -165,24 +165,37 @@ class ScheduleController extends GetxController {
   }
 
   // Helper function to format time
-  String formatTime(String time) {
-    final parts = time.split(' ');
-    if (parts.length != 2)
-      return time;
-    final timeParts = parts[0].split('.');
+  String formatTime(String? time) {
+    if (time == null || time.isEmpty) return "";
 
-    int hours = int.parse(timeParts[0]);
-    final minutes = '00';
+    try {
+      // If already formatted like "06:00 AM"
+      if (time.contains("AM") || time.contains("PM")) {
+        return time;
+      }
 
-    if (parts[1] == 'PM' && hours < 12) {
-      hours += 12;
-    } else if (parts[1] == 'AM' && hours == 12) {
-      hours = 0;
+      // Expecting 24h format like "18:30"
+      if (time.contains(":")) {
+        final parts = time.split(":");
+
+        if (parts.length != 2) return "";
+
+        final hour = int.tryParse(parts[0]);
+        final minute = parts[1];
+
+        if (hour == null) return "";
+
+        final hour12 = hour % 12 == 0 ? 12 : hour % 12;
+        final period = hour < 12 ? "AM" : "PM";
+
+        return "${hour12.toString().padLeft(2, '0')}:$minute $period";
+      }
+
+      return "--";
+    } catch (e) {
+      return "--";
     }
-
-    return '${hours.toString().padLeft(2, '0')}:${minutes}';
   }
-
   //
   InsertPrimaryInformationAndScheduleApi() async {
     inserting = true;
@@ -320,7 +333,12 @@ class ScheduleController extends GetxController {
     ];
   }
 
+  bool loadingInfo = false;
+
   Future<void> fetchPrimaryInformationApi() async {
+
+    loadingInfo = true;
+    update();
       try {
     String? token = await SharedPref().getToken();
     String? patientIDStr = await SharedPref().getId();
@@ -472,6 +490,8 @@ class ScheduleController extends GetxController {
     } catch (e,s) {
       debugPrint("Error: $s");
     }
+    loadingInfo = false;
+    update();
   }
 
   //imageUploadProcess

@@ -32,6 +32,9 @@ class EditProfileController extends GetxController{
   TextEditingController specialListNumberCT = TextEditingController();
   TextEditingController moreInfoCT = TextEditingController();
 
+  String weightUnit = "kg";
+  String heightUnit = "inches";
+
   PatientInfo? initialUserDetails;
   ProfileList ?profileList;
   Data? dataList;
@@ -159,7 +162,9 @@ class EditProfileController extends GetxController{
         "secondary_contact_number": secondaryNumberCT.text,
         "specialist_name": specialist_nameCT.text,
         "specialist_contact_number": secondaryNumberCT.text,
-        "moreinfo": moreInfoCT.text
+        "moreinfo": moreInfoCT.text,
+        "weight_unit": weightUnit,
+        "height_unit": heightUnit,
       };
 
       print('params$params');

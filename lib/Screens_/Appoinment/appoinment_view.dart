@@ -154,7 +154,8 @@ class AppointmentView extends StatelessWidget {
                         },
                         child: controller.isLoading
                             ? Center(child: CircularProgressIndicator())
-                            : ListView.builder(
+                            : controller.RequestAppointment.isNotEmpty
+                            ? ListView.builder(
                                 padding: EdgeInsets.all(8.0),
                                 itemCount: controller.searchedAppointments.isEmpty && controller.searchTEC.text.isEmpty && controller.displayDate==null
                                     ? controller.RequestAppointment.length
@@ -203,7 +204,7 @@ class AppointmentView extends StatelessWidget {
                                     ),
                                   );
                                 },
-                              ),
+                              ) : Center(child: Text("No requests to show")),
                       );
                     },
                   ),
@@ -221,7 +222,8 @@ class AppointmentView extends StatelessWidget {
                               Expanded(
                                 child: controller.isLoading
                                     ? Center(child: CircularProgressIndicator())
-                                    : ListView.builder(
+                                    : controller.ApprovedAppointment.isNotEmpty
+                                    ? ListView.builder(
                                         padding: EdgeInsets.all(8.0),
                                         itemCount: controller.searchedAppointments.isEmpty && controller.searchTEC.text.isEmpty && controller.displayDate==null
                                             ? controller.ApprovedAppointment.length
@@ -280,7 +282,7 @@ class AppointmentView extends StatelessWidget {
                                             ),
                                           );
                                         },
-                                      ),
+                                      ) : Center(child: Text("No requests to show")),
                               ),
                             ],
                           ));
@@ -336,7 +338,8 @@ class AppointmentView extends StatelessWidget {
                         },
                         child: controller.isLoading
                             ? Center(child: CircularProgressIndicator())
-                            : ListView.builder(
+                            : controller.ProcessingAppointment.isNotEmpty
+                            ? ListView.builder(
                                 padding: EdgeInsets.all(8.0),
                                 itemCount: controller.searchedAppointments.isEmpty && controller.searchTEC.text.isEmpty && controller.displayDate==null
                                     ? controller.ProcessingAppointment.length
@@ -402,7 +405,7 @@ class AppointmentView extends StatelessWidget {
                                     ),
                                   );
                                 },
-                              ),
+                              ) : Center(child: Text("No requests to show")),
                       );
                     },
                   ),
