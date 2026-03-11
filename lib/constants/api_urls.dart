@@ -57,6 +57,8 @@ class ApiUrls {
 
   String ServiceHistory = '$baseUrl/api/patients/patient/get-service-history';
 
+  String getVitalsForAppointment = '$baseUrl/api/patients/patient/get-service-vitals-by-days';
+
   String addReview = '$baseUrl/api/patients/patient/reviews/add';
 
   String unavailableDates = "$baseUrl/api/patients/patient/unavailable-dates/";

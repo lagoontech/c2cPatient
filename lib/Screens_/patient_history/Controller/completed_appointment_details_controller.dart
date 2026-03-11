@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'package:care2care/Screens_/patient_history/Models/vitals_model.dart';
 import 'package:care2care/constants/api_urls.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -7,7 +8,6 @@ import 'package:http/http.dart' as http;
 import '../../../../sharedPref/sharedPref.dart';
 import '../../../modals/Profile_modal.dart';
 import '../../Schedule/modal/medication_model.dart';
-
 
 class CompletedAppointmentDetailsController extends GetxController{
 
@@ -127,9 +127,14 @@ class CompletedAppointmentDetailsController extends GetxController{
   int ?caretakerId;
   bool noDataYet = false;
 
+  int ?appointmentId;
+  int ?patientId;
+
   //
   loadGetHistory({int? appointmentId, int? patientId}) async {
 
+    this.appointmentId = appointmentId;
+    this.patientId = patientId;
     loadingServiceHistory = true;
     update();
     print(appointmentId);
@@ -278,11 +283,73 @@ class CompletedAppointmentDetailsController extends GetxController{
       } else {
         print('Failed to load history: ${res.statusCode}');
         noDataYet = true;
-      }}catch(e){
-      print('Failed to load history: $e');
+      }}catch(e,s){
+      print('Failed to load history: $s');
     }
     loadingServiceHistory = false;
     update();
+  }
+
+  List<VitalsByDay> vitals = [];
+  bool loadingVitals = false;
+
+  var avg;
+
+  //
+  getVitals() async{
+
+    loadingVitals = true;
+    update();
+    try{
+      String? token = await SharedPref().getToken();
+      print(token);
+      final uri = Uri.parse(ApiUrls().getVitalsForAppointment).replace(
+        queryParameters: {
+          "appointment_id": appointmentId?.toString(),
+          "caretaker_id": caretakerId.toString(),
+          "patient_id": patientId?.toString(),
+        }
+      );
+      var res = await http.get(
+        uri,
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
+      if(res.statusCode == 200){
+        vitals = vitalsModelFromJson(res.body).data!.vitalsByDay!;
+        avg = calculateAverage(vitals);
+      }
+    }catch(e,s){
+      print("Error in getting vitals: $s");
+    }
+    loadingVitals = false;
+    update();
+
+  }
+
+  //
+  Map<String, String> calculateAverage(List<VitalsByDay> vitals) {
+    double bp = 0;
+    double heart = 0;
+    double resp = 0;
+    double temp = 0;
+
+    int count = vitals.length;
+
+    for (var v in vitals) {
+      bp += double.tryParse(v.vitalSigns?.bloodPressure ?? "0") ?? 0;
+      heart += double.tryParse(v.vitalSigns?.heartRate ?? "0") ?? 0;
+      resp += double.tryParse(v.vitalSigns?.respiratoryRate ?? "0") ?? 0;
+      temp += double.tryParse(v.vitalSigns?.temperature ?? "0") ?? 0;
+    }
+
+    return {
+      "bp": (bp / count).toStringAsFixed(1),
+      "heart": (heart / count).toStringAsFixed(0),
+      "resp": (resp / count).toStringAsFixed(0),
+      "temp": (temp / count).toStringAsFixed(1),
+    };
   }
 
 

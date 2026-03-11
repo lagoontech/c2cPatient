@@ -1,3 +1,4 @@
+import 'package:care2care/Screens_/patient_history/vitals_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -215,7 +216,23 @@ class CompletedAppointmentDetails extends StatelessWidget {
                           ),
                         ):Column(
                           children: [
-                            _buildSectionHeader("Baseline Vital Signs"),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                _buildSectionHeader("Baseline Vital Signs"),
+                                GestureDetector(
+                                  onTap: () {
+                                    Get.to(()=> VitalsView());
+                                    sc.getVitals();
+                                  },
+                                  child: Text("View in detail", style: TextStyle(
+                                    color: AppColors.primaryColor,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 14.sp,
+                                  )),
+                                ),
+                              ],
+                            ),
                             SizedBox(height: 8),
                             Card(
                               elevation: 1,

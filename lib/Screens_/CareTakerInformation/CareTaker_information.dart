@@ -176,17 +176,6 @@ class _CaretakerInformationState extends State<CaretakerInformation> {
                         icon: const Icon(IconlyLight.calendar)),
                   ],
                 ),
-                /*GetBuilder<CareTakerController>(builder: (v) {
-                  return CustomEasyDateTimeLine(
-                    disabledDates: v.getDisabledDates(),
-                    selectedDate: v.appointmentDate,
-                    onDateChange: (date) {
-                      v.appointmentDate = date;
-                      print("selected Date: $date");
-                      v.update();
-                    },
-                  );
-                }),*/
 
                 //
                 GetBuilder<CareTakerController>(

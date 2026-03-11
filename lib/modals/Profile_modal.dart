@@ -118,7 +118,7 @@ class PatientInfo {
   DateTime? dob;
   double? height;
   double? weight;
-  dynamic? bmi;
+  dynamic bmi;
   String? location;
   String? nationality;
   String? address;
@@ -376,6 +376,7 @@ class PatientSchedules {
   });
 
   factory PatientSchedules.fromJson(Map<String, dynamic> json) {
+    print(json["patient_vitalsigns"].runtimeType);
     return PatientSchedules(
       id: json["id"],
       patientId: json["patient_id"],
@@ -403,7 +404,10 @@ class PatientSchedules {
       patientToileting: json["patient_toileting"],
       patientWalkingtime: json["patient_walkingtime"],
       patientVitalsigns: json['patient_vitalsigns'] != null
-          ? PatientVitalSigns.fromJson(jsonDecode(json['patient_vitalsigns']))
+          ? PatientVitalSigns.fromJson(json["patient_vitalsigns"].runtimeType.toString()=="String"
+          ? jsonDecode(json['patient_vitalsigns'])
+            : json['patient_vitalsigns']
+      )
           : null,
       patientBloodsugar: json["patient_bloodsugar"],
       createdAt: json["created_at"] == null ? null : DateTime.parse(json["created_at"]),
