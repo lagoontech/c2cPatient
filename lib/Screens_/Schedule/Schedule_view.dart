@@ -204,10 +204,10 @@ class _ScheduleViewState extends State<ScheduleView> {
                       ),
                       kWidth20,
                       GetBuilder<ScheduleController>(builder: (n) {
-                        String? firstName =
-                            n.profile!.data!.patientInfo!.firstName!;
-                        String? lastname =
-                            n.profile!.data!.patientInfo!.lastName!;
+                        String firstName =
+                            n.profile?.data?.patientInfo?.firstName ?? '';
+                        String lastname =
+                            n.profile?.data?.patientInfo?.lastName ?? '';
 
                         return Column(
                           //mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -217,7 +217,7 @@ class _ScheduleViewState extends State<ScheduleView> {
                               height: 5.h,
                             ),
                             Text(
-                              '$firstName $lastname',
+                              '$firstName $lastname'.trim(),
                               style: TextStyle(
                                 color: Colors.black,
                                 fontWeight: FontWeight.bold,
@@ -225,7 +225,7 @@ class _ScheduleViewState extends State<ScheduleView> {
                             ),
                             kHeight10,
                             Text(
-                              n.profile!.data!.patientInfo!.sex!,
+                              n.profile?.data?.patientInfo?.sex ?? '',
                               style: TextStyle(color: Colors.black),
                             )
                           ],
@@ -359,29 +359,9 @@ class _ScheduleViewState extends State<ScheduleView> {
                           child: GetBuilder<ScheduleController>(
                             builder: (v) {
                               // Assign default snack time if empty or null, otherwise use existing snack time
-                              String selectedSnackTime = v.patientSchedules !=
-                                      null
-                                  ? v.patientSchedules!.patientSnackstime!
-                                  : ""; /*?.isNotEmpty == true
-                                ? v.patientSchedules!.patientSnackstime!
-                                : "06:00"; // Default to "06:00"
-*/
+                              String selectedSnackTime = v.patientSchedules?.patientSnackstime ?? "";
                               String formattedSelectedSnackTime =
                                   "06:00"; // Default value in case of errors
-
-                              // Safely split and format the time, ensuring it doesn't cause index errors
-                              /*     if (selectedSnackTime.contains(':')) {
-                              final timeParts = selectedSnackTime.split(':');
-                              if (timeParts.length == 2) {
-                                final hour = int.tryParse(timeParts[0]) ?? 0;
-                                final minute = timeParts[1];
-                                formattedSelectedSnackTime =
-                                    (hour % 12 == 0 ? 12 : hour % 12).toString().padLeft(2, '0') +
-                                        '.' +
-                                        minute +
-                                        (hour < 12 ? ' AM' : ' PM');
-                              }
-                            }*/
 
                               return Wrap(
                                 spacing: 8.0,
@@ -398,13 +378,15 @@ class _ScheduleViewState extends State<ScheduleView> {
                                       if (selected) {
                                         v.snacks.clear();
                                         v.snacks.add(name);
-                                        v.patientSchedules!.patientSnackstime =
-                                            name; // Update snack time
+                                        if (v.patientSchedules != null) {
+                                          v.patientSchedules!.patientSnackstime = name; // Update snack time
+                                        }
                                         v.update(); // Rebuild GetX state
                                       } else {
                                         v.snacks.remove(name);
-                                        v.patientSchedules!.patientSnackstime =
-                                            null; // Clear snack time
+                                        if (v.patientSchedules != null) {
+                                          v.patientSchedules!.patientSnackstime = null; // Clear snack time
+                                        }
                                         v.update();
                                       }
                                     },

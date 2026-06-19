@@ -44,21 +44,25 @@ class OtpController extends GetxController {
       debugPrint("userToken${savedToken}");
       bool locationIsEnabled = await Geolocator.isLocationServiceEnabled();
       await initialProfileDetails.fetchInitialUserDetails();
-      if (initialProfileDetails.profileList != null &&
-          initialProfileDetails.profileList!.data!.patientInfo != null && initialProfileDetails.profileList!.data!.patientSchedules!=null) {
+      final profileList = initialProfileDetails.profileList;
+      final data = profileList?.data;
+      final patientInfo = data?.patientInfo;
+      final patientSchedules = data?.patientSchedules;
+
+      if (profileList != null && data != null && patientInfo != null && patientSchedules != null) {
         print("Navigating to HomeView");
-        print("Profile List: ${initialProfileDetails.profileList}");
-        print("Patient Info: ${initialProfileDetails.profileList!.data!.patientInfo}");
+        print("Profile List: $profileList");
+        print("Patient Info: $patientInfo");
 
         Get.offAll(() => HomeView());
-      } else if(initialProfileDetails.profileList!=null && initialProfileDetails.profileList!.data!.patientInfo == null){
+      } else if (profileList != null && data != null && patientInfo == null) {
         print("Navigating to ProfileView");
         Get.offAll(() => ProfileView());
-      } else if(initialProfileDetails.profileList!=null && initialProfileDetails.profileList!.data!.patientSchedules==null){
-        Get.offAll(()=> PrimaryInformationView());
+      } else if (profileList != null && data != null && patientSchedules == null) {
+        Get.offAll(() => PrimaryInformationView());
       }
 
-      if( initialProfileDetails.profileList != null && initialProfileDetails.profileList!.data!.patientInfo != null){
+      if (profileList != null && data != null && patientInfo != null) {
         onUserDetailsCompleted();
       }
     /*  if (locationIsEnabled) {

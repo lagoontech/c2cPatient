@@ -165,7 +165,7 @@ class _ScheduleUpdateState extends State<ScheduleUpdate> {
                       MealTimeCard(
                         title: "Breakfast",
                         icon: "🌅",
-                        time: v.formatTime(v.patientSchedules!.patientBreakfasttime ?? "--"),
+                        time: v.formatTime(v.patientSchedules?.patientBreakfasttime ?? "--"),
                         onTap: () async {
                           final result = await showTimePickerDialog(context);
                           if (result != null && result.toString().isNotEmpty) {
@@ -180,7 +180,7 @@ class _ScheduleUpdateState extends State<ScheduleUpdate> {
                       MealTimeCard(
                         title: "Lunch",
                         icon: "🍛",
-                        time: v.formatTime(v.patientSchedules!.patientLunchtime ?? "--"),
+                        time: v.formatTime(v.patientSchedules?.patientLunchtime ?? "--"),
                         onTap: () async {
                           final result = await showTimePickerDialog(context);
                           if (result != null && result.toString().isNotEmpty) {
@@ -195,7 +195,7 @@ class _ScheduleUpdateState extends State<ScheduleUpdate> {
                       MealTimeCard(
                         title: "Snacks",
                         icon: "☕",
-                        time: v.formatTime(v.patientSchedules!.patientSnackstime ?? "--"),
+                        time: v.formatTime(v.patientSchedules?.patientSnackstime ?? "--"),
                         onTap: () async {
                           final result = await showTimePickerDialog(context);
                           if (result != null && result.toString().isNotEmpty) {
@@ -210,7 +210,7 @@ class _ScheduleUpdateState extends State<ScheduleUpdate> {
                       MealTimeCard(
                         title: "Dinner",
                         icon: "🌙",
-                        time: v.formatTime(v.patientSchedules!.patientDinnertime ?? "--"),
+                        time: v.formatTime(v.patientSchedules?.patientDinnertime ?? "--"),
                         onTap: () async {
                           final result = await showTimePickerDialog(context);
                           if (result != null && result.toString().isNotEmpty) {

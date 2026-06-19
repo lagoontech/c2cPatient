@@ -158,121 +158,121 @@ class CompletedAppointmentDetailsController extends GetxController{
         var data = json.decode(res.body);
         log(data.toString());
         profile = ProfileList.fromJson(data,isReport: true);
-        if (profile!.data != null && profile!.data!.patientSchedules != null) {
-          patientSchedules = profile!.data!.patientSchedules!;
+        final schedules = profile?.data?.patientSchedules;
+        if (schedules != null) {
+          patientSchedules = schedules;
           pastSurgicalCT.text =
-              patientSchedules!.patientPastsurgicalhistory ?? "";
-          breakfastField.text = patientSchedules!.patientBreakfast ?? "";
-          lunchField.text = patientSchedules!.patientLunch ?? "";
-          snacksField.text = patientSchedules!.patientSnack ?? "";
-          dinnerField.text = patientSchedules!.patientDinner ?? "";
-          lunchDetail = patientSchedules!.patientLunch ?? "";
-          snacksDetail = patientSchedules!.patientSnack ?? "";
-          dinnerDetail = patientSchedules!.patientDinner ?? "";
-          breakFastDetail = patientSchedules!.patientBreakfast ?? "";
+              schedules.patientPastsurgicalhistory ?? "";
+          breakfastField.text = schedules.patientBreakfast ?? "";
+          lunchField.text = schedules.patientLunch ?? "";
+          snacksField.text = schedules.patientSnack ?? "";
+          dinnerField.text = schedules.patientDinner ?? "";
+          lunchDetail = schedules.patientLunch ?? "";
+          snacksDetail = schedules.patientSnack ?? "";
+          dinnerDetail = schedules.patientDinner ?? "";
+          breakFastDetail = schedules.patientBreakfast ?? "";
           print(breakFastDetail);
-          activityCT.text = patientSchedules!.patientActivitytype ?? "";
-          toileting.text = patientSchedules!.patientToileting ?? "";
-          temp.text = patientSchedules!.patientVitalsigns!.temperature ?? "";
-          bp.text = patientSchedules!.patientVitalsigns!.bloodPressure!;
-          selectedWalkingTimings = jsonDecode(patientSchedules!.patientWalkingtime!);
+          activityCT.text = schedules.patientActivitytype ?? "";
+          toileting.text = schedules.patientToileting ?? "";
+          temp.text = schedules.patientVitalsigns?.temperature ?? "";
+          bp.text = schedules.patientVitalsigns?.bloodPressure ?? "";
+          final walkingTimeVal = schedules.patientWalkingtime;
+          selectedWalkingTimings = walkingTimeVal != null ? jsonDecode(walkingTimeVal) : [];
           print(selectedWalkingTimings);
           heartRate.text =
-              patientSchedules!.patientVitalsigns!.heartRate.toString();
+              schedules.patientVitalsigns?.heartRate?.toString() ?? "";
           respiration.text =
-          patientSchedules!.patientVitalsigns!.respiratoryRate!;
+              schedules.patientVitalsigns?.respiratoryRate ?? "";
 
           ///
-          if (patientSchedules!.patientBreakfasttime != null &&
-              patientSchedules!.patientBreakfasttime!.isNotEmpty) {
+          final breakfastTime = schedules.patientBreakfasttime;
+          if (breakfastTime != null && breakfastTime.isNotEmpty) {
             filters.clear();
-            filters.add(patientSchedules!.patientBreakfasttime!);
+            filters.add(breakfastTime);
             update();
           }
 
-          print(patientSchedules!.patientMedications);
-          if (patientSchedules!.patientMedications != null &&
-              patientSchedules!.patientMedications!.isNotEmpty) {
+          print(schedules.patientMedications);
+          final medications = schedules.patientMedications;
+          if (medications != null && medications.isNotEmpty) {
             medidation = "Morning";
             meditationDetails = [
               MedicationModel(time: "Morning",medicationDetails: []),
               MedicationModel(time: "Noon",medicationDetails: []),
               MedicationModel(time: "Evening",medicationDetails: []),
             ];
-            var medicationValues = jsonDecode(patientSchedules!.patientMedications!);
+            var medicationValues = jsonDecode(medications);
             medicationValues.keys.forEach((time) {
               List<dynamic> ?details = medicationValues[time];
-              if(time == "Morning"){
-                details!.forEach((element) {
-                  meditationDetails[0].medicationDetails!.add(TextEditingController(text:element.toString()));
-                });
-              }
-              if(time == "Noon"){
-                details!.forEach((element) {
-                  meditationDetails[1].medicationDetails!.add(TextEditingController(text:element.toString()));
-                });
-              }
-              if(time == "Evening"){
-                details!.forEach((element) {
-                  meditationDetails[2].medicationDetails!.add(TextEditingController(text:element.toString()));
-                });
+              if(details != null) {
+                if(time == "Morning"){
+                  details.forEach((element) {
+                    meditationDetails[0].medicationDetails!.add(TextEditingController(text:element.toString()));
+                  });
+                }
+                if(time == "Noon"){
+                  details.forEach((element) {
+                    meditationDetails[1].medicationDetails!.add(TextEditingController(text:element.toString()));
+                  });
+                }
+                if(time == "Evening"){
+                  details.forEach((element) {
+                    meditationDetails[2].medicationDetails!.add(TextEditingController(text:element.toString()));
+                  });
+                }
               }
             });
             selectedMedication = medidation;
             debugPrint(medidation);
             update();
           }
-          if (patientSchedules!.patientOralcare != null &&
-              patientSchedules!.patientOralcare!.isNotEmpty) {
-            //oralSelection = patientSchedules!.patientOralcare!;
-            selectedOralCareTimings = jsonDecode(patientSchedules!.patientOralcare!);
+          final oralCare = schedules.patientOralcare;
+          if (oralCare != null && oralCare.isNotEmpty) {
+            selectedOralCareTimings = jsonDecode(oralCare);
             debugPrint(medidation);
             update();
           }
-          if (patientSchedules!.patientBathing != null &&
-              patientSchedules!.patientBathing!.isNotEmpty) {
-            //bathingSelection = patientSchedules!.patientBathing!;
-            selectedBathingTimings = jsonDecode(patientSchedules!.patientBathing!);
-
+          final bathing = schedules.patientBathing;
+          if (bathing != null && bathing.isNotEmpty) {
+            selectedBathingTimings = jsonDecode(bathing);
             debugPrint(medidation);
             update();
           }
-          if (patientSchedules!.patientDressing != null &&
-              patientSchedules!.patientDressing!.isNotEmpty) {
-            //dressingSelection = patientSchedules!.patientDressing!;
-            selectedDressingTimings = jsonDecode(patientSchedules!.patientDressing!);
+          final dressing = schedules.patientDressing;
+          if (dressing != null && dressing.isNotEmpty) {
+            selectedDressingTimings = jsonDecode(dressing);
             debugPrint(medidation);
             update();
           }
 
-          if (patientSchedules!.patientLunchtime != null &&
-              patientSchedules!.patientLunchtime!.isNotEmpty) {
+          final lunchFiltersVal = schedules.patientLunchtime;
+          if (lunchFiltersVal != null && lunchFiltersVal.isNotEmpty) {
             lunchFilters.clear();
-            lunchFilters.add(patientSchedules!.patientLunchtime!);
+            lunchFilters.add(lunchFiltersVal);
             update();
           }
-          if (patientSchedules!.patientHydration != null &&
-              patientSchedules!.patientHydration!.isNotEmpty) {
-            hydrationTEC.text = patientSchedules!.patientHydration!;
+          final hydrationVal = schedules.patientHydration;
+          if (hydrationVal != null && hydrationVal.isNotEmpty) {
+            hydrationTEC.text = hydrationVal;
             update();
           }
 
-          if (patientSchedules!.patientSnackstime != null &&
-              patientSchedules!.patientSnackstime!.isNotEmpty) {
+          final snacksVal = schedules.patientSnackstime;
+          if (snacksVal != null && snacksVal.isNotEmpty) {
             snacks.clear();
-            snacks.add(patientSchedules!.patientSnackstime!);
+            snacks.add(snacksVal);
             update();
           }
 
-          if (patientSchedules!.patientDinnertime != null &&
-              patientSchedules!.patientDinnertime!.isNotEmpty) {
+          final dinnerVal = schedules.patientDinnertime;
+          if (dinnerVal != null && dinnerVal.isNotEmpty) {
             dinner.clear();
-            dinner.add(patientSchedules!.patientDinnertime!);
+            dinner.add(dinnerVal);
             update();
           }
-          if (patientSchedules!.patientBloodsugar != null &&
-              patientSchedules!.patientBloodsugar!.isNotEmpty) {
-            bloodSugarTEC.text = patientSchedules!.patientBloodsugar!;
+          final bloodSugarVal = schedules.patientBloodsugar;
+          if (bloodSugarVal != null && bloodSugarVal.isNotEmpty) {
+            bloodSugarTEC.text = bloodSugarVal;
             update();
           }
           noDataYet = false;
@@ -317,7 +317,7 @@ class CompletedAppointmentDetailsController extends GetxController{
         },
       );
       if(res.statusCode == 200){
-        vitals = vitalsModelFromJson(res.body).data!.vitalsByDay!;
+        vitals = vitalsModelFromJson(res.body).data?.vitalsByDay ?? [];
         avg = calculateAverage(vitals);
       }
     }catch(e,s){

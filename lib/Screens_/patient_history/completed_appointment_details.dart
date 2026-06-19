@@ -21,8 +21,9 @@ class CompletedAppointmentDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final dates = appointmentDates ?? [];
     if(sc.patientSchedules == null){
-      sc.selectedDate = appointmentDates![0];
+      sc.selectedDate = dates.isNotEmpty ? dates[0] : DateTime.now();
       sc.caretakerId = caretakerId;
       sc.loadGetHistory(patientId: patientId, appointmentId: appointmentId);
     }
@@ -72,11 +73,11 @@ class CompletedAppointmentDetails extends StatelessWidget {
                                       child: TableCalendar(
                                         enabledDayPredicate: (v){
                                           bool isAppointmentDate = false;
-                                          appointmentDates!.forEach((element) {
+                                          for (var element in dates) {
                                             if(DateFormat("MMM dd yyyy").format(element) == DateFormat("MMM dd yyyy").format(v)){
                                               isAppointmentDate = true;
                                             }
-                                          });
+                                          }
                                           return isAppointmentDate;
                                         },
                                         calendarBuilders: CalendarBuilders(
@@ -96,13 +97,14 @@ class CompletedAppointmentDetails extends StatelessWidget {
                                           },
                                           defaultBuilder: (context, date, _) {
                                             bool isAppointmentDate = false;
-                                            appointmentDates!.forEach((element) {
+                                            for (var element in dates) {
                                               if(DateFormat("MMM dd yyyy").format(element) == DateFormat("MMM dd yyyy").format(date)){
                                                 isAppointmentDate = true;
                                               }
-                                            });
+                                            }
                                             Color ?cellColor;
-                                            if (isAppointmentDate && DateFormat("MMM dd yyyy").format(sc.selectedDate!) == DateFormat("MMM dd yyyy").format(date)) {
+                                            final selDate = sc.selectedDate;
+                                            if (isAppointmentDate && selDate != null && DateFormat("MMM dd yyyy").format(selDate) == DateFormat("MMM dd yyyy").format(date)) {
                                               cellColor = Colors.green;
                                             } else if (isAppointmentDate) {
                                               cellColor = AppColors.primaryColor;
@@ -135,15 +137,15 @@ class CompletedAppointmentDetails extends StatelessWidget {
                                               appointmentId: appointmentId, patientId: patientId);
                                           Get.back();
                                         },
-                                        focusedDay: appointmentDates![0],
-                                        firstDay: appointmentDates![0],
+                                        focusedDay: dates.isNotEmpty ? dates[0] : DateTime.now(),
+                                        firstDay: dates.isNotEmpty ? dates[0] : DateTime.now(),
                                         lastDay: DateTime(2050),
                                         currentDay: sc.selectedDate,
                                         calendarStyle: CalendarStyle(
                                           outsideDaysVisible: false,
                                         ),
                                         /*selectedDayPredicate: (day) {
-                                          return appointmentDates!.any((date) => isSameDay(date, day));
+                                          return dates.any((date) => isSameDay(date, day));
                                         },*/
                                       ),
                                     ),

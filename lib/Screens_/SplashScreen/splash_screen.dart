@@ -43,24 +43,28 @@ class SplashScreenState extends State<SplashScreen> {
     InitialProfileDetails initialProfileDetails =
     Get.put(InitialProfileDetails());
     await initialProfileDetails.fetchInitialUserDetails();
-    if (initialProfileDetails.profileList != null &&
-        initialProfileDetails.profileList!.data!.patientInfo != null && initialProfileDetails.profileList!.data!.patientSchedules!=null) {
+    final profileList = initialProfileDetails.profileList;
+    final data = profileList?.data;
+    final patientInfo = data?.patientInfo;
+    final patientSchedules = data?.patientSchedules;
+
+    if (profileList != null && data != null && patientInfo != null && patientSchedules != null) {
       print("Navigating to HomeView");
-      print("Profile List: ${initialProfileDetails.profileList}");
-      print("Patient Info: ${initialProfileDetails.profileList!.data!.patientInfo}");
+      print("Profile List: $profileList");
+      print("Patient Info: $patientInfo");
 
       Get.offAll(() => HomeView());
       return;
-    } else if(initialProfileDetails.profileList!=null && initialProfileDetails.profileList!.data!.patientInfo == null){
+    } else if (profileList != null && data != null && patientInfo == null) {
       print("Navigating to ProfileView");
       Get.offAll(() => ProfileView());
       return;
-    } else if(initialProfileDetails.profileList!=null && initialProfileDetails.profileList!.data!.patientSchedules==null){
-      Get.offAll(()=> PrimaryInformationView());
+    } else if (profileList != null && data != null && patientSchedules == null) {
+      Get.offAll(() => PrimaryInformationView());
       return;
     }
 
-    if( initialProfileDetails.profileList != null && initialProfileDetails.profileList!.data!.patientInfo != null){
+    if (profileList != null && data != null && patientInfo != null) {
       onUserDetailsCompleted();
     }
     bool isDetailsComplete = await SharedPref().getRegisterComplete();

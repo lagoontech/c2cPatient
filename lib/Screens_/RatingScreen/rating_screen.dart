@@ -18,13 +18,15 @@ class RatingScreen extends StatelessWidget {
      this.name,
      this.appointmentDates,
      this.appointmentTime,
-     this.careTakerId
+     this.careTakerId,
+     this.imageUrl
    });
 
    String ?name;
    String ?appointmentTime;
    List<DateTime> ?appointmentDates;
    int ?careTakerId;
+   String ?imageUrl;
 
    RatingController rc = Get.put(RatingController());
 
@@ -49,7 +51,7 @@ class RatingScreen extends StatelessWidget {
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 8.w,vertical: 8.h),
                 child: AppointmentsContainer(
-                    imageUrl: "",
+                    imageUrl: imageUrl ?? "",
                     appointmentDates: appointmentDates!,
                     appointmentTime: appointmentTime!,
                     doctorName: name!,

@@ -145,7 +145,8 @@ class AppointmentsContainer extends StatelessWidget {
                     children: [
                       CircleAvatar(
                         radius: 25.r,
-                        backgroundImage: NetworkImage(imageUrl),
+                        backgroundImage: imageUrl.startsWith('http') ? NetworkImage(imageUrl) : null,
+                        child: !imageUrl.startsWith('http') ? Icon(Icons.person, size: 25.r) : null,
                       ),
                       SizedBox(width: 10.w),
                       Expanded(

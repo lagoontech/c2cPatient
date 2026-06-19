@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:care2care/ReusableUtils_/toast2.dart';
-import 'package:care2care/Utils/date_utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
@@ -180,24 +179,24 @@ class AppointmentStatusController extends GetxController {
     if(completedOnly){
       searchedCompletedAppointment = CompletedAppointment.where((app)
       {
-        var hasAppointment = false;
-        if(displayDate==null)
-          hasAppointment = app.caretaker!.caretakerInfo!.firstName!.toLowerCase().contains(
-              searchTEC.text.toLowerCase());
-        else if(displayDate!=null && searchTEC.text.isNotEmpty) {
-          bool has = false;
-          has = app.caretaker!.caretakerInfo!.firstName!.toLowerCase().contains(
-              searchTEC.text.toLowerCase());
-          has = app.appointmentDates![0].isAtSameMomentAs(selectedDate!)
-              || app.appointmentDates!.last.isAtSameMomentAs(selectedDate!)
-              || (selectedDate!.isAfter(app.appointmentDates![0]) && selectedDate!.isBefore(app.appointmentDates!.last));
-          hasAppointment = has;
+        final name = app.caretaker?.caretakerInfo?.firstName ?? '';
+        final dates = app.appointmentDates;
+        if(displayDate==null) {
+          return name.toLowerCase().contains(searchTEC.text.toLowerCase());
+        } else if(displayDate!=null && searchTEC.text.isNotEmpty) {
+          bool nameMatch = name.toLowerCase().contains(searchTEC.text.toLowerCase());
+          if (!nameMatch) return false;
+          if (dates == null || dates.isEmpty || selectedDate == null) return false;
+          return dates.first.isAtSameMomentAs(selectedDate!)
+              || dates.last.isAtSameMomentAs(selectedDate!)
+              || (selectedDate!.isAfter(dates.first) && selectedDate!.isBefore(dates.last));
         } else if(displayDate!=null){
-          hasAppointment = app.appointmentDates![0].isAtSameMomentAs(selectedDate!)
-              || app.appointmentDates!.last.isAtSameMomentAs(selectedDate!)
-              || (selectedDate!.isAfter(app.appointmentDates![0]) && selectedDate!.isBefore(app.appointmentDates!.last));
+          if (dates == null || dates.isEmpty || selectedDate == null) return false;
+          return dates.first.isAtSameMomentAs(selectedDate!)
+              || dates.last.isAtSameMomentAs(selectedDate!)
+              || (selectedDate!.isAfter(dates.first) && selectedDate!.isBefore(dates.last));
         }
-        return hasAppointment;
+        return false;
       }
       ).toList();
       update();
@@ -207,71 +206,71 @@ class AppointmentStatusController extends GetxController {
     if(currentTab == 0){
       searchedRequestAppointment = RequestAppointment.where((app)
       {
-        var hasAppointment = false;
-        if(displayDate==null)
-          hasAppointment = app.caretaker!.caretakerInfo!.firstName!.toLowerCase().contains(
-              searchTEC.text.toLowerCase());
-        else if(displayDate!=null && searchTEC.text.isNotEmpty) {
-          bool has = false;
-          has = app.caretaker!.caretakerInfo!.firstName!.toLowerCase().contains(
-              searchTEC.text.toLowerCase());
-          has = app.appointmentDates![0].isAtSameMomentAs(selectedDate!)
-              || app.appointmentDates!.last.isAtSameMomentAs(selectedDate!)
-               || (selectedDate!.isAfter(app.appointmentDates![0]) && selectedDate!.isBefore(app.appointmentDates!.last));
-          hasAppointment = has;
+        final name = app.caretaker?.caretakerInfo?.firstName ?? '';
+        final dates = app.appointmentDates;
+        if(displayDate==null) {
+          return name.toLowerCase().contains(searchTEC.text.toLowerCase());
+        } else if(displayDate!=null && searchTEC.text.isNotEmpty) {
+          bool nameMatch = name.toLowerCase().contains(searchTEC.text.toLowerCase());
+          if (!nameMatch) return false;
+          if (dates == null || dates.isEmpty || selectedDate == null) return false;
+          return dates.first.isAtSameMomentAs(selectedDate!)
+              || dates.last.isAtSameMomentAs(selectedDate!)
+              || (selectedDate!.isAfter(dates.first) && selectedDate!.isBefore(dates.last));
         } else if(displayDate!=null){
-          hasAppointment = app.appointmentDates![0].isAtSameMomentAs(selectedDate!)
-              || app.appointmentDates!.last.isAtSameMomentAs(selectedDate!)
-              || (selectedDate!.isAfter(app.appointmentDates![0]) && selectedDate!.isBefore(app.appointmentDates!.last));
+          if (dates == null || dates.isEmpty || selectedDate == null) return false;
+          return dates.first.isAtSameMomentAs(selectedDate!)
+              || dates.last.isAtSameMomentAs(selectedDate!)
+              || (selectedDate!.isAfter(dates.first) && selectedDate!.isBefore(dates.last));
         }
-        return hasAppointment;
+        return false;
       }
       ).toList();
     }
     if(currentTab == 1){
       searchedAppointments = ApprovedAppointment.where((app) {
-        var hasAppointment = false;
-        if(displayDate==null)
-          hasAppointment = app.caretaker!.caretakerInfo!.firstName!.toLowerCase().contains(
-              searchTEC.text.toLowerCase());
-        else if(displayDate!=null && searchTEC.text.isNotEmpty) {
-          bool has = false;
-          has = app.caretaker!.caretakerInfo!.firstName!.toLowerCase().contains(
-              searchTEC.text.toLowerCase());
-          has = app.appointmentDates![0].isAtSameMomentAs(selectedDate!)
-              || app.appointmentDates!.last.isAtSameMomentAs(selectedDate!)
-              || (selectedDate!.isAfter(app.appointmentDates![0]) && selectedDate!.isBefore(app.appointmentDates!.last));
-          hasAppointment = has;
+        final name = app.caretaker?.caretakerInfo?.firstName ?? '';
+        final dates = app.appointmentDates;
+        if(displayDate==null) {
+          return name.toLowerCase().contains(searchTEC.text.toLowerCase());
+        } else if(displayDate!=null && searchTEC.text.isNotEmpty) {
+          bool nameMatch = name.toLowerCase().contains(searchTEC.text.toLowerCase());
+          if (!nameMatch) return false;
+          if (dates == null || dates.isEmpty || selectedDate == null) return false;
+          return dates.first.isAtSameMomentAs(selectedDate!)
+              || dates.last.isAtSameMomentAs(selectedDate!)
+              || (selectedDate!.isAfter(dates.first) && selectedDate!.isBefore(dates.last));
         } else if(displayDate!=null){
-          hasAppointment = app.appointmentDates![0].isAtSameMomentAs(selectedDate!)
-              || app.appointmentDates!.last.isAtSameMomentAs(selectedDate!)
-              || (selectedDate!.isAfter(app.appointmentDates![0]) && selectedDate!.isBefore(app.appointmentDates!.last));
+          if (dates == null || dates.isEmpty || selectedDate == null) return false;
+          return dates.first.isAtSameMomentAs(selectedDate!)
+              || dates.last.isAtSameMomentAs(selectedDate!)
+              || (selectedDate!.isAfter(dates.first) && selectedDate!.isBefore(dates.last));
         }
-        return hasAppointment;
+        return false;
       }
       ).toList();
     }
     if(currentTab == 2){
       searchedProcessingAppointment = ProcessingAppointment.where((app)
       {
-        var hasAppointment = false;
-        if(displayDate==null)
-          hasAppointment = app.caretaker!.caretakerInfo!.firstName!.toLowerCase().contains(
-              searchTEC.text.toLowerCase());
-        else if(displayDate!=null && searchTEC.text.isNotEmpty) {
-          bool has = false;
-          has = app.caretaker!.caretakerInfo!.firstName!.toLowerCase().contains(
-              searchTEC.text.toLowerCase());
-          has = app.appointmentDates![0].isAtSameMomentAs(selectedDate!)
-              || app.appointmentDates!.last.isAtSameMomentAs(selectedDate!)
-              || (selectedDate!.isAfter(app.appointmentDates![0]) && selectedDate!.isBefore(app.appointmentDates!.last));
-          hasAppointment = has;
+        final name = app.caretaker?.caretakerInfo?.firstName ?? '';
+        final dates = app.appointmentDates;
+        if(displayDate==null) {
+          return name.toLowerCase().contains(searchTEC.text.toLowerCase());
+        } else if(displayDate!=null && searchTEC.text.isNotEmpty) {
+          bool nameMatch = name.toLowerCase().contains(searchTEC.text.toLowerCase());
+          if (!nameMatch) return false;
+          if (dates == null || dates.isEmpty || selectedDate == null) return false;
+          return dates.first.isAtSameMomentAs(selectedDate!)
+              || dates.last.isAtSameMomentAs(selectedDate!)
+              || (selectedDate!.isAfter(dates.first) && selectedDate!.isBefore(dates.last));
         } else if(displayDate!=null){
-          hasAppointment = app.appointmentDates![0].isAtSameMomentAs(selectedDate!)
-              || app.appointmentDates!.last.isAtSameMomentAs(selectedDate!)
-              || (selectedDate!.isAfter(app.appointmentDates![0]) && selectedDate!.isBefore(app.appointmentDates!.last));
+          if (dates == null || dates.isEmpty || selectedDate == null) return false;
+          return dates.first.isAtSameMomentAs(selectedDate!)
+              || dates.last.isAtSameMomentAs(selectedDate!)
+              || (selectedDate!.isAfter(dates.first) && selectedDate!.isBefore(dates.last));
         }
-        return hasAppointment;
+        return false;
       }).toList();
     }
     update();

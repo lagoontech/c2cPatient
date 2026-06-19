@@ -22,6 +22,15 @@ class PatientHistoryView extends StatefulWidget {
 class _PatientHistoryViewState extends State<PatientHistoryView> {
   AppointmentStatusController controller =
       Get.put(AppointmentStatusController());
+  final TextEditingController dateTEC = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    if (controller.displayDate != null) {
+      dateTEC.text = controller.displayDate!;
+    }
+  }
 
   Future<void> _onRefresh() async {
     await controller.fetchAppointments();
@@ -170,114 +179,89 @@ class _PatientHistoryViewState extends State<PatientHistoryView> {
           onRefresh: _onRefresh,
           child: Column(
             children: [
-
               Padding(
-                padding: EdgeInsets.symmetric(
-                    horizontal: 2.h,
-                    vertical: 2.h),
+                padding: EdgeInsets.symmetric(horizontal: 2.h, vertical: 2.h),
                 child: Row(
                   children: [
-
                     Expanded(
-                      flex: 3,
+                      flex: 2,
                       child: SizedBox(
-                        height: kToolbarHeight * 0.9,
+                        height: 56.h,
                         child: customTextField(
                           context,
-                          onChanged: (v){
+                          onChanged: (v) {
                             controller.searchAppointments(completedOnly: true);
                           },
-                          hint: "Search appointments",
+                          hint: "Appointments",
                           controller: controller.searchTEC,
                           borderColor: AppColors.primaryColor,
                           labelText: "",
                           prefix: Icon(Icons.search),
+                          height: 56.h,
                         ),
                       ),
                     ),
-
                     SizedBox(width: 12.w),
-
                     Expanded(
                       flex: 2,
-                      child: GestureDetector(
-                        onTap: (){
-                          _selectDate(context);
-                        },
-                        child: Container(
-                          height: kToolbarHeight * 0.9,
-                          decoration: BoxDecoration(
-                            border: Border.all(color: AppColors.primaryColor),
-                            borderRadius: BorderRadius.circular(8.r),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-
-                              Icon(Icons.calendar_month),
-
-                              SizedBox(width: 4.w),
-
-                              GetBuilder<AppointmentStatusController>(
-                                  builder: (vc) {
-                                    return controller.selectedDate!=null
-                                        ? Text(controller.displayDate.toString(),style: TextStyle(
-                                        fontSize: 12.sp
-                                    ),)
-                                        : Center(child: Text("Select a date",style: TextStyle(
-                                        color: Colors.grey,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w400,
-                                        fontFamily: "verdana_regular"
-                                    ),));
-
-                                  }
-                              ),
-
-                              SizedBox(width: 2.w),
-
-                              GetBuilder<AppointmentStatusController>(
-                                  builder: (vc) {
-                                    return controller.selectedDate!=null
-                                        ? GestureDetector(
-                                        onTap: (){
-                                          controller.selectedDate = null;
-                                          controller.displayDate = null;
-                                          controller.update();
-                                          controller.searchAppointments(completedOnly: true);
-                                        },
-                                        child: Icon(Icons.cancel_outlined)
+                      child: GetBuilder<AppointmentStatusController>(
+                        builder: (vc) {
+                          return SizedBox(
+                            height: 56.h,
+                            child: customTextField(
+                              context,
+                              readOnly: true,
+                              onTap: () {
+                                _selectDate(context);
+                              },
+                              hint: "Select a date",
+                              controller: dateTEC,
+                              borderColor: AppColors.primaryColor,
+                              labelText: "",
+                              prefix: Icon(Icons.calendar_month),
+                              height: 56.h,
+                              suffix: controller.selectedDate != null
+                                  ? GestureDetector(
+                                      onTap: () {
+                                        controller.selectedDate = null;
+                                        controller.displayDate = null;
+                                        dateTEC.clear();
+                                        controller.update();
+                                        controller.searchAppointments(
+                                            completedOnly: true);
+                                      },
+                                      child: Icon(Icons.cancel_outlined),
                                     )
-                                        : SizedBox();
-                                  }
-                              )
-
-                            ],
-                          ),
-                        ),
+                                  : SizedBox(width: 20.h, height: 20.h),
+                            ),
+                          );
+                        },
                       ),
-                    )
-
+                    ),
                   ],
                 ),
               ),
-
               Expanded(
                 child: GetBuilder<AppointmentStatusController>(builder: (v) {
-                    if(controller.CompletedAppointment.isEmpty){
-                      return Center(
-                         child: Text("No Data Available "),
-                      );
-                    }
+                  if (controller.CompletedAppointment.isEmpty) {
+                    return Center(
+                      child: Text("No Data Available "),
+                    );
+                  }
                   return ListView.builder(
-                      itemCount: controller.searchedCompletedAppointment.isEmpty && controller.searchTEC.text.isEmpty && controller.displayDate==null
-                          ? controller.CompletedAppointment.length
-                          : controller.searchedCompletedAppointment.length,
+                      itemCount:
+                          controller.searchedCompletedAppointment.isEmpty &&
+                                  controller.searchTEC.text.isEmpty &&
+                                  controller.displayDate == null
+                              ? controller.CompletedAppointment.length
+                              : controller.searchedCompletedAppointment.length,
                       itemBuilder: (context, index) {
                         StatusData completed;
-                        if(controller.searchedCompletedAppointment.isNotEmpty){
-                          completed = controller.searchedCompletedAppointment[index];
-                        }else {
+                        if (controller
+                            .searchedCompletedAppointment.isNotEmpty) {
+                          completed =
+                              controller.searchedCompletedAppointment[index];
+                        } else {
                           completed = controller.CompletedAppointment[index];
                         }
                         return Padding(
@@ -289,12 +273,14 @@ class _PatientHistoryViewState extends State<PatientHistoryView> {
                             child: InkWell(
                               onTap: () async {
                                 print(completed.appointmentId);
-                                Get.to(()=> CompletedAppointmentDetails(
-                                  patientId: completed.patientId,
-                                  appointmentId: completed.id,
-                                  appointmentDates: completed.appointmentDates,
-                                  caretakerId: completed.caretakerId,
-                                ));
+                                Get.to(() => CompletedAppointmentDetails(
+                                      patientId: completed.patientId,
+                                      appointmentId: completed.id,
+                                      appointmentDates:
+                                          completed.appointmentDates ??
+                                              [DateTime.now()],
+                                      caretakerId: completed.caretakerId,
+                                    ));
                               },
                               child: Container(
                                 padding: EdgeInsets.all(12.r),
@@ -308,8 +294,23 @@ class _PatientHistoryViewState extends State<PatientHistoryView> {
                                       padding: const EdgeInsets.only(top: 9.0),
                                       child: CircleAvatar(
                                         radius: 34.r,
-                                        backgroundImage: NetworkImage(
-                                            '${v.appointmentStatus!.profilePath}${completed.caretaker!.profileImageUrl}'),
+                                        backgroundImage: (v.appointmentStatus
+                                                        ?.profilePath !=
+                                                    null &&
+                                                completed.caretaker
+                                                        ?.profileImageUrl !=
+                                                    null)
+                                            ? NetworkImage(
+                                                '${v.appointmentStatus!.profilePath}${completed.caretaker!.profileImageUrl}')
+                                            : null,
+                                        child:
+                                            (v.appointmentStatus?.profilePath ==
+                                                        null ||
+                                                    completed.caretaker
+                                                            ?.profileImageUrl ==
+                                                        null)
+                                                ? Icon(Icons.person, size: 34.r)
+                                                : null,
                                       ),
                                     ),
                                     SizedBox(width: 12.w),
@@ -318,37 +319,38 @@ class _PatientHistoryViewState extends State<PatientHistoryView> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-
                                           Padding(
                                             padding: EdgeInsets.symmetric(
                                                 vertical: 2.h),
                                             child: Row(
                                               children: [
                                                 Text(
-                                                  completed.caretaker!
-                                                      .caretakerInfo!.firstName!,
+                                                  completed
+                                                          .caretaker
+                                                          ?.caretakerInfo
+                                                          ?.firstName ??
+                                                      'Caretaker',
                                                   style: TextStyle(
-                                                    fontSize: 15.sp,
-                                                    color: Colors.green[
-                                                        700],
-                                                    fontWeight: FontWeight.w600// Color for the value
-                                                  ),
+                                                      fontSize: 15.sp,
+                                                      color: Colors.green[700],
+                                                      fontWeight: FontWeight
+                                                          .w600 // Color for the value
+                                                      ),
                                                 ),
-
                                                 Expanded(
                                                   child: Align(
-                                                    alignment: Alignment.centerRight,
+                                                    alignment:
+                                                        Alignment.centerRight,
                                                     child: Text(
-                                                      '${completed.serviceStatus.toString().capitalizeFirst}',
+                                                      '${completed.serviceStatus?.capitalizeFirst ?? ''}',
                                                       style: TextStyle(
                                                         fontSize: 14.sp,
                                                         color: Colors.green[
-                                                        700], // Color for the value
+                                                            700], // Color for the value
                                                       ),
                                                     ),
                                                   ),
                                                 ),
-
                                               ],
                                             ),
                                           ),
@@ -359,28 +361,38 @@ class _PatientHistoryViewState extends State<PatientHistoryView> {
                                                 vertical: 4.h),
                                             child: Row(
                                               children: [
-
-                                                Text(
-                                                  DateFormat('MMM dd').format(
-                                                      DateTime.parse(completed
-                                                          .appointmentDates![0]
-                                                          .toString())),
-                                                  style: TextStyle(
-                                                    fontSize: 12.sp,
-                                                    color: Colors.grey.shade500, // Color for the value
+                                                if (completed
+                                                            .appointmentDates !=
+                                                        null &&
+                                                    completed.appointmentDates!
+                                                        .isNotEmpty) ...[
+                                                  Text(
+                                                    DateFormat('MMM dd').format(
+                                                        completed
+                                                            .appointmentDates![0]),
+                                                    style: TextStyle(
+                                                      fontSize: 12.sp,
+                                                      color: Colors.grey
+                                                          .shade500, // Color for the value
+                                                    ),
                                                   ),
-                                                ),
-                                               completed.appointmentDates!.length> 1
-                                                   ? Text(
-                                                  " To "+DateFormat('MMM dd').format(
-                                                      DateTime.parse(completed
-                                                          .appointmentDates!.last
-                                                          .toString())),
-                                                  style: TextStyle(
-                                                    fontSize: 12.sp,
-                                                    color: Colors.grey.shade500, // Color for the value
-                                                  ),
-                                                ) : SizedBox(),
+                                                  if (completed
+                                                          .appointmentDates!
+                                                          .length >
+                                                      1)
+                                                    Text(
+                                                      " To " +
+                                                          DateFormat('MMM dd')
+                                                              .format(completed
+                                                                  .appointmentDates!
+                                                                  .last),
+                                                      style: TextStyle(
+                                                        fontSize: 12.sp,
+                                                        color: Colors.grey
+                                                            .shade500, // Color for the value
+                                                      ),
+                                                    ),
+                                                ],
                                               ],
                                             ),
                                           ),
@@ -391,10 +403,17 @@ class _PatientHistoryViewState extends State<PatientHistoryView> {
                                             child: Row(
                                               children: [
                                                 Text(
-                                                  '${DateUtils().displayTime(completed.appointmentStartTime!)} - ${DateUtils().displayTime(completed.appointmentEndTime!)}',
+                                                  (completed.appointmentStartTime !=
+                                                              null &&
+                                                          completed
+                                                                  .appointmentEndTime !=
+                                                              null)
+                                                      ? '${DateUtils().displayTime(completed.appointmentStartTime!)} - ${DateUtils().displayTime(completed.appointmentEndTime!)}'
+                                                      : '',
                                                   style: TextStyle(
                                                     fontSize: 12.sp,
-                                                    color: Colors.grey.shade500, // Color for the value
+                                                    color: Colors.grey
+                                                        .shade500, // Color for the value
                                                   ),
                                                 ),
                                               ],
@@ -408,79 +427,125 @@ class _PatientHistoryViewState extends State<PatientHistoryView> {
                                             padding: EdgeInsets.symmetric(
                                                 vertical: 1.h),
                                             child: Row(
-                                              mainAxisAlignment: MainAxisAlignment.end,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.end,
                                               children: [
-
                                                 Align(
                                                   child: GestureDetector(
-                                                    onTap: (){
-                                                      Get.to(()=> CompletedAppointmentDetails(
-                                                        patientId: completed.patientId,
-                                                        appointmentId: completed.id,
-                                                        appointmentDates: completed.appointmentDates,
-                                                        caretakerId: completed.caretakerId,
-                                                      ));
+                                                    onTap: () {
+                                                      Get.to(() =>
+                                                          CompletedAppointmentDetails(
+                                                            patientId: completed
+                                                                .patientId,
+                                                            appointmentId:
+                                                                completed.id,
+                                                            appointmentDates:
+                                                                completed
+                                                                        .appointmentDates ??
+                                                                    [
+                                                                      DateTime
+                                                                          .now()
+                                                                    ],
+                                                            caretakerId:
+                                                                completed
+                                                                    .caretakerId,
+                                                          ));
                                                     },
                                                     child: Container(
                                                       width: 80.w,
                                                       height: 24.h,
                                                       decoration: BoxDecoration(
-                                                          borderRadius: BorderRadius.circular(8.r),
-                                                          color: AppColors.secondaryColor,
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      8.r),
+                                                          color: AppColors
+                                                              .secondaryColor,
                                                           boxShadow: [
                                                             BoxShadow(
-                                                                offset: Offset(0,2),
-                                                                color: Colors.black12
-                                                            )
-                                                          ]
-                                                      ),
+                                                                offset: Offset(
+                                                                    0, 2),
+                                                                color: Colors
+                                                                    .black12)
+                                                          ]),
                                                       child: Center(
                                                           child: Text(
-                                                            "View",
-                                                            style: TextStyle(color: Colors.white),
-                                                          )
-                                                      ),
+                                                        "View",
+                                                        style: TextStyle(
+                                                            color:
+                                                                Colors.white),
+                                                      )),
                                                     ),
                                                   ),
                                                 ),
-
                                                 SizedBox(width: 12.w),
-
                                                 Align(
-                                                  alignment: Alignment.centerRight,
+                                                  alignment:
+                                                      Alignment.centerRight,
                                                   child: GestureDetector(
-                                                    onTap: (){
-                                                      Get.to(()=> RatingScreen(
-                                                        careTakerId: completed.caretakerId,
-                                                        name: completed.caretaker!
-                                                            .caretakerInfo!.firstName,
-                                                        appointmentDates: completed.appointmentDates,
-                                                        appointmentTime: '${completed.appointmentStartTime} - ${completed.appointmentEndTime}',
-                                                      ));
+                                                    onTap: () {
+                                                      Get.to(() => RatingScreen(
+                                                            careTakerId:
+                                                                completed
+                                                                    .caretakerId,
+                                                            name: completed
+                                                                    .caretaker
+                                                                    ?.caretakerInfo
+                                                                    ?.firstName ??
+                                                                'Caretaker',
+                                                            imageUrl: (v.appointmentStatus
+                                                                            ?.profilePath !=
+                                                                        null &&
+                                                                    completed
+                                                                            .caretaker
+                                                                            ?.profileImageUrl !=
+                                                                        null)
+                                                                ? '${v.appointmentStatus!.profilePath}${completed.caretaker!.profileImageUrl}'
+                                                                : '',
+                                                            appointmentDates:
+                                                                completed
+                                                                        .appointmentDates ??
+                                                                    [
+                                                                      DateTime
+                                                                          .now()
+                                                                    ],
+                                                            appointmentTime: (completed
+                                                                            .appointmentStartTime !=
+                                                                        null &&
+                                                                    completed
+                                                                            .appointmentEndTime !=
+                                                                        null)
+                                                                ? '${DateUtils().displayTime(completed.appointmentStartTime!)} - ${DateUtils().displayTime(completed.appointmentEndTime!)}'
+                                                                : 'N/A',
+                                                          ));
                                                     },
                                                     child: Container(
                                                       width: 80.w,
                                                       height: 24.h,
                                                       decoration: BoxDecoration(
-                                                        borderRadius: BorderRadius.circular(8.r),
-                                                        color: AppColors.primaryColor,
-                                                        boxShadow: [
-                                                          BoxShadow(
-                                                            offset: Offset(0,2),
-                                                            color: Colors.black12
-                                                          )
-                                                        ]
-                                                      ),
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      8.r),
+                                                          color: AppColors
+                                                              .primaryColor,
+                                                          boxShadow: [
+                                                            BoxShadow(
+                                                                offset: Offset(
+                                                                    0, 2),
+                                                                color: Colors
+                                                                    .black12)
+                                                          ]),
                                                       child: Center(
                                                           child: Text(
-                                                              "Rate",
-                                                              style: TextStyle(color: Colors.white),
-                                                          )
-                                                      ),
+                                                        "Rate",
+                                                        style: TextStyle(
+                                                            color:
+                                                                Colors.white),
+                                                      )),
                                                     ),
                                                   ),
                                                 )
-
                                               ],
                                             ),
                                           ),
@@ -506,7 +571,6 @@ class _PatientHistoryViewState extends State<PatientHistoryView> {
 
   //
   Future<void> _selectDate(BuildContext context) async {
-
     var date = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
@@ -518,8 +582,7 @@ class _PatientHistoryViewState extends State<PatientHistoryView> {
             colorScheme: ColorScheme.light(
                 primary: Colors.purple,
                 onPrimary: Colors.white,
-                onSurface: Colors.black
-            ),
+                onSurface: Colors.black),
             textButtonTheme: TextButtonThemeData(
               style: TextButton.styleFrom(
                 foregroundColor: Colors.purple,
@@ -531,13 +594,12 @@ class _PatientHistoryViewState extends State<PatientHistoryView> {
       },
     );
 
-    if(date!=null){
+    if (date != null) {
       controller.selectedDate = date;
       controller.displayDate = DateUtils().dateOnlyFormat(date);
+      dateTEC.text = controller.displayDate ?? '';
       controller.update();
       controller.searchAppointments(completedOnly: true);
     }
-
   }
-
 }

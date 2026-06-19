@@ -71,18 +71,21 @@ class ProfileDetails extends StatelessWidget {
                           backgroundColor: Colors.grey,
                           // Optional placeholder color
                           child: ClipOval(
-                            child: CachedNetworkImage(
-                              imageUrl: '${v.profileList!.profilePath}${v.profileList!.data!.profileImageUrl}',
-                              fit: BoxFit.cover,
-                              // Ensure the image covers the CircleAvatar
-                              width: 40,
-                              // Set width and height to ensure the image fits properly
-                              height: 40,
-                              placeholder: (context, url) =>
-                                  CircularProgressIndicator(),
-                              errorWidget: (context, url, error) =>
-                                  Icon(Icons.error), // Error icon
-                            ),
+                            child: (v.profileList?.profilePath != null &&
+                                    v.profileList?.data?.profileImageUrl != null)
+                                ? CachedNetworkImage(
+                                    imageUrl: '${v.profileList!.profilePath}${v.profileList!.data!.profileImageUrl}',
+                                    fit: BoxFit.cover,
+                                    // Ensure the image covers the CircleAvatar
+                                    width: 40,
+                                    // Set width and height to ensure the image fits properly
+                                    height: 40,
+                                    placeholder: (context, url) =>
+                                        CircularProgressIndicator(),
+                                    errorWidget: (context, url, error) =>
+                                        Icon(Icons.error), // Error icon
+                                  )
+                                : Icon(Icons.person, size: 24),
                           ),
                         ),
                       ),
@@ -96,8 +99,8 @@ class ProfileDetails extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 SizedBox(height: 5),
-                                v.profileList!.data!=null && v.profileList!.data!.patientInfo!=null?Text(
-                                  '${v.profileList!.data!.patientInfo!.firstName!} ${v.profileList!.data!.patientInfo!.lastName}',
+                                v.profileList?.data?.patientInfo != null ? Text(
+                                  '${v.profileList!.data!.patientInfo!.firstName ?? ''} ${v.profileList!.data!.patientInfo!.lastName ?? ''}'.trim(),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
@@ -105,17 +108,17 @@ class ProfileDetails extends StatelessWidget {
                                     fontWeight: FontWeight.bold,
                                     color: Colors.black,
                                   ),
-                                ):SizedBox(),
+                                ) : SizedBox(),
                                 SizedBox(height: 4),
-                                v.profileList!.data!=null && v.profileList!.data!.patientInfo!=null?Text(
-                                  '${v.profileList!.data!.patientInfo!.email}',
+                                v.profileList?.data?.patientInfo != null ? Text(
+                                  '${v.profileList!.data!.patientInfo!.email ?? ''}',
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
                                     fontSize: 14,
                                     color: Colors.black54,
                                   ),
-                                ):SizedBox(),
+                                ) : SizedBox(),
                               ],
                             ),
                           ),

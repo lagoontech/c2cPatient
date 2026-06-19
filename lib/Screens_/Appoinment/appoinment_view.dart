@@ -20,9 +20,11 @@ class AppointmentView extends StatelessWidget {
 
   final AppointmentStatusController controller =
       Get.put(AppointmentStatusController());
+  final TextEditingController dateTEC = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    dateTEC.text = controller.displayDate ?? '';
     return DefaultTabController(
       length: 3,
       child: CustomBackground(
@@ -30,10 +32,11 @@ class AppointmentView extends StatelessWidget {
           leading: SizedBox(),
           title: "Appointment",
           bottom: TabBar(
-            onTap: (v){
+            onTap: (v) {
               controller.currentTab = v;
-              if(controller.searchTEC.text.isNotEmpty || controller.selectedDate!=null)
-              controller.searchAppointments();
+              if (controller.searchTEC.text.isNotEmpty ||
+                  controller.selectedDate != null)
+                controller.searchAppointments();
               else {
                 controller.fetchAppointments();
               }
@@ -47,102 +50,68 @@ class AppointmentView extends StatelessWidget {
         ),
         child: Column(
           children: [
-
             SizedBox(height: 8.h),
-
             Padding(
-              padding: EdgeInsets.symmetric(
-                  horizontal: 10.h,
-                  vertical: 2.h),
+              padding: EdgeInsets.symmetric(horizontal: 10.h, vertical: 2.h),
               child: Row(
                 children: [
-
                   Expanded(
-                    flex: 3,
+                    flex: 2,
                     child: SizedBox(
-                      height: kToolbarHeight * 0.9,
+                      height: 56.h,
                       child: customTextField(
                         context,
-                        onChanged: (v){
+                        onChanged: (v) {
                           controller.searchAppointments();
                         },
-                        hint: "Search appointments",
+                        hint: "Appointments",
                         controller: controller.searchTEC,
                         borderColor: AppColors.primaryColor,
                         labelText: "",
-                        prefix: Align(
-                            alignment: Alignment.centerRight,
-                            child: Icon(Icons.search)),
+                        prefix: Icon(Icons.search),
+                        height: 56.h,
                       ),
                     ),
                   ),
-
                   SizedBox(width: 12.w),
-
                   Expanded(
                     flex: 2,
-                    child: GestureDetector(
-                      onTap: (){
-                        _selectDate(context);
-                      },
-                      child: Container(
-                        height: kToolbarHeight * 0.9,
-                        decoration: BoxDecoration(
-                          border: Border.all(color: AppColors.primaryColor),
-                          borderRadius: BorderRadius.circular(8.r),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-
-                            Icon(Icons.calendar_month),
-
-                            SizedBox(width: 4.w),
-
-                            GetBuilder<AppointmentStatusController>(
-                              builder: (vc) {
-                                return controller.selectedDate!=null
-                                    ? Text(controller.displayDate.toString(),style: TextStyle(
-                                  fontSize: 12.sp
-                                ),)
-                                    : Center(child: Text("Select a date",style: TextStyle(
-                                    color: Colors.grey,
-                                    fontSize: 13.sp,
-                                    fontWeight: FontWeight.w400,
-                                    //fontFamily: "verdana_regular"
-                                ),));
-
-                              }
-                            ),
-
-                            SizedBox(width: 2.w),
-
-                            GetBuilder<AppointmentStatusController>(
-                              builder: (vc) {
-                                return controller.selectedDate!=null
-                                    ? GestureDetector(
-                                    onTap: (){
+                    child: GetBuilder<AppointmentStatusController>(
+                      builder: (vc) {
+                        return SizedBox(
+                          height: 56.h,
+                          child: customTextField(
+                            context,
+                            readOnly: true,
+                            onTap: () {
+                              _selectDate(context);
+                            },
+                            hint: "Select a date",
+                            controller: dateTEC,
+                            borderColor: AppColors.primaryColor,
+                            labelText: "",
+                            prefix: Icon(Icons.calendar_month),
+                            height: 56.h,
+                            suffix: controller.selectedDate != null
+                                ? GestureDetector(
+                                    onTap: () {
                                       controller.selectedDate = null;
                                       controller.displayDate = null;
+                                      dateTEC.clear();
                                       controller.update();
                                       controller.searchAppointments();
                                     },
-                                    child: Icon(Icons.cancel_outlined)
-                                )
-                                    : SizedBox();
-                              }
-                            )
-
-                          ],
-                        ),
-                      ),
+                                    child: Icon(Icons.cancel_outlined),
+                                  )
+                                : SizedBox(width: 20.h, height: 20.h),
+                          ),
+                        );
+                      },
                     ),
                   )
-
                 ],
               ),
             ),
-
             Expanded(
               child: TabBarView(
                 children: [
@@ -155,56 +124,77 @@ class AppointmentView extends StatelessWidget {
                         child: controller.isLoading
                             ? Center(child: CircularProgressIndicator())
                             : controller.RequestAppointment.isNotEmpty
-                            ? ListView.builder(
-                                padding: EdgeInsets.all(8.0),
-                                itemCount: controller.searchedAppointments.isEmpty && controller.searchTEC.text.isEmpty && controller.displayDate==null
-                                    ? controller.RequestAppointment.length
-                                    : controller.searchedRequestAppointment.length,
-                                itemBuilder: (context, index) {
-                                  var requested ;
+                                ? ListView.builder(
+                                    padding: EdgeInsets.all(8.0),
+                                    itemCount: controller
+                                                .searchedAppointments.isEmpty &&
+                                            controller.searchTEC.text.isEmpty &&
+                                            controller.displayDate == null
+                                        ? controller.RequestAppointment.length
+                                        : controller
+                                            .searchedRequestAppointment.length,
+                                    itemBuilder: (context, index) {
+                                      var requested;
 
-                                  if(controller.searchedRequestAppointment.isNotEmpty){
-                                    requested = controller.searchedRequestAppointment[index];
-                                  }
-                                  else {
-                                    requested =
-                                    controller
-                                        .RequestAppointment[index];
-                                  }
-                                  return Padding(
-                                    padding: EdgeInsets.symmetric(vertical: 3.h),
-                                    child: InkWell(
-                                      onTap: () {
-                                        Get.to(() => RequestDetailsScreen2(
-                                              careTakerId: requested.caretakerId,
-                                              appointmentId: requested.id,
-                                              serviceCharge: requested.caretaker!.caretakerInfo!.serviceCharge,
-                                              paymentStatus: requested.paymentStatus,
-                                              imgUrl: '${controller.appointmentStatus!.profilePath}${requested.caretaker?.profileImageUrl}',
-                                              name: requested.caretaker!.caretakerInfo!.firstName,
-                                              dates: requested.appointmentDates,
-                                              status: requested.serviceStatus,
-                                              time: "${requested.appointmentStartTime} - ${requested.appointmentEndTime}",
-                                            ));
-                                      },
-                                      child: AppointmentsContainer(
-                                        action: '',
-                                        appointmentDates: requested.appointmentDates,
-                                        appointmentTime:
-                                            "${DateUtils().displayTime(requested.appointmentStartTime)} - ${DateUtils().displayTime(requested.appointmentEndTime)}",
-                                        doctorName: requested.caretaker?.caretakerInfo
-                                                ?.firstName ??
-                                            "Unknown",
-                                        doctorDesignation: requested
-                                                .caretaker?.caretakerInfo?.location ??
-                                            "Neurologist",
-                                        imageUrl:
-                                            '${controller.appointmentStatus!.profilePath}${requested.caretaker?.profileImageUrl}',
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ) : Center(child: Text("No requests to show")),
+                                      if (controller.searchedRequestAppointment
+                                          .isNotEmpty) {
+                                        requested = controller
+                                            .searchedRequestAppointment[index];
+                                      } else {
+                                        requested = controller
+                                            .RequestAppointment[index];
+                                      }
+                                      return Padding(
+                                        padding:
+                                            EdgeInsets.symmetric(vertical: 3.h),
+                                        child: InkWell(
+                                          onTap: () {
+                                            Get.to(() => RequestDetailsScreen2(
+                                                  careTakerId:
+                                                      requested.caretakerId,
+                                                  appointmentId: requested.id,
+                                                  serviceCharge: requested
+                                                      .caretaker!
+                                                      .caretakerInfo!
+                                                      .serviceCharge,
+                                                  paymentStatus:
+                                                      requested.paymentStatus,
+                                                  imgUrl:
+                                                      '${controller.appointmentStatus!.profilePath}${requested.caretaker?.profileImageUrl}',
+                                                  name: requested.caretaker!
+                                                      .caretakerInfo!.firstName,
+                                                  dates: requested
+                                                      .appointmentDates,
+                                                  status:
+                                                      requested.serviceStatus,
+                                                  time:
+                                                      "${requested.appointmentStartTime} - ${requested.appointmentEndTime}",
+                                                ));
+                                          },
+                                          child: AppointmentsContainer(
+                                            action: '',
+                                            appointmentDates:
+                                                requested.appointmentDates,
+                                            appointmentTime:
+                                                "${DateUtils().displayTime(requested.appointmentStartTime)} - ${DateUtils().displayTime(requested.appointmentEndTime)}",
+                                            doctorName: requested
+                                                    .caretaker
+                                                    ?.caretakerInfo
+                                                    ?.firstName ??
+                                                "Unknown",
+                                            doctorDesignation: requested
+                                                    .caretaker
+                                                    ?.caretakerInfo
+                                                    ?.location ??
+                                                "Neurologist",
+                                            imageUrl:
+                                                '${controller.appointmentStatus!.profilePath}${requested.caretaker?.profileImageUrl}',
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  )
+                                : Center(child: Text("No requests to show")),
                       );
                     },
                   ),
@@ -223,66 +213,92 @@ class AppointmentView extends StatelessWidget {
                                 child: controller.isLoading
                                     ? Center(child: CircularProgressIndicator())
                                     : controller.ApprovedAppointment.isNotEmpty
-                                    ? ListView.builder(
-                                        padding: EdgeInsets.all(8.0),
-                                        itemCount: controller.searchedAppointments.isEmpty && controller.searchTEC.text.isEmpty && controller.displayDate==null
-                                            ? controller.ApprovedAppointment.length
-                                            : controller.searchedAppointments.length,
-                                        itemBuilder: (context, index) {
-                                          var approved;
-                                          if(controller.searchedAppointments.isNotEmpty){
-                                            approved = controller.searchedAppointments[index];
-                                          }
-                                          else {
-                                            approved =
-                                            controller
-                                                .ApprovedAppointment[index];
-                                          }
-                                          return Padding(
-                                            padding:
-                                                EdgeInsets.symmetric(vertical: 3.h),
-                                            child: InkWell(
-                                              onTap: () {
-                                                Get.to(
-                                                  () => ApprovedDetailScreen(
-                                                    fromTime:
-                                                        approved.appointmentStartTime,
-                                                    Totime:
-                                                        approved.appointmentEndTime,
-                                                    serviceCharge: approved.caretaker!
-                                                        .caretakerInfo!.serviceCharge,
-                                                    appointmentId: approved.id,
-                                                    careTakerId: approved.caretakerId,
-                                                    paymentStatus:
-                                                        approved.paymentStatus,
-                                                    imgUrl:
+                                        ? ListView.builder(
+                                            padding: EdgeInsets.all(8.0),
+                                            itemCount: controller
+                                                        .searchedAppointments
+                                                        .isEmpty &&
+                                                    controller.searchTEC.text
+                                                        .isEmpty &&
+                                                    controller.displayDate ==
+                                                        null
+                                                ? controller
+                                                    .ApprovedAppointment.length
+                                                : controller
+                                                    .searchedAppointments
+                                                    .length,
+                                            itemBuilder: (context, index) {
+                                              var approved;
+                                              if (controller
+                                                  .searchedAppointments
+                                                  .isNotEmpty) {
+                                                approved = controller
+                                                        .searchedAppointments[
+                                                    index];
+                                              } else {
+                                                approved = controller
+                                                    .ApprovedAppointment[index];
+                                              }
+                                              return Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                    vertical: 3.h),
+                                                child: InkWell(
+                                                  onTap: () {
+                                                    Get.to(
+                                                      () =>
+                                                          ApprovedDetailScreen(
+                                                        fromTime: approved
+                                                            .appointmentStartTime,
+                                                        Totime: approved
+                                                            .appointmentEndTime,
+                                                        serviceCharge: approved
+                                                            .caretaker!
+                                                            .caretakerInfo!
+                                                            .serviceCharge,
+                                                        appointmentId:
+                                                            approved.id,
+                                                        careTakerId: approved
+                                                            .caretakerId,
+                                                        paymentStatus: approved
+                                                            .paymentStatus,
+                                                        imgUrl:
+                                                            '${controller.appointmentStatus!.profilePath}${approved.caretaker?.profileImageUrl}',
+                                                        name:
+                                                            '${approved.caretaker!.caretakerInfo!.firstName} ${approved.caretaker!.caretakerInfo!.lastName}',
+                                                        dates: approved
+                                                            .appointmentDates,
+                                                        status: approved
+                                                            .serviceStatus,
+                                                        time:
+                                                            "From ${DateFormat('h:mm a').format(DateTime.parse('1970-01-01 ${approved.appointmentStartTime}'))} - To ${DateFormat('h:mm a').format(DateTime.parse('1970-01-01 ${approved.appointmentEndTime}'))}",
+                                                      ),
+                                                    );
+                                                  },
+                                                  child: AppointmentsContainer(
+                                                    statusColor: Colors.green,
+                                                    appointmentDates: approved
+                                                        .appointmentDates,
+                                                    appointmentTime:
+                                                        "${DateUtils().displayTime(approved.appointmentStartTime)} - ${DateUtils().displayTime(approved.appointmentEndTime)}",
+                                                    doctorName: approved
+                                                            .caretaker
+                                                            ?.caretakerInfo
+                                                            ?.firstName ??
+                                                        "Unknown",
+                                                    doctorDesignation: approved
+                                                            .caretaker
+                                                            ?.caretakerInfo
+                                                            ?.location ??
+                                                        "Neurologist",
+                                                    imageUrl:
                                                         '${controller.appointmentStatus!.profilePath}${approved.caretaker?.profileImageUrl}',
-                                                    name: '${approved.caretaker!.caretakerInfo!.firstName} ${approved.caretaker!.caretakerInfo!.lastName}',
-                                                    dates: approved.appointmentDates,
-                                                    status: approved.serviceStatus,
-                                                    time:
-                                                        "From ${DateFormat('h:mm a').format(DateTime.parse('1970-01-01 ${approved.appointmentStartTime}'))} - To ${DateFormat('h:mm a').format(DateTime.parse('1970-01-01 ${approved.appointmentEndTime}'))}",
                                                   ),
-                                                );
-                                              },
-                                              child: AppointmentsContainer(
-                                                statusColor: Colors.green,
-                                                appointmentDates: approved.appointmentDates,
-                                                appointmentTime:
-                                                "${DateUtils().displayTime(approved.appointmentStartTime)} - ${DateUtils().displayTime(approved.appointmentEndTime)}",
-                                                doctorName: approved.caretaker
-                                                        ?.caretakerInfo?.firstName ??
-                                                    "Unknown",
-                                                doctorDesignation: approved.caretaker
-                                                        ?.caretakerInfo?.location ??
-                                                    "Neurologist",
-                                                imageUrl:
-                                                    '${controller.appointmentStatus!.profilePath}${approved.caretaker?.profileImageUrl}',
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                      ) : Center(child: Text("No requests to show")),
+                                                ),
+                                              );
+                                            },
+                                          )
+                                        : Center(
+                                            child: Text("No requests to show")),
                               ),
                             ],
                           ));
@@ -339,73 +355,106 @@ class AppointmentView extends StatelessWidget {
                         child: controller.isLoading
                             ? Center(child: CircularProgressIndicator())
                             : controller.ProcessingAppointment.isNotEmpty
-                            ? ListView.builder(
-                                padding: EdgeInsets.all(8.0),
-                                itemCount: controller.searchedAppointments.isEmpty && controller.searchTEC.text.isEmpty && controller.displayDate==null
-                                    ? controller.ProcessingAppointment.length
-                                    : controller.searchedProcessingAppointment.length,
-                                itemBuilder: (context, index) {
-                                  var cancelled;
-                                  if(controller.searchedProcessingAppointment.isNotEmpty){
-                                    cancelled = controller.searchedProcessingAppointment[index];
-                                  }else
-                                    cancelled = controller.ProcessingAppointment[index];
-                                  var data =
-                                      controller.appointmentStatus!.profilePath;
+                                ? ListView.builder(
+                                    padding: EdgeInsets.all(8.0),
+                                    itemCount: controller
+                                                .searchedAppointments.isEmpty &&
+                                            controller.searchTEC.text.isEmpty &&
+                                            controller.displayDate == null
+                                        ? controller
+                                            .ProcessingAppointment.length
+                                        : controller
+                                            .searchedProcessingAppointment
+                                            .length,
+                                    itemBuilder: (context, index) {
+                                      var cancelled;
+                                      if (controller
+                                          .searchedProcessingAppointment
+                                          .isNotEmpty) {
+                                        cancelled = controller
+                                                .searchedProcessingAppointment[
+                                            index];
+                                      } else
+                                        cancelled = controller
+                                            .ProcessingAppointment[index];
+                                      var data = controller
+                                          .appointmentStatus!.profilePath;
 
-                                  return Padding(
-                                    padding: EdgeInsets.symmetric(vertical: 3.h),
-                                    child: GestureDetector(
-                                      onTap: (){
-                                        Get.to(()=> CompletedAppointmentDetails(
-                                          caretakerId: cancelled.caretakerId,
-                                          appointmentId: cancelled.id,
-                                          patientId: cancelled.patientId,
-                                          appointmentDates: cancelled.appointmentDates,
-                                        ));
-                                      },
-                                      child: AppointmentsContainer(
-                                        actionTap: () {
-                                          Get.to(() => CaretakerInformation(
-                                                careTakerId: cancelled.caretakerId,
-                                                gender: cancelled
-                                                    .caretaker!.caretakerInfo!.sex,
-                                                charge: cancelled.caretaker!
-                                                    .caretakerInfo!.serviceCharge,
-                                                doctorDesignation: "Care Taker",
-                                                doctorState: cancelled.caretaker!
-                                                    .caretakerInfo!.nationality,
-                                                totalPatient: cancelled
-                                                    .caretaker!
-                                                    .caretakerInfo!
-                                                    .totalPatientsAttended,
-                                                experience: cancelled.caretaker!
-                                                    .caretakerInfo!.yearOfExperiences,
-                                                doctorName: cancelled.caretaker!
-                                                    .caretakerInfo!.firstName,
-                                                imageUrl:
-                                                    '${data}${cancelled.caretaker!.profileImageUrl}',
-                                                rating: "2",
-                                              ));
-                                        },
-                                        action: "Reschedule",
-                                        actionIcon: EneftyIcons.refresh_outline,
-                                        appointmentDates: cancelled.appointmentDates,
-                                        appointmentTime:
-                                        "${DateUtils().displayTime(cancelled.appointmentStartTime)} - ${DateUtils().displayTime(cancelled.appointmentEndTime)}",
-                                        doctorName: cancelled
-                                                .caretaker?.caretakerInfo?.firstName ??
-                                            "Unknown",
-                                        doctorDesignation: cancelled
-                                                .caretaker?.caretakerInfo?.location ??
-                                            "Neurologist",
-                                        imageUrl:
-                                            '${controller.appointmentStatus!.profilePath}${cancelled.caretaker?.profileImageUrl}',
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ) : Center(child: Text("No requests to show")),
+                                      return Padding(
+                                        padding:
+                                            EdgeInsets.symmetric(vertical: 3.h),
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            Get.to(() =>
+                                                CompletedAppointmentDetails(
+                                                  caretakerId:
+                                                      cancelled.caretakerId,
+                                                  appointmentId: cancelled.id,
+                                                  patientId:
+                                                      cancelled.patientId,
+                                                  appointmentDates: cancelled
+                                                      .appointmentDates,
+                                                ));
+                                          },
+                                          child: AppointmentsContainer(
+                                            actionTap: () {
+                                              Get.to(() => CaretakerInformation(
+                                                    careTakerId:
+                                                        cancelled.caretakerId,
+                                                    gender: cancelled.caretaker!
+                                                        .caretakerInfo!.sex,
+                                                    charge: cancelled
+                                                        .caretaker!
+                                                        .caretakerInfo!
+                                                        .serviceCharge,
+                                                    doctorDesignation:
+                                                        "Care Taker",
+                                                    doctorState: cancelled
+                                                        .caretaker!
+                                                        .caretakerInfo!
+                                                        .nationality,
+                                                    totalPatient: cancelled
+                                                        .caretaker!
+                                                        .caretakerInfo!
+                                                        .totalPatientsAttended,
+                                                    experience: cancelled
+                                                        .caretaker!
+                                                        .caretakerInfo!
+                                                        .yearOfExperiences,
+                                                    doctorName: cancelled
+                                                        .caretaker!
+                                                        .caretakerInfo!
+                                                        .firstName,
+                                                    imageUrl:
+                                                        '${data}${cancelled.caretaker!.profileImageUrl}',
+                                                    rating: "2",
+                                                  ));
+                                            },
+                                            action: "Reschedule",
+                                            actionIcon:
+                                                EneftyIcons.refresh_outline,
+                                            appointmentDates:
+                                                cancelled.appointmentDates,
+                                            appointmentTime:
+                                                "${DateUtils().displayTime(cancelled.appointmentStartTime)} - ${DateUtils().displayTime(cancelled.appointmentEndTime)}",
+                                            doctorName: cancelled
+                                                    .caretaker
+                                                    ?.caretakerInfo
+                                                    ?.firstName ??
+                                                "Unknown",
+                                            doctorDesignation: cancelled
+                                                    .caretaker
+                                                    ?.caretakerInfo
+                                                    ?.location ??
+                                                "Neurologist",
+                                            imageUrl:
+                                                '${controller.appointmentStatus!.profilePath}${cancelled.caretaker?.profileImageUrl}',
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  )
+                                : Center(child: Text("No requests to show")),
                       );
                     },
                   ),
@@ -420,7 +469,6 @@ class AppointmentView extends StatelessWidget {
 
   //
   Future<void> _selectDate(BuildContext context) async {
-
     var date = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
@@ -430,10 +478,9 @@ class AppointmentView extends StatelessWidget {
         return Theme(
           data: ThemeData.light().copyWith(
             colorScheme: ColorScheme.light(
-              primary: Colors.purple,
-              onPrimary: Colors.white,
-              onSurface: Colors.black
-            ),
+                primary: Colors.purple,
+                onPrimary: Colors.white,
+                onSurface: Colors.black),
             textButtonTheme: TextButtonThemeData(
               style: TextButton.styleFrom(
                 foregroundColor: Colors.purple,
@@ -445,15 +492,12 @@ class AppointmentView extends StatelessWidget {
       },
     );
 
-    if(date!=null){
+    if (date != null) {
       controller.selectedDate = date;
       controller.displayDate = DateUtils().dateOnlyFormat(date);
+      dateTEC.text = controller.displayDate ?? '';
       controller.update();
       controller.searchAppointments();
     }
-
   }
-
-
-
 }

@@ -25,7 +25,7 @@ Widget customTextField(BuildContext context,
       Function(String?)? onChanged,
       TextInputAction? textInputAction,
       int? maxLength,
-      int? maxLines,
+      int? maxLines = 1,
       String? labelText,
       String? errorText,
       TextStyle? labelStyle,
@@ -59,7 +59,22 @@ Widget customTextField(BuildContext context,
       textCapitalization: textCapitalization ?? TextCapitalization.words,
       onSaved: onSaved,
       decoration: InputDecoration(
-        prefixIconConstraints: BoxConstraints(maxWidth: 36.w,minHeight: double.infinity,minWidth: 36.w),
+        prefixIconConstraints: prefix != null
+            ? BoxConstraints(
+                minWidth: 40.w,
+                maxWidth: 48.w,
+                minHeight: 20.h,
+                maxHeight: 20.h,
+              )
+            : null,
+        suffixIconConstraints: suffix != null
+            ? BoxConstraints(
+                minWidth: 40.w,
+                maxWidth: 48.w,
+                minHeight: 20.h,
+                maxHeight: 20.h,
+              )
+            : null,
         disabledBorder: const OutlineInputBorder(
             borderSide: BorderSide(color: Colors.grey, width: 0.3)),
         focusedErrorBorder: const OutlineInputBorder(
@@ -69,22 +84,36 @@ Widget customTextField(BuildContext context,
         contentPadding: contentPadding ?? EdgeInsets.symmetric(vertical: 8.h, horizontal: 8.w),
         fillColor: fillColor ?? Colors.white.withOpacity(0.2),
         counterText: "",
-        prefixIcon: prefix ,
-        suffixIcon: suffix,
+        prefixIcon: prefix != null
+            ? IconTheme(
+                data: IconThemeData(
+                  size: 20.h,
+                  color: Colors.grey,
+                ),
+                child: prefix,
+              )
+            : null,
+        suffixIcon: suffix != null
+            ? IconTheme(
+                data: IconThemeData(
+                  size: 20.h,
+                  color: Colors.grey,
+                ),
+                child: suffix,
+              )
+            : null,
         hintText: hint,
         errorText: errorText,
         hintStyle: hintStyle ?? TextStyle(
             color: Colors.grey,
             fontSize: 13.sp,
             fontWeight: FontWeight.w400,
-            //fontFamily: "verdana_regular"
         ),
         labelText: labelText ?? 'Email/Mobile',
         labelStyle: labelStyle ?? TextStyle(
             color: Colors.black,
             fontSize: 16,
             fontWeight: FontWeight.w400,
-            //fontFamily: "verdana_regular"
         ),
         floatingLabelBehavior: FloatingLabelBehavior.always, // Always show the label
         border: OutlineInputBorder(
@@ -153,6 +182,18 @@ Widget customDropdown(BuildContext context,
       onTap: onTap,
       value: value,
       decoration: InputDecoration(
+        prefixIconConstraints: prefix != null
+            ? BoxConstraints(
+                minWidth: 40.w,
+                maxWidth: 48.w,
+              )
+            : null,
+        suffixIconConstraints: suffix != null
+            ? BoxConstraints(
+                minWidth: 40.w,
+                maxWidth: 48.w,
+              )
+            : null,
         disabledBorder: InputBorder.none,
         focusedErrorBorder: const OutlineInputBorder(
             borderSide: BorderSide(color: Colors.grey, width: 0.3)),
@@ -161,22 +202,36 @@ Widget customDropdown(BuildContext context,
         contentPadding: contentPadding ?? EdgeInsets.symmetric(vertical: 13.h, horizontal: 10.w),
         fillColor: fillColor ?? Colors.white.withOpacity(0.2),
         counterText: "",
-        prefixIcon: prefix ,
-        suffixIcon: suffix,
+        prefixIcon: prefix != null
+            ? IconTheme(
+                data: IconThemeData(
+                  size: 20.h,
+                  color: Colors.grey,
+                ),
+                child: prefix,
+              )
+            : null,
+        suffixIcon: suffix != null
+            ? IconTheme(
+                data: IconThemeData(
+                  size: 20.h,
+                  color: Colors.grey,
+                ),
+                child: suffix,
+              )
+            : null,
         hintText: hint,
         errorText: errorText,
         hintStyle: hintStyle ?? TextStyle(
             color: Colors.grey,
             fontSize: 16,
             fontWeight: FontWeight.w400,
-            fontFamily: "verdana_regular"
         ),
         labelText: labelText ?? 'Email/Mobile',
         labelStyle: labelStyle ?? TextStyle(
             color: Colors.black,
             fontSize: 16,
             fontWeight: FontWeight.w400,
-            fontFamily: "verdana_regular"
         ),
         floatingLabelBehavior: FloatingLabelBehavior.always, // Always show the label
         border: OutlineInputBorder(

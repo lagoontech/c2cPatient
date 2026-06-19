@@ -295,7 +295,7 @@ class InitialProfileDetails extends GetxController {
       if (res.statusCode == 200) {
         var decodeBody = jsonDecode(res.body);
         profileList = ProfileList.fromJson(decodeBody);
-        initialUserDetails = profileList!.data!.patientInfo;
+        initialUserDetails = profileList?.data?.patientInfo;
         update();
         if (initialUserDetails != null) {
           // Populate the text controllers with user details

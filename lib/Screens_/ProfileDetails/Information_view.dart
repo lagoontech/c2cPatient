@@ -30,7 +30,7 @@ class AccountInformation extends StatelessWidget {
 
       var data ;
       if(!ec.loadingProfile && ec.profileList!=null){
-        data = ec.profileList!.data!.patientInfo;
+        data = ec.profileList?.data?.patientInfo;
       }
 
       return !v.loadingProfile?CustomBackground(
@@ -63,21 +63,25 @@ class AccountInformation extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.only(left: 8.0),
                       child: GetBuilder<InitialProfileDetails>(builder: (v) {
-                        String imageURL =
-                            '${ec.profileList!.profilePath}${ec.profileList!.data!.profileImageUrl}';
+                        String imageURL = (ec.profileList?.profilePath != null &&
+                                ec.profileList?.data?.profileImageUrl != null)
+                            ? '${ec.profileList!.profilePath}${ec.profileList!.data!.profileImageUrl}'
+                            : '';
                         return CircleAvatar(
                             radius: 20,
                             child: ClipRRect(
                                 borderRadius: BorderRadius.circular(60.r),
                                 child: Container(
                                     width: 80.w,
-                                    child: CachedNetworkImage(imageUrl: imageURL,fit: BoxFit.fill))));
+                                    child: imageURL.isNotEmpty
+                                        ? CachedNetworkImage(imageUrl: imageURL, fit: BoxFit.fill)
+                                        : Icon(Icons.person, size: 20))));
                       }),
                     ),
                     kWidth10,
                     GetBuilder<InitialProfileDetails>(builder: (v) {
                       String fullName =
-                          '${ec.profileList!.data!.patientInfo!.firstName!} ${ec.profileList!.data!.patientInfo!.lastName!}';
+                          '${ec.profileList?.data?.patientInfo?.firstName ?? ''} ${ec.profileList?.data?.patientInfo?.lastName ?? ''}'.trim();
                       return Container(
                         height: MediaQuery.of(context).size.height * 0.10,
                         child: Column(

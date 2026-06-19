@@ -84,16 +84,16 @@ class EditProfileController extends GetxController{
     if (res.statusCode == 200) {
       var decodeBody     = jsonDecode(res.body);
       profileList        = ProfileList.fromJson(decodeBody);
-      initialUserDetails = profileList!.data!.patientInfo;
+      initialUserDetails = profileList?.data?.patientInfo;
       update();
       if (initialUserDetails != null) {
         // Populate the text controllers with user details
         firstName.text = initialUserDetails?.firstName ?? '';
         lastName.text = initialUserDetails?.lastName ?? '';
         emailCT.text = initialUserDetails?.email ?? '';
-        sexCT.text = initialUserDetails?.sex!.capitalizeFirst! ?? '';
-        dobCT.text = DateUtils().dateOnlyFormat(initialUserDetails!.dob!)?? '';
-        dob = initialUserDetails!.dob;
+        sexCT.text = initialUserDetails?.sex?.capitalizeFirst ?? '';
+        dobCT.text = initialUserDetails?.dob != null ? (DateUtils().dateOnlyFormat(initialUserDetails!.dob!) ?? '') : '';
+        dob = initialUserDetails?.dob;
         ageCT.text = initialUserDetails?.age.toString() ?? '';
         heightCT.text = initialUserDetails?.height.toString() ?? '';
         weightCT.text = initialUserDetails?.weight.toString() ?? '';
@@ -147,7 +147,7 @@ class EditProfileController extends GetxController{
         "sex": sexCT.text.toLowerCase(),
         "age": ageCT.text,
         "email":emailCT.text,
-        "dob": DateUtils().parsableDate(dob!),
+        "dob": dob != null ? DateUtils().parsableDate(dob!) : '',
         "bmi": bmiCT.text,
         "height": heightCT.text,
         "weight": weightCT.text,
