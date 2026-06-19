@@ -58,27 +58,31 @@ class _ApprovedDetailScreenState extends State<ApprovedDetailScreen> {
   }
 
   void calculateTotalAmount() {
-    // Ensure fromTime and toTime are not null
-    if (widget.fromTime != null && widget.Totime != null) {
-      // Parse the time strings into DateTime objects
-      DateTime fromDateTime = DateTime.parse("2024-10-30 ${widget.fromTime}");
-      DateTime toDateTime = DateTime.parse("2024-10-30 ${widget.Totime}");
+    try {
+      // Ensure fromTime and toTime are not null and not empty
+      if (widget.fromTime != null && widget.Totime != null && widget.fromTime!.isNotEmpty && widget.Totime!.isNotEmpty) {
+        // Parse the time strings into DateTime objects
+        DateTime fromDateTime = DateTime.parse("2024-10-30 ${widget.fromTime}");
+        DateTime toDateTime = DateTime.parse("2024-10-30 ${widget.Totime}");
 
-      // Calculate the total hours worked
-      Duration duration = toDateTime.difference(fromDateTime);
-      int totalHoursWorked = duration.inHours;
+        // Calculate the total hours worked
+        Duration duration = toDateTime.difference(fromDateTime);
+        int totalHoursWorked = duration.inHours;
 
-      // Parse the service charge to an integer
-      int? serviceCharge = int.tryParse(widget.serviceCharge ?? '');
+        // Parse the service charge to an integer
+        int? serviceCharge = int.tryParse(widget.serviceCharge ?? '');
 
-      // Calculate the total charge only if serviceCharge is valid
-      if (serviceCharge != null) {
-        totalAmount = totalHoursWorked * serviceCharge;
+        // Calculate the total charge only if serviceCharge is valid
+        if (serviceCharge != null) {
+          totalAmount = totalHoursWorked * serviceCharge;
+        } else {
+          totalAmount = 0; // Handle parsing error
+        }
       } else {
-        totalAmount = 0; // Handle parsing error
+        totalAmount = 0; // Default to 0 if times are null or empty
       }
-    } else {
-      totalAmount = 0; // Default to 0 if times are null
+    } catch (e) {
+      totalAmount = 0; // Fallback if parsing fails
     }
 
     // Trigger UI update
@@ -175,33 +179,55 @@ class _ApprovedDetailScreenState extends State<ApprovedDetailScreen> {
               child: Column(
                 children: [
                   kHeight15,
-                  CachedNetworkImage(
-                    imageUrl: widget.imgUrl!,
-                    height: 100.h,
-                    width: 100.h,
-                    fit: BoxFit.cover,
-                    placeholder: (context, url) => Center(
-                      child: SizedBox(
-                        height: 20.h,
-                        width: 20.h,
-                        child: CircularProgressIndicator(strokeWidth: 2.0),
-                      ),
-                    ),
-                    errorWidget: (context, url, error) => Icon(
-                      Icons.error,
-                      size: 30.sp,
-                      color: Colors.red,
-                    ),
-                    imageBuilder: (context, imageProvider) => Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        image: DecorationImage(
-                          image: imageProvider,
+                   (widget.imgUrl == null || widget.imgUrl!.trim().isEmpty || !widget.imgUrl!.startsWith('http'))
+                      ? Container(
+                          height: 100.h,
+                          width: 100.h,
+                          decoration: BoxDecoration(
+                            color: Colors.white24,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.person,
+                            size: 60.h,
+                            color: Colors.white70,
+                          ),
+                        )
+                      : CachedNetworkImage(
+                          imageUrl: widget.imgUrl!,
+                          height: 100.h,
+                          width: 100.h,
                           fit: BoxFit.cover,
+                          placeholder: (context, url) => Center(
+                            child: SizedBox(
+                              height: 20.h,
+                              width: 20.h,
+                              child: CircularProgressIndicator(strokeWidth: 2.0),
+                            ),
+                          ),
+                          errorWidget: (context, url, error) => Container(
+                            height: 100.h,
+                            width: 100.h,
+                            decoration: BoxDecoration(
+                              color: Colors.white24,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Icons.person,
+                              size: 60.h,
+                              color: Colors.white70,
+                            ),
+                          ),
+                          imageBuilder: (context, imageProvider) => Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              image: DecorationImage(
+                                image: imageProvider,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                  ),
                   kHeight10,
                   Text(
                     widget.name ?? "No Name",
@@ -228,9 +254,9 @@ class _ApprovedDetailScreenState extends State<ApprovedDetailScreen> {
                   kHeight5,
                   IgnorePointer(
                     child: TableCalendar(
-                        focusedDay: widget.dates!.first,
+                        focusedDay: (widget.dates != null && widget.dates!.isNotEmpty) ? widget.dates!.first : DateTime.now(),
                         selectedDayPredicate: (day) {
-                          return widget.dates!.any((date) => isSameDay(date, day)); // Highlight appointment dates
+                          return widget.dates?.any((date) => isSameDay(date, day)) ?? false; // Highlight appointment dates
                         },
                         headerStyle: HeaderStyle(
                             formatButtonVisible: false,
@@ -243,7 +269,7 @@ class _ApprovedDetailScreenState extends State<ApprovedDetailScreen> {
                             shape: BoxShape.circle,
                           ),
                         ),
-                        firstDay: widget.dates!.first, lastDay: DateTime(2050)
+                        firstDay: (widget.dates != null && widget.dates!.isNotEmpty) ? widget.dates!.first : DateTime.now(), lastDay: DateTime(2050)
                     ),
                   ),
 
@@ -261,7 +287,7 @@ class _ApprovedDetailScreenState extends State<ApprovedDetailScreen> {
                   ),
                   kHeight5,
                   Text(
-                    widget.time!,
+                    widget.time ?? 'N/A',
                     style: TextStyle(
                         fontSize: 16.sp, fontWeight: FontWeight.normal),
                   ),
@@ -280,7 +306,7 @@ class _ApprovedDetailScreenState extends State<ApprovedDetailScreen> {
                   ),
                   kHeight5,
                   Text(
-                    '\$ ${widget.serviceCharge} /Hr',
+                    '\$ ${widget.serviceCharge ?? '0'} /Hr',
                     style: TextStyle(
                       fontSize: 16.sp,
                       color: Colors.black,
@@ -324,7 +350,9 @@ class _ApprovedDetailScreenState extends State<ApprovedDetailScreen> {
                   ),
                   kHeight5,
                   Text(
-                    '${widget.status![0].toUpperCase()}${widget.status!.substring(1).toLowerCase()}',
+                    (widget.status != null && widget.status!.isNotEmpty)
+                        ? '${widget.status![0].toUpperCase()}${widget.status!.substring(1).toLowerCase()}'
+                        : 'N/A',
                     style: TextStyle(
                       color: widget.status == 'approved'
                           ? AppColors.primaryColor
@@ -348,7 +376,9 @@ class _ApprovedDetailScreenState extends State<ApprovedDetailScreen> {
                   ),
                   kHeight5,
                   Text(
-                    '${widget.paymentStatus![0].toUpperCase()}${widget.paymentStatus!.substring(1).toLowerCase()}',
+                    (widget.paymentStatus != null && widget.paymentStatus!.isNotEmpty)
+                        ? '${widget.paymentStatus![0].toUpperCase()}${widget.paymentStatus!.substring(1).toLowerCase()}'
+                        : 'N/A',
                     style: TextStyle(
                       fontSize: 16.sp,
                       color: widget.paymentStatus == 'pending'

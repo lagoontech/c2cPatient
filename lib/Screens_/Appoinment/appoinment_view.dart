@@ -154,21 +154,21 @@ class AppointmentView extends StatelessWidget {
                                                       requested.caretakerId,
                                                   appointmentId: requested.id,
                                                   serviceCharge: requested
-                                                      .caretaker!
-                                                      .caretakerInfo!
-                                                      .serviceCharge,
+                                                      .caretaker
+                                                      ?.caretakerInfo
+                                                      ?.serviceCharge,
                                                   paymentStatus:
                                                       requested.paymentStatus,
-                                                  imgUrl:
-                                                      '${controller.appointmentStatus!.profilePath}${requested.caretaker?.profileImageUrl}',
-                                                  name: requested.caretaker!
-                                                      .caretakerInfo!.firstName,
+                                                  imgUrl: (controller.appointmentStatus?.profilePath != null && requested.caretaker?.profileImageUrl != null)
+                                                      ? '${controller.appointmentStatus!.profilePath}${requested.caretaker!.profileImageUrl}'
+                                                      : '',
+                                                  name: requested.caretaker?.caretakerInfo?.firstName ?? 'Unknown Caretaker',
                                                   dates: requested
                                                       .appointmentDates,
                                                   status:
                                                       requested.serviceStatus,
                                                   time:
-                                                      "${requested.appointmentStartTime} - ${requested.appointmentEndTime}",
+                                                      "${requested.appointmentStartTime ?? 'N/A'} - ${requested.appointmentEndTime ?? 'N/A'}",
                                                 ));
                                           },
                                           child: AppointmentsContainer(
@@ -187,8 +187,9 @@ class AppointmentView extends StatelessWidget {
                                                     ?.caretakerInfo
                                                     ?.location ??
                                                 "Neurologist",
-                                            imageUrl:
-                                                '${controller.appointmentStatus!.profilePath}${requested.caretaker?.profileImageUrl}',
+                                             imageUrl: (controller.appointmentStatus?.profilePath != null && requested.caretaker?.profileImageUrl != null)
+                                                 ? '${controller.appointmentStatus!.profilePath}${requested.caretaker!.profileImageUrl}'
+                                                 : '',
                                           ),
                                         ),
                                       );
@@ -245,32 +246,40 @@ class AppointmentView extends StatelessWidget {
                                                 child: InkWell(
                                                   onTap: () {
                                                     Get.to(
-                                                      () =>
-                                                          ApprovedDetailScreen(
+                                                      () => ApprovedDetailScreen(
                                                         fromTime: approved
                                                             .appointmentStartTime,
                                                         Totime: approved
                                                             .appointmentEndTime,
                                                         serviceCharge: approved
-                                                            .caretaker!
-                                                            .caretakerInfo!
-                                                            .serviceCharge,
+                                                            .caretaker
+                                                            ?.caretakerInfo
+                                                            ?.serviceCharge,
                                                         appointmentId:
                                                             approved.id,
                                                         careTakerId: approved
                                                             .caretakerId,
                                                         paymentStatus: approved
                                                             .paymentStatus,
-                                                        imgUrl:
-                                                            '${controller.appointmentStatus!.profilePath}${approved.caretaker?.profileImageUrl}',
-                                                        name:
-                                                            '${approved.caretaker!.caretakerInfo!.firstName} ${approved.caretaker!.caretakerInfo!.lastName}',
+                                                        imgUrl: (controller.appointmentStatus?.profilePath != null && approved.caretaker?.profileImageUrl != null)
+                                                            ? '${controller.appointmentStatus!.profilePath}${approved.caretaker!.profileImageUrl}'
+                                                            : '',
+                                                        name: approved.caretaker?.caretakerInfo != null
+                                                            ? '${approved.caretaker!.caretakerInfo!.firstName ?? ''} ${approved.caretaker!.caretakerInfo!.lastName ?? ''}'
+                                                            : 'Unknown Caretaker',
                                                         dates: approved
                                                             .appointmentDates,
                                                         status: approved
                                                             .serviceStatus,
-                                                        time:
-                                                            "From ${DateFormat('h:mm a').format(DateTime.parse('1970-01-01 ${approved.appointmentStartTime}'))} - To ${DateFormat('h:mm a').format(DateTime.parse('1970-01-01 ${approved.appointmentEndTime}'))}",
+                                                        time: (approved.appointmentStartTime != null && approved.appointmentEndTime != null)
+                                                            ? (() {
+                                                                try {
+                                                                  return "From ${DateFormat('h:mm a').format(DateTime.parse('1970-01-01 ${approved.appointmentStartTime}'))} - To ${DateFormat('h:mm a').format(DateTime.parse('1970-01-01 ${approved.appointmentEndTime}'))}";
+                                                                } catch (e) {
+                                                                  return "From ${approved.appointmentStartTime} - To ${approved.appointmentEndTime}";
+                                                                }
+                                                              })()
+                                                            : "N/A",
                                                       ),
                                                     );
                                                   },
