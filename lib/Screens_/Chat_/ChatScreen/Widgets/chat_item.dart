@@ -32,7 +32,7 @@ class ChatItem extends StatelessWidget {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(chat!.message!,style: TextStyle(
+                    Text(chat?.message ?? '',style: TextStyle(
                       color: Colors.white,
                       fontSize: 13.sp
                     ),),

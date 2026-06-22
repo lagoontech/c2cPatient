@@ -8,16 +8,15 @@ import '../../../constants/api_urls.dart';
 import '../../../modals/Profile_modal.dart';
 import '../../../sharedPref/sharedPref.dart';
 
-class EditProfileController extends GetxController{
-
-  TextEditingController firstName  = TextEditingController();
-  TextEditingController lastName   = TextEditingController();
-  TextEditingController sexCT      = TextEditingController();
-  TextEditingController emailCT    = TextEditingController();
-  TextEditingController ageCT      = TextEditingController();
-  TextEditingController dobCT      = TextEditingController();
-  TextEditingController heightCT   = TextEditingController();
-  TextEditingController weightCT   = TextEditingController();
+class EditProfileController extends GetxController {
+  TextEditingController firstName = TextEditingController();
+  TextEditingController lastName = TextEditingController();
+  TextEditingController sexCT = TextEditingController();
+  TextEditingController emailCT = TextEditingController();
+  TextEditingController ageCT = TextEditingController();
+  TextEditingController dobCT = TextEditingController();
+  TextEditingController heightCT = TextEditingController();
+  TextEditingController weightCT = TextEditingController();
   TextEditingController locationCT = TextEditingController();
   TextEditingController nationalityCT = TextEditingController();
   TextEditingController addressCT = TextEditingController();
@@ -36,9 +35,8 @@ class EditProfileController extends GetxController{
   String heightUnit = "inches";
 
   PatientInfo? initialUserDetails;
-  ProfileList ?profileList;
+  ProfileList? profileList;
   Data? dataList;
-
 
   DateTime? dob;
   bool isUserFound = false;
@@ -62,7 +60,6 @@ class EditProfileController extends GetxController{
 
   //
   Future<bool> fetchInitialUserDetails() async {
-
     if (hasFetchedUserDetails) {
       return isUserFound;
     }
@@ -73,56 +70,66 @@ class EditProfileController extends GetxController{
     update();
 
     try {
-    var res = await http.get(
-      Uri.parse(ApiUrls().patientInfoFetch),
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer $token",
-      },
-    );
+      var res = await http.get(
+        Uri.parse(ApiUrls().patientInfoFetch),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+      );
 
-    if (res.statusCode == 200) {
-      var decodeBody     = jsonDecode(res.body);
-      profileList        = ProfileList.fromJson(decodeBody);
-      initialUserDetails = profileList?.data?.patientInfo;
-      update();
-      if (initialUserDetails != null) {
-        // Populate the text controllers with user details
-        firstName.text = initialUserDetails?.firstName ?? '';
-        lastName.text = initialUserDetails?.lastName ?? '';
-        emailCT.text = initialUserDetails?.email ?? '';
-        sexCT.text = initialUserDetails?.sex?.capitalizeFirst ?? '';
-        dobCT.text = initialUserDetails?.dob != null ? (DateUtils().dateOnlyFormat(initialUserDetails!.dob!) ?? '') : '';
-        dob = initialUserDetails?.dob;
-        ageCT.text = initialUserDetails?.age.toString() ?? '';
-        heightCT.text = initialUserDetails?.height.toString() ?? '';
-        weightCT.text = initialUserDetails?.weight.toString() ?? '';
-        locationCT.text = initialUserDetails?.location ?? '';
-        nationalityCT.text = initialUserDetails?.nationality ?? '';
-        addressCT.text = initialUserDetails?.address ?? '';
-        diagnosisCT.text = initialUserDetails?.diagnosis ?? '';
-        primary_care_giver_nameCT.text =
-            initialUserDetails?.primaryCareGiverName ?? '';
-        specialist_nameCT.text = initialUserDetails?.specialistName ?? '';
-        bmiCT.text = initialUserDetails?.bmi.toString() ?? '';
-        primaryContactNameCT.text =
-            initialUserDetails?.primaryContactName ?? '';
-        primaryContactNumberCT.text =
-            initialUserDetails?.primaryContactNumber ?? '';
-        secondaryNameCT.text = initialUserDetails?.secondaryContactName ?? '';
-        secondaryNumberCT.text =
-            initialUserDetails?.secondaryContactNumber ?? '';
-        specialListNumberCT.text =
-            initialUserDetails?.specialistContactNumber ?? '';
-        moreInfoCT.text = initialUserDetails?.moreinfo ?? '';
-        loadingProfile = false;
+      if (res.statusCode == 200) {
+        var decodeBody = jsonDecode(res.body);
+        profileList = ProfileList.fromJson(decodeBody);
+        initialUserDetails = profileList?.data?.patientInfo;
         update();
-        return true;
+        if (initialUserDetails != null) {
+          // Populate the text controllers with user details
+          firstName.text = initialUserDetails?.firstName ?? '';
+          lastName.text = initialUserDetails?.lastName ?? '';
+          emailCT.text = initialUserDetails?.email ?? '';
+          sexCT.text = initialUserDetails?.sex?.capitalizeFirst ?? '';
+          dobCT.text = initialUserDetails?.dob != null
+              ? (DateUtils().dateOnlyFormat(initialUserDetails!.dob!) ?? '')
+              : '';
+          dob = initialUserDetails?.dob;
+          ageCT.text = initialUserDetails?.age != null
+              ? "${initialUserDetails!.age}"
+              : "";
+          heightCT.text = initialUserDetails?.height != null
+              ? "${initialUserDetails?.height}"
+              : '';
+          weightCT.text = initialUserDetails?.weight != null
+              ? "${initialUserDetails?.weight}"
+              : '';
+          locationCT.text = initialUserDetails?.location ?? '';
+          nationalityCT.text = initialUserDetails?.nationality ?? '';
+          addressCT.text = initialUserDetails?.address ?? '';
+          diagnosisCT.text = initialUserDetails?.diagnosis ?? '';
+          primary_care_giver_nameCT.text =
+              initialUserDetails?.primaryCareGiverName ?? '';
+          specialist_nameCT.text = initialUserDetails?.specialistName ?? '';
+          bmiCT.text = initialUserDetails?.bmi != null
+              ? "${initialUserDetails?.bmi}"
+              : '';
+          primaryContactNameCT.text =
+              initialUserDetails?.primaryContactName ?? '';
+          primaryContactNumberCT.text =
+              initialUserDetails?.primaryContactNumber ?? '';
+          secondaryNameCT.text = initialUserDetails?.secondaryContactName ?? '';
+          secondaryNumberCT.text =
+              initialUserDetails?.secondaryContactNumber ?? '';
+          specialListNumberCT.text =
+              initialUserDetails?.specialistContactNumber ?? '';
+          moreInfoCT.text = initialUserDetails?.moreinfo ?? '';
+          loadingProfile = false;
+          update();
+          return true;
+        }
+        update();
+      } else {
+        print("Error: ${res.statusCode} - ${res.body}");
       }
-      update();
-    } else {
-      print("Error: ${res.statusCode} - ${res.body}");
-    }
     } catch (e) {
       print("Exception occurred: $e");
     }
@@ -146,7 +153,7 @@ class EditProfileController extends GetxController{
         "last_name": lastName.text,
         "sex": sexCT.text.toLowerCase(),
         "age": ageCT.text,
-        "email":emailCT.text,
+        "email": emailCT.text,
         "dob": dob != null ? DateUtils().parsableDate(dob!) : '',
         "bmi": bmiCT.text,
         "height": heightCT.text,
@@ -180,8 +187,8 @@ class EditProfileController extends GetxController{
         update();
         Get.back();
         showCustomToast(message: "Updated successfully");
-      } else if(res.statusCode == 422){
-        var response = jsonDecode(res.body) as Map<String,dynamic>;
+      } else if (res.statusCode == 422) {
+        var response = jsonDecode(res.body) as Map<String, dynamic>;
         response.keys.forEach((element) {
           var errorMsg = response[element][0];
           showCustomToast(message: errorMsg);
@@ -200,7 +207,6 @@ class EditProfileController extends GetxController{
 
   //
   void calculateBMI() {
-
     double height = double.tryParse(heightCT.text) ?? 0;
     double weight = double.tryParse(weightCT.text) ?? 0;
 
@@ -212,7 +218,6 @@ class EditProfileController extends GetxController{
     }
 
     update();
-
   }
 
   @override
@@ -220,5 +225,4 @@ class EditProfileController extends GetxController{
     super.onInit();
     fetchInitialUserDetails();
   }
-
 }

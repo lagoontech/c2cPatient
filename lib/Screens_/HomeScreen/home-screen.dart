@@ -35,10 +35,11 @@ class HomePage extends StatelessWidget {
       }
       String? name;
       String? fullImg;
-      if(controller.profileList!=null && controller.profileList!.data!=null && controller.profileList!.data!.patientInfo!=null){
-         name = controller.profileList!.data!.patientInfo!.firstName!;
-         fullImg = ('${controller.profileList!.profilePath}' +
-            ('${controller.profileList!.data!.profileImageUrl}'));
+      final profile = v.profileList;
+      final patientData = profile?.data;
+      if (patientData != null) {
+        name = patientData.patientInfo?.firstName;
+        fullImg = '${profile?.profilePath ?? ""}${patientData.profileImageUrl ?? ""}';
       }
       return RefreshIndicator(
         onRefresh: () async {
@@ -62,7 +63,7 @@ class HomePage extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: 10.h),
               child: ListView(
                 children: [
-                  kHeight10,
+                  SizedBox(height: 6.h),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -71,12 +72,12 @@ class HomePage extends StatelessWidget {
                           children: [
                             CustomLabel(
                               text: "Welcome to",
-                              fontSize: 19.sp,
+                              fontSize: 17.sp,
                               fontWeight: FontWeight.bold,
                             ),
                             CustomLabel(
                               text: " Care2Care",
-                              fontSize: 19.sp,
+                              fontSize: 17.sp,
                               color: AppColors.primaryColor,
                               fontWeight: FontWeight.bold,
                             ),
@@ -85,9 +86,9 @@ class HomePage extends StatelessWidget {
                       ),
                     ],
                   ),
-                  kHeight15,
+                  SizedBox(height: 10.h),
                   Container(
-                    height: MediaQuery.of(context).size.height * 0.17,
+                    height: MediaQuery.of(context).size.height * 0.145,
                     width: MediaQuery.of(context).size.width,
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10.r),
@@ -112,11 +113,11 @@ class HomePage extends StatelessWidget {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  kHeight15,
+                                  SizedBox(height: 10.h),
                                   Expanded(
                                     child: Text(
                                       "We provide high quality, individualized care for patients of all ages where you feel most comfortable – your home or community",
-                                      style: TextStyle(color: Colors.white,fontSize: 13.sp),
+                                      style: TextStyle(color: Colors.white,fontSize: 12.sp),
                                     ),
                                   )
                                   /* kHeight25,
@@ -189,14 +190,14 @@ class HomePage extends StatelessWidget {
                       ],
                     ),
                   ),
-                  kHeight20,
+                  SizedBox(height: 12.h),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Expanded(
                         child: CustomLabel(
                           text: "Top CareTakers",
-                          fontSize: 19.sp,
+                          fontSize: 17.sp,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -206,13 +207,13 @@ class HomePage extends StatelessWidget {
                         },
                         child: CustomLabel(
                           text: "See all",
-                          fontSize: 15.sp,
+                          fontSize: 13.sp,
                           color: AppColors.primaryColor,
                         ),
                       ),
                     ],
                   ),
-                  kHeight10,
+                  SizedBox(height: 6.h),
                   GetBuilder<HomeController>(builder: (v) {
                     return !v.isLoadingTopCareTakers?ListView.builder(
                       shrinkWrap: true,
@@ -329,7 +330,7 @@ class CustomCareTakers extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height * 0.12,
+      height: MediaQuery.of(context).size.height * 0.105,
       width: MediaQuery.of(context).size.width,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10.r),
@@ -338,22 +339,39 @@ class CustomCareTakers extends StatelessWidget {
           width: 0.2,
         ),
       ),
-      padding: EdgeInsets.all(6.r),
+      padding: EdgeInsets.all(5.r),
       child: Row(
         children: [
           Container(
             height: MediaQuery.of(context).size.height,
-            width: 68.w,
-
-            //color: AppColors.secondaryColor,
+            width: 56.w,
             child: ClipOval(
-              child: CachedNetworkImage(fit: BoxFit.cover, imageUrl: imageUrl!),
+              child: (imageUrl != null && imageUrl!.isNotEmpty && !imageUrl!.endsWith('/'))
+                  ? CachedNetworkImage(
+                      fit: BoxFit.cover,
+                      imageUrl: imageUrl!,
+                      placeholder: (context, url) => const Center(
+                        child: SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                      ),
+                      errorWidget: (context, url, error) => Container(
+                        color: Colors.grey[200],
+                        child: const Icon(Icons.person, size: 36, color: Colors.grey),
+                      ),
+                    )
+                  : Container(
+                      color: Colors.grey[200],
+                      child: const Icon(Icons.person, size: 36, color: Colors.grey),
+                    ),
             ),
           ),
           kWidth10,
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Row(
                 children: [
@@ -361,7 +379,7 @@ class CustomCareTakers extends StatelessWidget {
                     name ?? '',
                     style: TextStyle(
                       color: Colors.black,
-                      fontSize: 16.sp,
+                      fontSize: 14.sp,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -371,34 +389,27 @@ class CustomCareTakers extends StatelessWidget {
                 "Age : ${age ?? ''}Yrs",
                 style: TextStyle(
                   color: Colors.black,
-                  fontSize: 12.sp,
+                  fontSize: 11.sp,
                 ),
               ),
               Text(
                 "Service Charge : \$${amount ?? ''}/Hr",
                 style: TextStyle(
                   color: Colors.black,
-                  fontSize: 12.sp,
+                  fontSize: 11.sp,
                 ),
               ),
-              SizedBox(height: 4.h),
-              rating!=null
+              SizedBox(height: 2.h),
+              rating != null
                   ? RatingBar.readOnly(
-                filledIcon: Icons.star,
-                emptyIcon: Icons.star_border,
-                isHalfAllowed: true,
-                halfFilledIcon: Icons.star_half,
-                initialRating: double.parse(rating!),
-                size: 16.sp,
-              ):SizedBox()
-              /*  RatingBar(
-                size: 23.sp,
-                filledIcon: Icons.star,
-                emptyIcon: Icons.star_border,
-                onRatingChanged: (value) => debugPrint('$value'),
-                initialRating: initial,
-                maxRating: 5,
-              ),*/
+                      filledIcon: Icons.star,
+                      emptyIcon: Icons.star_border,
+                      isHalfAllowed: true,
+                      halfFilledIcon: Icons.star_half,
+                      initialRating: double.tryParse(rating!) ?? 0.0,
+                      size: 13.sp,
+                    )
+                  : SizedBox(),
             ],
           ),
         ],

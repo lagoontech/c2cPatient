@@ -93,15 +93,15 @@ class CancelList extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                data.caretaker!.caretakerInfo!.firstName ?? 'N/A',
+                                data.caretaker?.caretakerInfo?.firstName ?? 'N/A',
                                 style: TextStyle(
                                     fontSize: 16, fontWeight: FontWeight.bold),
                               ),
                               Text(
-                                  "Age: ${data.caretaker!.caretakerInfo!.age ?? 'N/A'}"),
-                              Text("Date: ${DateUtils().dateOnlyFormat(data.appointmentDate!) ?? 'N/A'}"),
+                                  "Age: ${data.caretaker?.caretakerInfo?.age ?? 'N/A'}"),
+                              Text("Date: ${data.appointmentDate != null ? (DateUtils().dateOnlyFormat(data.appointmentDate!) ?? 'N/A') : 'N/A'}"),
                               Text(
-                                  "Time: ${DateUtils().displayTime(data.appointmentStartTime!) ?? 'N/A'} - ${DateUtils().displayTime(data.appointmentEndTime!) ?? 'N/A'}"),
+                                  "Time: ${(data.appointmentStartTime != null ? DateUtils().displayTime(data.appointmentStartTime!) : null) ?? 'N/A'} - ${(data.appointmentEndTime != null ? DateUtils().displayTime(data.appointmentEndTime!) : null) ?? 'N/A'}"),
                               Text(
                                 "Status: ${data.serviceStatus ?? 'Cancelled'}",
                                 style: TextStyle(color: Colors.red),

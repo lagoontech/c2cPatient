@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import 'package:care2care/ReusableUtils_/AppColors.dart';
-import 'package:care2care/Utils/screen_utils.dart';
 
 class AppointmentsContainer extends StatelessWidget {
   final String imageUrl;
@@ -32,35 +31,32 @@ class AppointmentsContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool isiPad = isiPadLayout(context);
-    final double containerHeight = isiPad ? 185.h : 160.h;
-
     return Container(
-      height: containerHeight,
       width: double.infinity,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12.r),
+        borderRadius: BorderRadius.circular(10.r),
         border: Border.all(color: Colors.grey.shade300, width: 0.6),
         color: Colors.white,
         boxShadow: [
           BoxShadow(
             color: Colors.black12,
-            blurRadius: 4,
+            blurRadius: 3,
             offset: const Offset(1, 1),
           ),
         ],
       ),
-      child: Row(
-        children: [
+      child: IntrinsicHeight(
+        child: Row(
+          children: [
           // Left colored strip
           Container(
-            width: 6.w,
+            width: 5.w,
             height: double.infinity,
             decoration: BoxDecoration(
               color: statusColor ?? AppColors.primaryColor,
               borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(12.r),
-                bottomLeft: Radius.circular(12.r),
+                topLeft: Radius.circular(10.r),
+                bottomLeft: Radius.circular(10.r),
               ),
             ),
           ),
@@ -68,7 +64,7 @@ class AppointmentsContainer extends StatelessWidget {
           // Main content
           Expanded(
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+              padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 7.h),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -80,52 +76,46 @@ class AppointmentsContainer extends StatelessWidget {
                         "Appointment Details",
                         style: TextStyle(
                           color: Colors.grey.shade700,
-                          fontSize: 14.sp,
+                          fontSize: 12.sp,
                           fontWeight: FontWeight.w500,
                         ),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.more_vert_outlined),
-                        onPressed: () {},
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(),
                       ),
                     ],
                   ),
 
-                  SizedBox(height: 6.h),
+                  SizedBox(height: 4.h),
 
                   // Date and time row
                   Row(
                     children: [
                       Icon(
                         Icons.access_time,
-                        size: 16.sp,
+                        size: 13.sp,
                         color: AppColors.primaryColor,
                       ),
-                      SizedBox(width: 6.w),
+                      SizedBox(width: 4.w),
                       Text(
                         _buildDateRange(),
                         style: TextStyle(
-                          fontSize: 13.sp,
+                          fontSize: 11.sp,
                           fontWeight: FontWeight.w400,
                           color: Colors.black87,
                         ),
                       ),
-                      SizedBox(width: 10.w),
+                      SizedBox(width: 6.w),
                       Text(
                         '•',
                         style: TextStyle(
-                          fontSize: 18.sp,
+                          fontSize: 14.sp,
                           color: Colors.black45,
                         ),
                       ),
-                      SizedBox(width: 10.w),
+                      SizedBox(width: 6.w),
                       Flexible(
                         child: Text(
                           appointmentTime,
                           style: TextStyle(
-                            fontSize: 13.sp,
+                            fontSize: 11.sp,
                             color: Colors.black87,
                             fontWeight: FontWeight.w500,
                           ),
@@ -135,20 +125,20 @@ class AppointmentsContainer extends StatelessWidget {
                     ],
                   ),
 
-                  SizedBox(height: 10.h),
+                  SizedBox(height: 6.h),
                   Divider(color: Colors.grey.shade300, height: 1.h),
-                  SizedBox(height: 10.h),
+                  SizedBox(height: 6.h),
 
                   // Doctor info and action row
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       CircleAvatar(
-                        radius: 25.r,
+                        radius: 20.r,
                         backgroundImage: imageUrl.startsWith('http') ? NetworkImage(imageUrl) : null,
-                        child: !imageUrl.startsWith('http') ? Icon(Icons.person, size: 25.r) : null,
+                        child: !imageUrl.startsWith('http') ? Icon(Icons.person, size: 20.r) : null,
                       ),
-                      SizedBox(width: 10.w),
+                      SizedBox(width: 8.w),
                       Expanded(
                         flex: 2,
                         child: Column(
@@ -158,7 +148,7 @@ class AppointmentsContainer extends StatelessWidget {
                             Text(
                               doctorName,
                               style: TextStyle(
-                                fontSize: 15.sp,
+                                fontSize: 13.sp,
                                 fontWeight: FontWeight.w600,
                                 color: Colors.black87,
                               ),
@@ -167,7 +157,7 @@ class AppointmentsContainer extends StatelessWidget {
                             Text(
                               doctorDesignation,
                               style: TextStyle(
-                                fontSize: 12.sp,
+                                fontSize: 10.5.sp,
                                 color: Colors.black54,
                               ),
                               overflow: TextOverflow.ellipsis,
@@ -183,14 +173,14 @@ class AppointmentsContainer extends StatelessWidget {
                             children: [
                               if (actionIcon != null)
                                 Icon(actionIcon,
-                                    size: 18.sp,
+                                    size: 15.sp,
                                     color:
                                     actionColor ?? AppColors.secondaryColor),
-                              if (actionIcon != null) SizedBox(width: 5.w),
+                              if (actionIcon != null) SizedBox(width: 4.w),
                               Text(
                                 action!,
                                 style: TextStyle(
-                                  fontSize: 12.sp,
+                                  fontSize: 10.5.sp,
                                   fontWeight: FontWeight.w500,
                                   color: actionColor ?? AppColors.secondaryColor,
                                 ),
@@ -206,6 +196,7 @@ class AppointmentsContainer extends StatelessWidget {
             ),
           ),
         ],
+      ),
       ),
     );
   }

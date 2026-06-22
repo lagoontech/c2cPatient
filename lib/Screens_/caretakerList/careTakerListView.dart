@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:care2care/ReusableUtils_/appBar.dart';
 import 'package:care2care/ReusableUtils_/customButton.dart';
 import 'package:care2care/ReusableUtils_/custom_textfield.dart';
@@ -45,7 +46,7 @@ class CaretakerList extends StatelessWidget {
         onRefresh: () async {
           await ct.getCareTakers();
         },
-        onLoading: (){
+        onLoading: () {
           ct.getCareTakers(loading: true);
         },
         enablePullUp: true,
@@ -54,28 +55,24 @@ class CaretakerList extends StatelessWidget {
           physics: NeverScrollableScrollPhysics(),
           child: Column(
             children: [
-
               Padding(
-                padding: EdgeInsets.symmetric(
-                    horizontal: 10.h,
-                    vertical: 12.h),
+                padding: EdgeInsets.symmetric(horizontal: 10.h, vertical: 12.h),
                 child: SizedBox(
                   height: kToolbarHeight,
                   child: customTextField(
-                      context,
-                      onChanged: (v){
-                        ct.debounceSearch();
-                      },
-                      hint: "Search caretakers",
+                    context,
+                    onChanged: (v) {
+                      ct.debounceSearch();
+                    },
+                    hint: "Search caretakers",
                     hintStyle: TextStyle(fontSize: 14.sp),
-                      controller: ct.searchTEC,
-                      borderColor: AppColors.primaryColor,
-                      labelText: "",
-                      prefix: Icon(Icons.search),
+                    controller: ct.searchTEC,
+                    borderColor: AppColors.primaryColor,
+                    labelText: "",
+                    prefix: Icon(Icons.search),
                   ),
                 ),
               ),
-
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 10.h),
                 child: GetBuilder<HomeController>(
@@ -97,10 +94,11 @@ class CaretakerList extends StatelessWidget {
                       physics: NeverScrollableScrollPhysics(),
                       itemCount: controller.careTakers.length,
                       itemBuilder: (context, index) {
-                        var caretaker = controller.careTakers[index].caretakerInfo;
+                        var caretaker =
+                            controller.careTakers[index].caretakerInfo;
                         var path = controller.profilePath;
-                        var imgUrl = controller
-                            .careTakers[index].profileImageUrl;
+                        var imgUrl =
+                            controller.careTakers[index].profileImageUrl;
 
                         return GestureDetector(
                           onTap: () {
@@ -117,7 +115,8 @@ class CaretakerList extends StatelessWidget {
                                     caretaker.totalPatientsAttended.toString(),
                                 experience:
                                     caretaker.yearOfExperiences.toString(),
-                                rating: controller.careTakers[index].averageRating,
+                                rating:
+                                    controller.careTakers[index].averageRating,
                                 imageUrl: '${path}${imgUrl}',
                               ),
                               transition: Transition.fade,
@@ -129,7 +128,7 @@ class CaretakerList extends StatelessWidget {
                             child: carTakerList(
                               context,
                               ct,
-                              charge:caretaker.serviceCharge ,
+                              charge: caretaker.serviceCharge,
                               gender: caretaker.sex,
                               doctorDesignation: 'Care Taker',
                               doctorName: caretaker.firstName,
@@ -157,133 +156,135 @@ class CaretakerList extends StatelessWidget {
   }
 
   //
-  Widget filterLabel(String label){
-
+  Widget filterLabel(String label) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 9.w,vertical: 12.h),
-      child: Text(
-          label,
+      padding: EdgeInsets.symmetric(horizontal: 9.w, vertical: 12.h),
+      child: Text(label,
           style: TextStyle(
-              fontWeight: FontWeight.w600,
-              fontSize: 15.sp,
+            fontWeight: FontWeight.w600,
+            fontSize: 15.sp,
           )),
     );
-
   }
 
   //
-  showFilterSheet(BuildContext context) async{
-
+  showFilterSheet(BuildContext context) async {
     await showModalBottomSheet(
         context: context,
-        builder: (context){
-          return GetBuilder<HomeController>(
-            builder: (vc) {
-              return Container(
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height * 0.5,
-                padding: EdgeInsets.symmetric(horizontal: 12.w),
-                child: SingleChildScrollView(child: Column(
+        builder: (context) {
+          return GetBuilder<HomeController>(builder: (vc) {
+            return Container(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height * 0.5,
+              padding: EdgeInsets.symmetric(horizontal: 12.w),
+              child: SingleChildScrollView(
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-
                     filterLabel("Rating"),
-
                     Center(
                       child: RatingBar(
                           alignment: Alignment.center,
                           filledIcon: Icons.star,
                           emptyIcon: Icons.star_border,
-                          onRatingChanged: (v){
+                          onRatingChanged: (v) {
                             ct.rating = v;
                             ct.update();
-                          }
-                      ),
+                          }),
                     ),
-
                     filterLabel("Price"),
-
                     SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.8,
-                      child: SliderTheme(
-                        data: SliderThemeData(
+                        width: MediaQuery.of(context).size.width * 0.8,
+                        child: SliderTheme(
+                          data: SliderThemeData(
                             showValueIndicator: ShowValueIndicator.always,
-                        ),
-                        child: RangeSlider(
-                          values: ct.priceRange,
-                          min: 0,
-                          max: 1000,
-                          labels: RangeLabels('${ct.priceRange.start.round()}', '${ct.priceRange.end.round()}'),
-                          inactiveColor: Colors.grey,
-                          activeColor: Colors.black,
-                          onChanged: (RangeValues values) {
-                            ct.priceRange = values;
+                          ),
+                          child: RangeSlider(
+                            values: ct.priceRange,
+                            min: 0,
+                            max: 1000,
+                            labels: RangeLabels(
+                                '${ct.priceRange.start.round()}',
+                                '${ct.priceRange.end.round()}'),
+                            inactiveColor: Colors.grey,
+                            activeColor: Colors.black,
+                            onChanged: (RangeValues values) {
+                              ct.priceRange = values;
+                              ct.update();
+                            },
+                          ),
+                        )),
+                    SizedBox(
+                      height: 12.h,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        // Male Option
+                        GestureDetector(
+                          onTap: () {
+                            ct.gender = "male";
                             ct.update();
                           },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 12, horizontal: 20),
+                            decoration: BoxDecoration(
+                              color: ct.gender == "male"
+                                  ? Colors.blue
+                                  : Colors.grey[300],
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Text(
+                              "Male",
+                              style: TextStyle(
+                                color: ct.gender == "male"
+                                    ? Colors.white
+                                    : Colors.black,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
                         ),
-                      )
+                        const SizedBox(width: 16),
+                        // Female Option
+                        GestureDetector(
+                          onTap: () {
+                            ct.gender = "female";
+                            ct.update();
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 12, horizontal: 20),
+                            decoration: BoxDecoration(
+                              color: ct.gender == "female"
+                                  ? Colors.pink
+                                  : Colors.grey[300],
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Text(
+                              "Female",
+                              style: TextStyle(
+                                color: ct.gender == "female"
+                                    ? Colors.white
+                                    : Colors.black,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-
-                    SizedBox(height: 12.h,),
-
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      // Male Option
-                      GestureDetector(
-                        onTap: (){
-                          ct.gender = "male";
-                          ct.update();
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-                          decoration: BoxDecoration(
-                            color: ct.gender == "male" ? Colors.blue : Colors.grey[300],
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Text(
-                            "Male",
-                            style: TextStyle(
-                              color: ct.gender == "male" ? Colors.white : Colors.black,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      // Female Option
-                      GestureDetector(
-                        onTap: (){
-                          ct.gender = "female";
-                          ct.update();
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-                          decoration: BoxDecoration(
-                            color: ct.gender == "female" ? Colors.pink : Colors.grey[300],
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Text(
-                            "Female",
-                            style: TextStyle(
-                              color: ct.gender == "female" ? Colors.white : Colors.black,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-
-                    SizedBox(height: 24.h,),
-
+                    SizedBox(
+                      height: 24.h,
+                    ),
                     Row(
                       children: [
                         Expanded(
                           child: CustomButton(
                             width: 80.w,
                             text: "Apply",
-                            onPressed: (){
+                            onPressed: () {
                               ct.getCareTakers();
                             },
                           ),
@@ -292,7 +293,7 @@ class CaretakerList extends StatelessWidget {
                           width: 80.w,
                           text: "Clear",
                           color: Colors.red,
-                          onPressed: (){
+                          onPressed: () {
                             ct.gender = "";
                             ct.priceRange = const RangeValues(0, 1000);
                             ct.rating = 0.0;
@@ -301,15 +302,13 @@ class CaretakerList extends StatelessWidget {
                         ),
                       ],
                     )
-
                   ],
-                ),),
-              );
-            }
-          );
+                ),
+              ),
+            );
+          });
         });
   }
-
 }
 
 Widget carTakerList(BuildContext context, HomeController controller,
@@ -321,11 +320,10 @@ Widget carTakerList(BuildContext context, HomeController controller,
     String? totalPatient,
     String? experience,
     String? rating,
-      String?charge,
+    String? charge,
     String? reviews,
     String? imageUrl,
-    String? about
-    }) {
+    String? about}) {
   // Define the icon and color based on the gender
   IconData genderIcon =
       (gender?.toLowerCase() == 'male') ? Icons.male : Icons.female;
@@ -334,10 +332,10 @@ Widget carTakerList(BuildContext context, HomeController controller,
       (gender?.toLowerCase() == 'male') ? Colors.blue : Colors.pink;
 
   return Container(
-    padding: EdgeInsets.all(10.r),
+    padding: EdgeInsets.all(8.r),
     height: isiPadLayout(context)
-        ? MediaQuery.of(context).size.height * 0.3
-        : MediaQuery.of(context).size.height * 0.25,
+        ? MediaQuery.of(context).size.height * 0.25
+        : MediaQuery.of(context).size.height * 0.21,
     width: MediaQuery.of(context).size.width,
     decoration: BoxDecoration(
       borderRadius: BorderRadius.circular(12.r),
@@ -349,13 +347,40 @@ Widget carTakerList(BuildContext context, HomeController controller,
       children: [
         Expanded(
           child: Container(
-            height: MediaQuery.of(context).size.height * 0.10,
+            height: MediaQuery.of(context).size.height * 0.08,
             width: MediaQuery.of(context).size.width,
             child: Row(
               children: [
                 CircleAvatar(
-                  radius: 28.r,
-                  backgroundImage: NetworkImage(imageUrl!),
+                  radius: 22.r,
+                  backgroundColor: Colors.grey[200],
+                  child: ClipOval(
+                    child: (imageUrl != null &&
+                            imageUrl.isNotEmpty &&
+                            !imageUrl.endsWith('/'))
+                        ? CachedNetworkImage(
+                            fit: BoxFit.cover,
+                            imageUrl: imageUrl,
+                            placeholder: (context, url) => const Center(
+                              child: SizedBox(
+                                width: 14,
+                                height: 14,
+                                child:
+                                    CircularProgressIndicator(strokeWidth: 2),
+                              ),
+                            ),
+                            errorWidget: (context, url, error) => const Icon(
+                              Icons.person,
+                              size: 22,
+                              color: Colors.grey,
+                            ),
+                          )
+                        : const Icon(
+                            Icons.person,
+                            size: 22,
+                            color: Colors.grey,
+                          ),
+                  ),
                 ),
                 SizedBox(width: 10.w),
                 Expanded(
@@ -370,7 +395,7 @@ Widget carTakerList(BuildContext context, HomeController controller,
                             doctorName ?? '',
                             style: TextStyle(
                               color: Colors.black,
-                              fontSize: 16.sp,
+                              fontSize: 14.sp,
                               fontWeight: FontWeight.bold,
                             ),
                             overflow: TextOverflow.ellipsis,
@@ -379,7 +404,7 @@ Widget carTakerList(BuildContext context, HomeController controller,
                           Image.asset(
                             "assets/images/verified_tick.png",
                             fit: BoxFit.cover,
-                            height: 17.h,
+                            height: 14.h,
                           ),
                         ],
                       ),
@@ -387,7 +412,7 @@ Widget carTakerList(BuildContext context, HomeController controller,
                         doctorDesignation ?? '',
                         style: TextStyle(
                           color: Colors.grey,
-                          fontSize: 14.sp,
+                          fontSize: 12.sp,
                           fontWeight: FontWeight.w500,
                         ),
                         overflow: TextOverflow.ellipsis,
@@ -396,7 +421,7 @@ Widget carTakerList(BuildContext context, HomeController controller,
                         doctorState ?? '',
                         style: TextStyle(
                           color: Colors.grey,
-                          fontSize: 14.sp,
+                          fontSize: 12.sp,
                           fontWeight: FontWeight.w500,
                         ),
                         overflow: TextOverflow.ellipsis,
@@ -414,12 +439,11 @@ Widget carTakerList(BuildContext context, HomeController controller,
             ),
           ),
         ),
-
-        const Divider(),
-
+        const Divider(height: 12, thickness: 0.5),
+        SizedBox(height: 8.h),
         Expanded(
           child: Container(
-            height: MediaQuery.of(context).size.height * 0.10,
+            height: MediaQuery.of(context).size.height * 0.08,
             width: MediaQuery.of(context).size.width,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -428,14 +452,18 @@ Widget carTakerList(BuildContext context, HomeController controller,
                     icon: IconlyBold.user_2, name: '${totalPatient}+ Patients'),
                 Circleso(context,
                     icon: IconlyBold.work, name: '${experience}+ years '),
-                Circleso(context, icon: EneftyIcons.dollar_circle_outline, name: "\$${charge}/Hr"),
                 Circleso(context,
-                    icon: IconlyBold.star, name: rating!=null? '${double.parse(rating).toStringAsFixed(1)}':'No ratings'),
+                    icon: EneftyIcons.dollar_circle_outline,
+                    name: "\$${charge}/Hr"),
+                Circleso(context,
+                    icon: IconlyBold.star,
+                    name: rating != null
+                        ? '${double.parse(rating).round()}'
+                        : 'No ratings'),
               ],
             ),
           ),
         )
-
       ],
     ),
   );
@@ -445,20 +473,21 @@ Widget Circleso(BuildContext context, {IconData? icon, String? name}) {
   return Column(
     children: [
       CircleAvatar(
-        radius: 24.r,
+        radius: 20.r,
         backgroundColor: AppColors.primaryColor,
         child: Icon(
           icon,
           color: Colors.white,
+          size: 18.sp,
         ),
       ),
-      SizedBox(height: 6.h),
+      SizedBox(height: 4.h),
       Expanded(
         child: Text(
           name ?? '',
           style: TextStyle(
             color: Colors.black,
-            fontSize: 13.sp,
+            fontSize: 11.sp,
             fontWeight: FontWeight.w500,
           ),
         ),

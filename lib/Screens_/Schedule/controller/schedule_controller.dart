@@ -354,7 +354,6 @@ class ScheduleController extends GetxController {
     if (response.statusCode == 200) {
       var jsonResponse = jsonDecode(response.body);
       profile = ProfileList.fromJson(jsonResponse);
-      update();
       if (profile?.data?.patientSchedules != null) {
         patientSchedules = profile!.data!.patientSchedules;
         pastSurgicalCT.text =
@@ -388,7 +387,6 @@ class ScheduleController extends GetxController {
         if (breakfastTime != null && breakfastTime.isNotEmpty) {
           filters.clear();
           filters.add(breakfastTime);
-          update();
         }
 
         final medications = patientSchedules?.patientMedications;
@@ -422,7 +420,6 @@ class ScheduleController extends GetxController {
           });
           selectedMedication = medidation;
           debugPrint(medidation);
-          update();
         }else{
           meditationDetails = [
             MedicationModel(time: "Morning",medicationDetails: []),
@@ -435,54 +432,45 @@ class ScheduleController extends GetxController {
           oralSelection = oralCare;
           selectedOralCareTimings = jsonDecode(oralCare);
           debugPrint(medidation);
-          update();
         }
         final bathing = patientSchedules?.patientBathing;
         if (bathing != null && bathing.isNotEmpty) {
           bathingSelection = bathing;
           selectedBathingTimings = jsonDecode(bathing);
           debugPrint(medidation);
-          update();
         }
         final dressing = patientSchedules?.patientDressing;
         if (dressing != null && dressing.isNotEmpty) {
           dressingSelection = dressing;
           selectedDressingTimings = jsonDecode(dressing);
           debugPrint(medidation);
-          update();
         }
 
         final lunchTime = patientSchedules?.patientLunchtime;
         if (lunchTime != null && lunchTime.isNotEmpty) {
           lunchFilters.clear();
           lunchFilters.add(lunchTime);
-          update();
         }
         final hydrationVal = patientSchedules?.patientHydration;
         if (hydrationVal != null && hydrationVal.isNotEmpty) {
           hydrationTEC.text = hydrationVal;
-          update();
         }
 
         final snacksVal = patientSchedules?.patientSnackstime;
         if (snacksVal != null && snacksVal.isNotEmpty) {
           snacks.clear();
           snacks.add(snacksVal);
-          update();
         }
 
         final dinnerVal = patientSchedules?.patientDinnertime;
         if (dinnerVal != null && dinnerVal.isNotEmpty) {
           dinner.clear();
           dinner.add(dinnerVal);
-          update();
         }
         final bloodSugarVal = patientSchedules?.patientBloodsugar;
         if (bloodSugarVal != null && bloodSugarVal.isNotEmpty) {
           bloodSugarTEC.text = bloodSugarVal;
-          update();
         }
-        update();
         debugPrint(
             "Fetched patient schedules: ${profile?.data?.patientSchedules?.toJson()}");
       } else {

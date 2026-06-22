@@ -5,8 +5,8 @@ import 'package:care2care/ReusableUtils_/customLabel.dart';
 import 'package:care2care/ReusableUtils_/image_background.dart';
 import 'package:care2care/ReusableUtils_/loader.dart';
 import 'package:care2care/ReusableUtils_/sizes.dart';
-import 'package:care2care/Screens_/CareTakerInformation/Controller/careTaker_controller.dart';
-import 'package:care2care/Screens_/HomeScreen/controller/home%20controller.dart';
+import 'Controller/careTaker_controller.dart';
+import '../HomeScreen/controller/home controller.dart';
 import 'package:enefty_icons/enefty_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_date_range_picker/flutter_date_range_picker.dart';
@@ -31,20 +31,19 @@ class CaretakerInformation extends StatefulWidget {
 
   int? careTakerId;
 
-  CaretakerInformation({
-    super.key,
-    this.doctorName,
-    this.doctorDesignation,
-    this.doctorState,
-    this.gender,
-    this.totalPatient,
-    this.experience,
-    this.rating,
-    this.imageUrl,
-    this.careTakerId,
-    this.charge,
-    this.about
-  });
+  CaretakerInformation(
+      {super.key,
+      this.doctorName,
+      this.doctorDesignation,
+      this.doctorState,
+      this.gender,
+      this.totalPatient,
+      this.experience,
+      this.rating,
+      this.imageUrl,
+      this.careTakerId,
+      this.charge,
+      this.about});
 
   @override
   State<CaretakerInformation> createState() => _CaretakerInformationState();
@@ -68,8 +67,7 @@ class _CaretakerInformationState extends State<CaretakerInformation> {
 
   @override
   Widget build(BuildContext context) {
-
-    if(controller.caretakerId == null){
+    if (controller.caretakerId == null) {
       controller.caretakerId = widget.careTakerId;
       controller.getUnavailableDates();
     }
@@ -123,17 +121,18 @@ class _CaretakerInformationState extends State<CaretakerInformation> {
                   ],
                 ),
                 kHeight10,
-                widget.about!=null && widget.about!.isNotEmpty
+                widget.about?.isNotEmpty == true
                     ? Column(
-                      children: [
-                        CustomLabel(
-                                          text: "About",
-                                          fontSize: 16.sp,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                        kHeight10,
-                      ],
-                    ) : SizedBox(),
+                        children: [
+                          CustomLabel(
+                            text: "About",
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          kHeight10,
+                        ],
+                      )
+                    : SizedBox(),
                 ReadMoreText(
                   widget.about ?? "",
                   trimMode: TrimMode.Line,
@@ -180,42 +179,109 @@ class _CaretakerInformationState extends State<CaretakerInformation> {
                 //
                 GetBuilder<CareTakerController>(
                     builder: (vc){
-                      return !vc.blockingDates?DateRangePickerWidget(
-                        doubleMonth: false,
-                        maximumDateRangeLength: 30,
-                        minimumDateRangeLength: 2,
-                        minDate: DateTime.now().subtract(Duration(days: 1)),
-                        disabledDates: vc.unavailableDates,
-                        theme: CalendarTheme(
-                          selectedColor: AppColors.primaryColor,
-                          inRangeColor: AppColors.primaryColor.withOpacity(0.3),
-                          inRangeTextStyle: TextStyle(color: Colors.black),
-                          selectedTextStyle: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                          todayTextStyle: TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
-                          defaultTextStyle: TextStyle(color: Colors.black),
-                          disabledTextStyle: TextStyle(color: Colors.grey),
-                          radius: 8.0,
-                          tileSize: 48.sp,
+                      // Calculate the exact size needed to span the width of the card
+                      final double availableWidth = MediaQuery.of(context).size.width - 32.w;
+                      final double calTileSize = availableWidth / 7;
+                      final double calHeight = calTileSize * 6 + 96;
+
+                      return Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12.r),
+                          border: Border.all(color: Colors.grey.shade200),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.04),
+                              blurRadius: 10,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
                         ),
-                        height: 300.h,
-                        onDateRangeChanged: (v){
-                          vc.selectedRange = v;
-                          print(vc.selectedRange!.end);
-                          vc.calculateNumberOfDays();
-                        },
-                      ) : SizedBox(
-                          height: 200.h,
-                          child: CustomCircularLoader(
-                              color: AppColors.primaryColor
-                          )
+                        clipBehavior: Clip.antiAlias,
+                        child: !vc.blockingDates ? Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            DateRangePickerWidget(
+                              doubleMonth: false,
+                              maximumDateRangeLength: 30,
+                              minimumDateRangeLength: 2,
+                              minDate: DateTime.now().subtract(Duration(days: 1)),
+                              disabledDates: vc.unavailableDates,
+                              theme: CalendarTheme(
+                                selectedColor: AppColors.primaryColor,
+                                inRangeColor: AppColors.primaryColor.withOpacity(0.12),
+                                inRangeTextStyle: TextStyle(
+                                  color: Colors.black87,
+                                  fontSize: 12.sp,
+                                ),
+                                selectedTextStyle: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 12.sp,
+                                ),
+                                todayTextStyle: TextStyle(
+                                  color: AppColors.primaryColor,
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 12.sp,
+                                ),
+                                defaultTextStyle: TextStyle(
+                                  color: Colors.black87,
+                                  fontSize: 12.sp,
+                                ),
+                                disabledTextStyle: TextStyle(
+                                  color: Colors.grey.shade300,
+                                  fontSize: 12.sp,
+                                ),
+                                radius: 10.0,
+                                tileSize: calTileSize,
+                              ),
+                              height: calHeight,
+                              onDateRangeChanged: (v){
+                                vc.selectedRange = v;
+                                vc.calculateNumberOfDays();
+                              },
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(left: 12.w, right: 12.w, bottom: 12.h, top: 4.h),
+                              child: Row(
+                                children: [
+                                  Container(
+                                    padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.primaryColor.withOpacity(0.08),
+                                      borderRadius: BorderRadius.circular(20.r),
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(Icons.date_range_rounded,
+                                          size: 14.sp,
+                                          color: AppColors.primaryColor,
+                                        ),
+                                        SizedBox(width: 4.w),
+                                        Text(
+                                          "${controller.numberOfDays} day${controller.numberOfDays != 1 ? 's' : ''} selected",
+                                          style: TextStyle(
+                                            fontSize: 11.5.sp,
+                                            fontWeight: FontWeight.w600,
+                                            color: AppColors.primaryColor,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ) : SizedBox(
+                            height: 200.h,
+                            child: CustomCircularLoader(
+                                color: AppColors.primaryColor
+                            )
+                        ),
                       );
                     }
-                ),
-
-                GetBuilder<CareTakerController>(
-                  builder: (vc) {
-                    return Text("Number of days - ${controller.numberOfDays}");
-                  }
                 ),
 
                 kHeight10,
@@ -355,7 +421,6 @@ class _CaretakerInformationState extends State<CaretakerInformation> {
                   Get.back();
                   v.isAppointmentLoading = false;
                   v.update();
-
                 }
               },
             );

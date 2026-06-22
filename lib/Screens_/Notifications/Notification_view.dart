@@ -80,9 +80,9 @@ class NotificationView extends StatelessWidget {
                               icon: Icons.notifications,
                               circleColor: Color(0xfffafcf9),
                               iconColor: Colors.blue,
-                              heading: data.data!.title,
-                              message: data.data!.body,
-                              notificationId:data.id,
+                              heading: data.data?.title ?? '',
+                              message: data.data?.body ?? '',
+                              notificationId: data.id,
                               time: data.createdAt,
                             ),
                           ),
@@ -137,7 +137,9 @@ class CustomNotification extends StatelessWidget {
         ),
       ),
       onDismissed: (direction) {
-        controller.deleteNotification(notificationId!);
+        if (notificationId != null) {
+          controller.deleteNotification(notificationId!);
+        }
       },
       secondaryBackground: Container(
         color: AppColors.primaryColor.withOpacity(0.7),
@@ -195,13 +197,16 @@ class CustomNotification extends StatelessWidget {
                         ),
                         // Time on the right
                         if (time != null)
-                          Text(
-                            "${time!.hour}:${time!.minute.toString().padLeft(2, '0')} ${time!.hour >= 12 ? 'PM' : 'AM'}",
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey,
-                            ),
-                          ),
+                          Builder(builder: (context) {
+                            final t = time!;
+                            return Text(
+                              "${t.hour}:${t.minute.toString().padLeft(2, '0')} ${t.hour >= 12 ? 'PM' : 'AM'}",
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey,
+                              ),
+                            );
+                          }),
                       ],
                     ),
                     SizedBox(height: 4),
@@ -293,12 +298,12 @@ class _AnimatedDialogContentState extends State<AnimatedDialogContent> with Tick
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                widget.notificationData.data!.title!,
+                widget.notificationData.data?.title ?? '',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 8),
               Text(
-                widget.notificationData.data!.body!,
+                widget.notificationData.data?.body ?? '',
                 style: TextStyle(fontSize: 16),
               ),
               SizedBox(height: 16),

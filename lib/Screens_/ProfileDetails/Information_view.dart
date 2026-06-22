@@ -65,7 +65,7 @@ class AccountInformation extends StatelessWidget {
                       child: GetBuilder<InitialProfileDetails>(builder: (v) {
                         String imageURL = (ec.profileList?.profilePath != null &&
                                 ec.profileList?.data?.profileImageUrl != null)
-                            ? '${ec.profileList!.profilePath}${ec.profileList!.data!.profileImageUrl}'
+                            ? '${ec.profileList?.profilePath}${ec.profileList?.data?.profileImageUrl}'
                             : '';
                         return CircleAvatar(
                             radius: 20,

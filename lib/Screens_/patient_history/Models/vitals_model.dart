@@ -74,10 +74,13 @@ class VitalsByDay {
     vitalSigns: json["vital_signs"] == null ? null : VitalSigns.fromJson(json["vital_signs"]),
   );
 
-  Map<String, dynamic> toJson() => {
-    "appointment_date": "${appointmentDate!.year.toString().padLeft(4, '0')}-${appointmentDate!.month.toString().padLeft(2, '0')}-${appointmentDate!.day.toString().padLeft(2, '0')}",
-    "vital_signs": vitalSigns?.toJson(),
-  };
+  Map<String, dynamic> toJson() {
+    final date = appointmentDate;
+    return {
+      "appointment_date": date == null ? null : "${date.year.toString().padLeft(4, '0')}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}",
+      "vital_signs": vitalSigns?.toJson(),
+    };
+  }
 }
 
 class VitalSigns {

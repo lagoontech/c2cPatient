@@ -378,15 +378,11 @@ class _ScheduleViewState extends State<ScheduleView> {
                                       if (selected) {
                                         v.snacks.clear();
                                         v.snacks.add(name);
-                                        if (v.patientSchedules != null) {
-                                          v.patientSchedules!.patientSnackstime = name; // Update snack time
-                                        }
+                                        v.patientSchedules?.patientSnackstime = name; // Update snack time
                                         v.update(); // Rebuild GetX state
                                       } else {
                                         v.snacks.remove(name);
-                                        if (v.patientSchedules != null) {
-                                          v.patientSchedules!.patientSnackstime = null; // Clear snack time
-                                        }
+                                        v.patientSchedules?.patientSnackstime = null; // Clear snack time
                                         v.update();
                                       }
                                     },

@@ -196,33 +196,36 @@ class PatientInfo {
     heightUnit: json["height_unit"]
   );
 
-  Map<String, dynamic> toJson() => {
-    "id": id,
-    "patient_id": patientId,
-    "first_name": firstName,
-    "last_name": lastName,
-    "sex": sex,
-    "age": age,
-    "email":email,
-    "dob": "${dob!.year.toString().padLeft(4, '0')}-${dob!.month.toString().padLeft(2, '0')}-${dob!.day.toString().padLeft(2, '0')}",
-    "height": height,
-    "weight": weight,
-    "bmi": bmi,
-    "location": location,
-    "nationality": nationality,
-    "address": address,
-    "diagnosis": diagnosis,
-    "primary_care_giver_name": primaryCareGiverName,
-    "primary_contact_name": primaryContactName,
-    "primary_contact_number": primaryContactNumber,
-    "secondary_contact_name": secondaryContactName,
-    "secondary_contact_number": secondaryContactNumber,
-    "specialist_name": specialistName,
-    "specialist_contact_number": specialistContactNumber,
-    "moreinfo": moreinfo,
-    "created_at": createdAt?.toIso8601String(),
-    "updated_at": updatedAt?.toIso8601String(),
-  };
+  Map<String, dynamic> toJson() {
+    final birthDate = dob;
+    return {
+      "id": id,
+      "patient_id": patientId,
+      "first_name": firstName,
+      "last_name": lastName,
+      "sex": sex,
+      "age": age,
+      "email": email,
+      "dob": birthDate == null ? null : "${birthDate.year.toString().padLeft(4, '0')}-${birthDate.month.toString().padLeft(2, '0')}-${birthDate.day.toString().padLeft(2, '0')}",
+      "height": height,
+      "weight": weight,
+      "bmi": bmi,
+      "location": location,
+      "nationality": nationality,
+      "address": address,
+      "diagnosis": diagnosis,
+      "primary_care_giver_name": primaryCareGiverName,
+      "primary_contact_name": primaryContactName,
+      "primary_contact_number": primaryContactNumber,
+      "secondary_contact_name": secondaryContactName,
+      "secondary_contact_number": secondaryContactNumber,
+      "specialist_name": specialistName,
+      "specialist_contact_number": specialistContactNumber,
+      "moreinfo": moreinfo,
+      "created_at": createdAt?.toIso8601String(),
+      "updated_at": updatedAt?.toIso8601String(),
+    };
+  }
 }
 
 
@@ -294,28 +297,31 @@ class CaretakerInfo {
     updatedAt: json["updated_at"] == null ? null : DateTime.parse(json["updated_at"]),
   );
 
-  Map<String, dynamic> toJson() => {
-    "id": id,
-    "caretaker_id": caretakerId,
-    "first_name": firstName,
-    "last_name": lastName,
-    "email": email,
-    "sex": sex,
-    "age": age,
-    "dob": "${dob!.year.toString().padLeft(4, '0')}-${dob!.month.toString().padLeft(2, '0')}-${dob!.day.toString().padLeft(2, '0')}",
-    "medical_license": medicalLicense,
-    "location": location,
-    "nationality": nationality,
-    "address": address,
-    "uploaded_documents": uploadedDocuments,
-    "year_of_experiences": yearOfExperiences,
-    "primary_contact_number": primaryContactNumber,
-    "secondary_contact_number": secondaryContactNumber,
-    "service_charge": serviceCharge,
-    "total_patients_attended": totalPatientsAttended,
-    "created_at": createdAt?.toIso8601String(),
-    "updated_at": updatedAt?.toIso8601String(),
-  };
+  Map<String, dynamic> toJson() {
+    final birthDate = dob;
+    return {
+      "id": id,
+      "caretaker_id": caretakerId,
+      "first_name": firstName,
+      "last_name": lastName,
+      "email": email,
+      "sex": sex,
+      "age": age,
+      "dob": birthDate == null ? null : "${birthDate.year.toString().padLeft(4, '0')}-${birthDate.month.toString().padLeft(2, '0')}-${birthDate.day.toString().padLeft(2, '0')}",
+      "medical_license": medicalLicense,
+      "location": location,
+      "nationality": nationality,
+      "address": address,
+      "uploaded_documents": uploadedDocuments,
+      "year_of_experiences": yearOfExperiences,
+      "primary_contact_number": primaryContactNumber,
+      "secondary_contact_number": secondaryContactNumber,
+      "service_charge": serviceCharge,
+      "total_patients_attended": totalPatientsAttended,
+      "created_at": createdAt?.toIso8601String(),
+      "updated_at": updatedAt?.toIso8601String(),
+    };
+  }
 }
 
 

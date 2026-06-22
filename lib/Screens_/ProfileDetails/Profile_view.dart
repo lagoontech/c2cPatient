@@ -55,7 +55,7 @@ class ProfileDetails extends StatelessWidget {
               children: [
                 kHeight10,
                 Container(
-                  height: 80.h,
+                  height: 72.h,
                   width: MediaQuery.of(context).size.width,
                   decoration: BoxDecoration(
                     color: AppColors.primaryColor.withOpacity(0.6),
@@ -67,93 +67,80 @@ class ProfileDetails extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.only(left: 8.0),
                         child: CircleAvatar(
-                          radius: 20,
+                          radius: 18,
                           backgroundColor: Colors.grey,
                           // Optional placeholder color
                           child: ClipOval(
                             child: (v.profileList?.profilePath != null &&
                                     v.profileList?.data?.profileImageUrl != null)
                                 ? CachedNetworkImage(
-                                    imageUrl: '${v.profileList!.profilePath}${v.profileList!.data!.profileImageUrl}',
+                                    imageUrl: '${v.profileList?.profilePath}${v.profileList?.data?.profileImageUrl}',
                                     fit: BoxFit.cover,
                                     // Ensure the image covers the CircleAvatar
-                                    width: 40,
+                                    width: 36,
                                     // Set width and height to ensure the image fits properly
-                                    height: 40,
+                                    height: 36,
                                     placeholder: (context, url) =>
-                                        CircularProgressIndicator(),
+                                        const CircularProgressIndicator(strokeWidth: 2),
                                     errorWidget: (context, url, error) =>
-                                        Icon(Icons.error), // Error icon
+                                        const Icon(Icons.error, size: 18), // Error icon
                                   )
-                                : Icon(Icons.person, size: 24),
+                                : const Icon(Icons.person, size: 20),
                           ),
                         ),
                       ),
                       Expanded(
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          padding: EdgeInsets.symmetric(horizontal: 12.w),
                           child: Container(
-                            height: MediaQuery.of(context).size.height * 0.10,
+                            height: MediaQuery.of(context).size.height * 0.08,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                SizedBox(height: 5),
+                                const SizedBox(height: 2),
                                 v.profileList?.data?.patientInfo != null ? Text(
-                                  '${v.profileList!.data!.patientInfo!.firstName ?? ''} ${v.profileList!.data!.patientInfo!.lastName ?? ''}'.trim(),
+                                  '${v.profileList?.data?.patientInfo?.firstName ?? ''} ${v.profileList?.data?.patientInfo?.lastName ?? ''}'.trim(),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
-                                    fontSize: 16,
+                                    fontSize: 14.sp,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.black,
                                   ),
-                                ) : SizedBox(),
-                                SizedBox(height: 4),
+                                ) : const SizedBox(),
+                                const SizedBox(height: 2),
                                 v.profileList?.data?.patientInfo != null ? Text(
-                                  '${v.profileList!.data!.patientInfo!.email ?? ''}',
+                                  '${v.profileList?.data?.patientInfo?.email ?? ''}',
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
-                                    fontSize: 14,
+                                    fontSize: 12.sp,
                                     color: Colors.black54,
                                   ),
-                                ) : SizedBox(),
+                                ) : const SizedBox(),
                               ],
                             ),
                           ),
                         ),
                       ),
-                      /*  Align(
-                        alignment: Alignment.topRight,
-                        child: IconButton(
-                          onPressed: () {
-                            // Handle edit action
-                          },
-                          icon: Icon(
-                            Icons.edit,
-                            color: Colors.white,
-                            size: 20.sp,
-                          ),
-                        ),
-                      ),*/
                     ],
                   ),
                 ),
-                kHeight30,
-                CustomLabel(text: "General"),
-                kHeight10,
+                SizedBox(height: 20.h),
+                CustomLabel(text: "General", fontSize: 15.sp),
+                SizedBox(height: 6.h),
                 ProfileDetailsCustom(
                   icons: IconlyBold.profile,
-                  iconColor: Color(0xff246AFD),
+                  iconColor: const Color(0xff246AFD),
                   heading: "Profile",
                   message: "Change your account information ",
                   callback: () {
                     Get.to(() => AccountInformation());
                   },
                 ),
-                    Divider(),
-                kHeight10,
+                const Divider(),
+                SizedBox(height: 6.h),
                 ProfileDetailsCustom(
                   icons: EneftyIcons.wallet_remove_bold,
                   iconColor: Colors.green,
@@ -163,8 +150,8 @@ class ProfileDetails extends StatelessWidget {
                     Get.to(() => ScheduleUpdate());
                   },
                 ),
-                Divider(),
-                kHeight10,
+                const Divider(),
+                SizedBox(height: 6.h),
                 ProfileDetailsCustom(
                   icons: EneftyIcons.wallet_remove_bold,
                   iconColor: Colors.green,
@@ -174,8 +161,8 @@ class ProfileDetails extends StatelessWidget {
                     Get.to(() => PatientHistoryView());
                   },
                 ),
-                Divider(),
-                kHeight10,
+                const Divider(),
+                SizedBox(height: 6.h),
                 ProfileDetailsCustom(
                   icons: EneftyIcons.wallet_remove_bold,
                   iconColor: Colors.green,
@@ -185,7 +172,7 @@ class ProfileDetails extends StatelessWidget {
                     Get.to(() => CancelList());
                   },
                 ),
-                Divider(),
+                const Divider(),
                 ProfileDetailsCustom(
                   callback: () {
                     Get.to(() => DocumentUploadView());
@@ -195,19 +182,11 @@ class ProfileDetails extends StatelessWidget {
                   heading: "Medical Records",
                   message: "History about the your medical records",
                 ),
-                /*   Divider(),
-                kHeight10,
-                ProfileDetailsCustom(
-                  icons: IconlyBold.location,
-                  iconColor: Color(0xff076F88),
-                  heading: "My Address",
-                  message: "Add Your Address",
-                ),*/
-                Divider(),
-                kHeight10,
+                const Divider(),
+                SizedBox(height: 6.h),
                 ProfileDetailsCustom(
                   icons: EneftyIcons.logout_bold,
-                  iconColor: Color(0xff002574),
+                  iconColor: const Color(0xff002574),
                   heading: "Logout",
                   message: "Tap to logout",
                   callback: () async {
@@ -215,21 +194,21 @@ class ProfileDetails extends StatelessWidget {
                       context: context,
                       builder: (BuildContext context) {
                         return AlertDialog(
-                          title: Text('Are You Sure?'),
-                          content: Text('Do you want to logout?'),
+                          title: const Text('Are You Sure?'),
+                          content: const Text('Do you want to logout?'),
                           actions: [
                             TextButton(
                               onPressed: () {
                                 Navigator.of(context).pop(); // Close the dialog
                               },
-                              child: Text('Cancel'),
+                              child: const Text('Cancel'),
                             ),
                             TextButton(
                               onPressed: () async {
                                 await SharedPref().logout();
                                 Navigator.of(context).pop(); // Close the dialog
                               },
-                              child: Text('Logout'),
+                              child: const Text('Logout'),
                             ),
                           ],
                         );
@@ -238,7 +217,7 @@ class ProfileDetails extends StatelessWidget {
 
                   },
                 ),
-                Divider(),
+                const Divider(),
               ],
             ),
           ),
@@ -271,35 +250,36 @@ class ProfileDetailsCustom extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 8.0),
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
       child: Row(
         children: [
           Padding(
             padding: const EdgeInsets.only(left: 8.0),
             child: CircleAvatar(
               backgroundColor: Colors.grey.withOpacity(0.1),
-              radius: radiusSize ?? 20,
+              radius: radiusSize ?? 16.r,
               child: Icon(
                 icons,
                 color: iconColor,
+                size: 18.sp,
               ),
             ),
           ),
           kWidth10,
           Expanded(
             child: Container(
-              height: MediaQuery.of(context).size.height * 0.06,
+              height: MediaQuery.of(context).size.height * 0.05,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SizedBox(height: 5),
+                  const SizedBox(height: 2),
                   Text(
                     heading ?? "Alis Dia",
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      fontSize: 16.sp,
+                      fontSize: 14.sp,
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
                     ),
@@ -309,7 +289,7 @@ class ProfileDetailsCustom extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      fontSize: 12.sp,
+                      fontSize: 11.sp,
                       color: Colors.black54,
                     ),
                   ),
@@ -322,7 +302,7 @@ class ProfileDetailsCustom extends StatelessWidget {
             icon: Icon(
               Icons.arrow_forward_ios_sharp,
               color: Colors.black,
-              size: 20.sp,
+              size: 16.sp,
             ),
           ),
         ],

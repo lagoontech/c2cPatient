@@ -301,7 +301,7 @@ class _PatientHistoryViewState extends State<PatientHistoryView> {
                                                         ?.profileImageUrl !=
                                                     null)
                                             ? NetworkImage(
-                                                '${v.appointmentStatus!.profilePath}${completed.caretaker!.profileImageUrl}')
+                                                '${v.appointmentStatus?.profilePath ?? ""}${completed.caretaker?.profileImageUrl ?? ""}')
                                             : null,
                                         child:
                                             (v.appointmentStatus?.profilePath ==
@@ -500,7 +500,7 @@ class _PatientHistoryViewState extends State<PatientHistoryView> {
                                                                             .caretaker
                                                                             ?.profileImageUrl !=
                                                                         null)
-                                                                ? '${v.appointmentStatus!.profilePath}${completed.caretaker!.profileImageUrl}'
+                                                                ? '${v.appointmentStatus?.profilePath ?? ""}${completed.caretaker?.profileImageUrl ?? ""}'
                                                                 : '',
                                                             appointmentDates:
                                                                 completed

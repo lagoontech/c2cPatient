@@ -7,7 +7,7 @@ import 'package:care2care/ReusableUtils_/sizes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:table_calendar/table_calendar.dart';
+import 'package:intl/intl.dart';
 import '../../ReusableUtils_/customButton.dart';
 import '../Paymentmethod/controller/paymentMethod_controller.dart';
 
@@ -50,6 +50,16 @@ class _ApprovedDetailScreenState extends State<ApprovedDetailScreen> {
   int totalAmount = 0;
 
   PayMethodController pm = Get.put(PayMethodController());
+
+  String _buildDateRange(List<DateTime>? dates) {
+    if (dates == null || dates.isEmpty) return 'No dates available';
+    if (dates.length == 1) {
+      return DateFormat("MMM dd, yyyy").format(dates.first);
+    } else {
+      final sorted = List<DateTime>.from(dates)..sort();
+      return "${DateFormat("MMM dd").format(sorted.first)} to ${DateFormat("MMM dd, yyyy").format(sorted.last)}";
+    }
+  }
 
   @override
   void initState() {
@@ -170,7 +180,7 @@ class _ApprovedDetailScreenState extends State<ApprovedDetailScreen> {
         slivers: [
           SliverToBoxAdapter(
             child: Container(
-              height: MediaQuery.sizeOf(context).height * 0.25,
+              height: MediaQuery.sizeOf(context).height * 0.22,
               decoration: BoxDecoration(
                   color: AppColors.primaryColor,
                   borderRadius: BorderRadius.only(
@@ -178,43 +188,43 @@ class _ApprovedDetailScreenState extends State<ApprovedDetailScreen> {
                       bottomRight: Radius.circular(30.r))),
               child: Column(
                 children: [
-                  kHeight15,
+                  SizedBox(height: 10.h),
                    (widget.imgUrl == null || widget.imgUrl!.trim().isEmpty || !widget.imgUrl!.startsWith('http'))
                       ? Container(
-                          height: 100.h,
-                          width: 100.h,
-                          decoration: BoxDecoration(
+                          height: 80.h,
+                          width: 80.h,
+                          decoration: const BoxDecoration(
                             color: Colors.white24,
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
                             Icons.person,
-                            size: 60.h,
+                            size: 48.h,
                             color: Colors.white70,
                           ),
                         )
                       : CachedNetworkImage(
                           imageUrl: widget.imgUrl!,
-                          height: 100.h,
-                          width: 100.h,
+                          height: 80.h,
+                          width: 80.h,
                           fit: BoxFit.cover,
                           placeholder: (context, url) => Center(
                             child: SizedBox(
                               height: 20.h,
                               width: 20.h,
-                              child: CircularProgressIndicator(strokeWidth: 2.0),
+                              child: const CircularProgressIndicator(strokeWidth: 2.0),
                             ),
                           ),
                           errorWidget: (context, url, error) => Container(
-                            height: 100.h,
-                            width: 100.h,
-                            decoration: BoxDecoration(
+                            height: 80.h,
+                            width: 80.h,
+                            decoration: const BoxDecoration(
                               color: Colors.white24,
                               shape: BoxShape.circle,
                             ),
                             child: Icon(
                               Icons.person,
-                              size: 60.h,
+                              size: 48.h,
                               color: Colors.white70,
                             ),
                           ),
@@ -228,11 +238,11 @@ class _ApprovedDetailScreenState extends State<ApprovedDetailScreen> {
                             ),
                           ),
                         ),
-                  kHeight10,
+                  SizedBox(height: 8.h),
                   Text(
                     widget.name ?? "No Name",
                     style:
-                    TextStyle(fontSize: 20.sp, fontWeight: FontWeight.bold),
+                    TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
@@ -241,74 +251,62 @@ class _ApprovedDetailScreenState extends State<ApprovedDetailScreen> {
           // Adding more slivers if needed
           SliverToBoxAdapter(
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 12.w),
+              padding: EdgeInsets.symmetric(horizontal: 14.w),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  kHeight10,
+                  SizedBox(height: 10.h),
                   CustomLabel(
                     text: 'Requested Date',
                     fontWeight: FontWeight.bold,
-                    fontSize: 17.sp,
+                    fontSize: 14.sp,
                   ),
-                  kHeight5,
-                  IgnorePointer(
-                    child: TableCalendar(
-                        focusedDay: (widget.dates != null && widget.dates!.isNotEmpty) ? widget.dates!.first : DateTime.now(),
-                        selectedDayPredicate: (day) {
-                          return widget.dates?.any((date) => isSameDay(date, day)) ?? false; // Highlight appointment dates
-                        },
-                        headerStyle: HeaderStyle(
-                            formatButtonVisible: false,
-                          titleCentered: true
-                        ),
-                        calendarStyle: CalendarStyle(
-                          outsideDaysVisible: false,
-                          selectedDecoration: BoxDecoration(
-                            color: AppColors.primaryColor,
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                        firstDay: (widget.dates != null && widget.dates!.isNotEmpty) ? widget.dates!.first : DateTime.now(), lastDay: DateTime(2050)
+                  SizedBox(height: 4.h),
+                  Text(
+                    _buildDateRange(widget.dates),
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      fontWeight: FontWeight.normal,
+                      color: Colors.black,
                     ),
                   ),
 
                   // Divider with height 5
                   Divider(
-                    height: 12, // Adjusted height
-                    thickness: 1.5,
+                    height: 8, // Adjusted height
+                    thickness: 1.0,
                     color: Colors.grey.shade300,
                   ),
 
                   CustomLabel(
                     text: 'Appointment Time',
                     fontWeight: FontWeight.bold,
-                    fontSize: 17.sp,
+                    fontSize: 14.sp,
                   ),
-                  kHeight5,
+                  SizedBox(height: 4.h),
                   Text(
                     widget.time ?? 'N/A',
                     style: TextStyle(
-                        fontSize: 16.sp, fontWeight: FontWeight.normal),
+                        fontSize: 12.sp, fontWeight: FontWeight.normal),
                   ),
 
                   // Divider with height 5
                   Divider(
-                    height: 12, // Adjusted height
-                    thickness: 1.5,
+                    height: 8, // Adjusted height
+                    thickness: 1.0,
                     color: Colors.grey.shade300,
                   ),
 
                   CustomLabel(
                     text: 'Service Charge',
                     fontWeight: FontWeight.bold,
-                    fontSize: 17.sp,
+                    fontSize: 14.sp,
                   ),
-                  kHeight5,
+                  SizedBox(height: 4.h),
                   Text(
                     '\$ ${widget.serviceCharge ?? '0'} /Hr',
                     style: TextStyle(
-                      fontSize: 16.sp,
+                      fontSize: 12.sp,
                       color: Colors.black,
                       fontWeight: FontWeight.normal,
                     ),
@@ -316,21 +314,21 @@ class _ApprovedDetailScreenState extends State<ApprovedDetailScreen> {
 
                   // Divider with height 5
                   Divider(
-                    height: 12, // Adjusted height
-                    thickness: 1.5,
+                    height: 8, // Adjusted height
+                    thickness: 1.0,
                     color: Colors.grey.shade300,
                   ),
 
                   CustomLabel(
                     text: 'Total Charge',
                     fontWeight: FontWeight.bold,
-                    fontSize: 17.sp,
+                    fontSize: 14.sp,
                   ),
-                  kHeight5,
+                  SizedBox(height: 4.h),
                   Text(
                     '\$ ${totalAmount}',
                     style: TextStyle(
-                      fontSize: 16.sp,
+                      fontSize: 12.sp,
                       color: Colors.black,
                       fontWeight: FontWeight.normal,
                     ),
@@ -338,17 +336,17 @@ class _ApprovedDetailScreenState extends State<ApprovedDetailScreen> {
 
                   // Divider with height 5
                   Divider(
-                    height: 12, // Adjusted height
-                    thickness: 1.5,
+                    height: 8, // Adjusted height
+                    thickness: 1.0,
                     color: Colors.grey.shade300,
                   ),
 
                   CustomLabel(
                     text: 'Appointment Status',
                     fontWeight: FontWeight.bold,
-                    fontSize: 17.sp,
+                    fontSize: 14.sp,
                   ),
-                  kHeight5,
+                  SizedBox(height: 4.h),
                   Text(
                     (widget.status != null && widget.status!.isNotEmpty)
                         ? '${widget.status![0].toUpperCase()}${widget.status!.substring(1).toLowerCase()}'
@@ -357,30 +355,30 @@ class _ApprovedDetailScreenState extends State<ApprovedDetailScreen> {
                       color: widget.status == 'approved'
                           ? AppColors.primaryColor
                           : Colors.red,
-                      fontSize: 16.sp,
+                      fontSize: 12.sp,
                       fontWeight: FontWeight.normal,
                     ),
                   ),
 
                   // Divider with height 5
                   Divider(
-                    height: 12, // Adjusted height
-                    thickness: 1.5,
+                    height: 8, // Adjusted height
+                    thickness: 1.0,
                     color: Colors.grey.shade300,
                   ),
 
                   CustomLabel(
                     text: 'Payment Status',
                     fontWeight: FontWeight.bold,
-                    fontSize: 17.sp,
+                    fontSize: 14.sp,
                   ),
-                  kHeight5,
+                  SizedBox(height: 4.h),
                   Text(
                     (widget.paymentStatus != null && widget.paymentStatus!.isNotEmpty)
                         ? '${widget.paymentStatus![0].toUpperCase()}${widget.paymentStatus!.substring(1).toLowerCase()}'
                         : 'N/A',
                     style: TextStyle(
-                      fontSize: 16.sp,
+                      fontSize: 12.sp,
                       color: widget.paymentStatus == 'pending'
                           ? AppColors.secondaryColor
                           : Colors.red,
@@ -390,27 +388,28 @@ class _ApprovedDetailScreenState extends State<ApprovedDetailScreen> {
 
                   // Divider with height 5
                   Divider(
-                    height: 12, // Adjusted height
-                    thickness: 1.5,
+                    height: 8, // Adjusted height
+                    thickness: 1.0,
                     color: Colors.grey.shade300,
                   ),
 
                   CustomLabel(
                     text: 'Notes',
                     fontWeight: FontWeight.bold,
-                    fontSize: 17.sp,
+                    fontSize: 14.sp,
                   ),
-                  kHeight5,
+                  SizedBox(height: 4.h),
                   Text(
                     '${widget.notes ?? 'No Notes Available'}',
                     maxLines: 3,
                     style: TextStyle(
-                      fontSize: 16.sp,
+                      fontSize: 12.sp,
                       color: Colors.black,
                       overflow: TextOverflow.ellipsis,
                       fontWeight: FontWeight.normal,
                     ),
                   ),
+                  SizedBox(height: 16.h),
                 ],
               ),
             ),
