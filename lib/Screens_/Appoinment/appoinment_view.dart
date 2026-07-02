@@ -24,10 +24,14 @@ class AppointmentView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    dateTEC.text = controller.displayDate ?? '';
-    return DefaultTabController(
-      length: 3,
-      child: CustomBackground(
+    return GetBuilder<AppointmentStatusController>(
+      builder: (controller) {
+        dateTEC.text = controller.displayDate ?? '';
+        return DefaultTabController(
+          key: ValueKey(controller.currentTab),
+          initialIndex: controller.currentTab,
+          length: 3,
+          child: CustomBackground(
         appBar: CustomAppBar(
           leading: SizedBox(),
           title: "Appointment",
@@ -495,6 +499,8 @@ class AppointmentView extends StatelessWidget {
           ],
         ),
       ),
+        );
+      },
     );
   }
 

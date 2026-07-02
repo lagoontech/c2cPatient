@@ -26,8 +26,8 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if(controller.profileList==null){
-      controller.fetchInitialUserDetails();
+    if (controller.profileList?.data?.patientInfo == null) {
+      controller.fetchInitialUserDetails(forceRefresh: true);
     }
     return GetBuilder<InitialProfileDetails>(builder: (v) {
       if (v.profileList == null) {

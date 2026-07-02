@@ -1,3 +1,4 @@
+import 'package:care2care/Notification/controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../ReusableUtils_/image_background.dart';
@@ -12,6 +13,16 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView> {
   final BottomNavController bn = Get.put(BottomNavController());
   DateTime? _lastBackPressTime;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (Get.isRegistered<NotificationController>()) {
+        Get.find<NotificationController>().markAppReady();
+      }
+    });
+  }
 
   Future<bool> _onWillPop() async {
     final now = DateTime.now();
@@ -39,7 +50,7 @@ class _HomeViewState extends State<HomeView> {
         builder: (vv) {
           return CustomBackground(
             bottomNavBar: BottomNavBar(),
-            child: bn.screens[bn.currentIndex],
+            child: bn.getScreen(bn.currentIndex),
           );
         },
       ),

@@ -1,105 +1,19 @@
-/*
-
-import 'package:get/get.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-
-class NotificationController extends GetxController {
-  FirebaseMessaging messaging = FirebaseMessaging.instance;
-
-  // String? fcmToken;
-  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
-
-  @override
-  void onInit() {
-    super.onInit();
-    initFirebaseMessaging();
-    initLocalNotifications();
-  }
-
-  // Initialize Firebase Messaging
-  void initFirebaseMessaging() async {
-    */
-/*fcmToken = await messaging.getToken();
-    print('FCM Token: $fcmToken');*/ /*
-
-    //var  fcmTokens = await SharedPref().getFCMToken();
-   // print("after close $fcmTokens");
-    // Handle foreground messages
-
-    NotificationSettings settings = await messaging.requestPermission(
-      alert: true,
-      badge: true,
-      sound: true,
-    );
-
-    print('User granted permission: ${settings.authorizationStatus}');
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      print('Received a message in the foreground: ${message.notification?.body}');
-
-      // Show local notification
-      if (message.notification != null) {
-        showLocalNotification(
-          message.notification?.title,
-          message.notification?.body,
-        );
-      }
-    });
-
-    // Handle when the app is opened via the notification (from background or terminated state)
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      print('Message opened from background: ${message.notification?.body}');
-    });
-  }
-
-  // Initialize Local Notifications Plugin
-  void initLocalNotifications() {
-    const AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
-
-    final InitializationSettings initializationSettings =
-        InitializationSettings(android: initializationSettingsAndroid);
-
-    flutterLocalNotificationsPlugin.initialize(initializationSettings);
-  }
-
-  // Show a local notification
-  void showLocalNotification(String? title, String? body) async {
-    const AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails(
-      'channel_id', // Channel ID from manifest
-      'channel_name', // Channel name
-      importance: Importance.max,
-      priority: Priority.high,
-      showWhen: true,
-    );
-
-    const NotificationDetails platformChannelSpecifics =
-        NotificationDetails(android: androidPlatformChannelSpecifics);
-
-    await flutterLocalNotificationsPlugin.show(
-      0, // Notification ID
-      title ?? 'Default Title', // Notification Title
-      body ?? 'Default Body', // Notification Body
-      platformChannelSpecifics, // Notification Details
-    );
-  }
-}
-*/
-
 import 'dart:developer';
 
 import 'package:care2care/Notification/modal/notification_modal.dart';
+import 'package:care2care/Notification/notification_routes.dart';
 import 'package:care2care/ReusableUtils_/toast2.dart';
+import 'package:care2care/Screens_/Appoinment/controller/appointmentsStatus_Controller.dart';
+import 'package:care2care/Screens_/HomeView/Controller/bottomNav_controller.dart';
+import 'package:care2care/Screens_/HomeView/home_view.dart';
 import 'package:care2care/constants/api_urls.dart';
 import 'package:care2care/sharedPref/sharedPref.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
 
 class NotificationController extends GetxController {
   FirebaseMessaging messaging = FirebaseMessaging.instance;
@@ -107,7 +21,12 @@ class NotificationController extends GetxController {
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
   var unreadCount = 0;
-  //FlutterTts tts = FlutterTts();
+
+  /// Survives controller re-registration; used for cold-start notification taps.
+  static Map<String, dynamic>? _launchPayload;
+
+  /// Holds tap payload until [HomeView] is mounted (cold start / splash).
+  Map<String, dynamic>? _pendingNotificationData;
 
   @override
   void onInit() {
@@ -115,13 +34,218 @@ class NotificationController extends GetxController {
     initFirebaseMessaging();
     initLocalNotifications();
     setupInteractedMessage();
-    //initTextToSpeech();
     allNotifications();
   }
 
-  // Initialize Firebase Messaging
+  /// Call from [HomeView] once the shell (bottom nav) is ready.
+  void markAppReady() {
+    _pendingNotificationData ??= _launchPayload;
+    _launchPayload = null;
+    _flushPendingNavigation();
+  }
+
+  void clearPendingNavigation() {
+    _pendingNotificationData = null;
+    _launchPayload = null;
+  }
+
+  void _flushPendingNavigation() {
+    final pending = _pendingNotificationData ?? _launchPayload;
+    _pendingNotificationData = null;
+    _launchPayload = null;
+    if (pending == null) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _applyNavigation(pending);
+    });
+  }
+
+  /// Single entry point for all notification taps (FCM + local).
+  void handleNotificationOpen(Map<String, dynamic> data) {
+    if (kDebugMode) {
+      debugPrint(
+        'handleNotificationOpen → data: $data, canNavigateNow: ${_canNavigateNow()}',
+      );
+    }
+    if (_canNavigateNow()) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _applyNavigation(data);
+      });
+    } else {
+      final copy = Map<String, dynamic>.from(data);
+      _pendingNotificationData = copy;
+      _launchPayload = copy;
+    }
+  }
+
+  bool _canNavigateNow() => Get.isRegistered<BottomNavController>();
+
+  Map<String, dynamic> _routingDataFrom(RemoteMessage message) {
+    final data = Map<String, dynamic>.from(message.data);
+    final notification = message.notification;
+    if (notification?.title != null) {
+      data['_title'] = notification!.title!;
+    }
+    if (notification?.body != null) {
+      data['_body'] = notification!.body!;
+    }
+    return data;
+  }
+
+  bool _isAppointmentApproved(Map<String, dynamic> data) {
+    final type = (data['type'] ??
+            data['notification_type'] ??
+            data['event'] ??
+            '')
+        .toString()
+        .toLowerCase();
+    if (type == 'appointment_approved' ||
+        type == 'approved_appointment' ||
+        type == 'appointments_approved') {
+      return true;
+    }
+    if (type.contains('approved')) {
+      return true;
+    }
+
+    final title =
+        (data['_title'] ?? data['title'] ?? '').toString().toLowerCase();
+    final body =
+        (data['_body'] ?? data['body'] ?? '').toString().toLowerCase();
+    final text = '$title $body';
+    return text.contains('approved') ||
+        text.contains('accept') ||
+        text.contains('appointment request approved');
+  }
+
+  bool _isPaymentProcessingUpdate(Map<String, dynamic> data) {
+    final type = (data['type'] ??
+            data['notification_type'] ??
+            data['event'] ??
+            '')
+        .toString()
+        .toLowerCase();
+    if (type.contains('payment') || type.contains('paid')) {
+      return true;
+    }
+    if (type == 'appointment_paid' ||
+        type == 'payment_received' ||
+        type == 'appointment_processing') {
+      return true;
+    }
+
+    final title =
+        (data['_title'] ?? data['title'] ?? '').toString().toLowerCase();
+    final body =
+        (data['_body'] ?? data['body'] ?? '').toString().toLowerCase();
+    final text = '$title $body';
+
+    final mentionsPayment =
+        text.contains('paid') || text.contains('payment received');
+    final mentionsAppointment =
+        text.contains('appointment') || text.contains('processing');
+    return mentionsPayment && mentionsAppointment;
+  }
+
+  bool isApprovedAppointmentText(String? title, String? body) {
+    return _isAppointmentApproved({
+      if (title != null) '_title': title,
+      if (body != null) '_body': body,
+    });
+  }
+
+  void openAppointmentFromNotificationText(String? title, String? body) {
+    final isProcessing = _isPaymentProcessingUpdate({
+      if (title != null) '_title': title,
+      if (body != null) '_body': body,
+    });
+    handleNotificationOpen({
+      'screen': isProcessing
+          ? NotificationRoutes.appointmentsProcessing
+          : NotificationRoutes.appointmentsApproved,
+      if (title != null) '_title': title,
+      if (body != null) '_body': body,
+    });
+    if (!Get.isRegistered<BottomNavController>()) {
+      Get.offAll(() => HomeView());
+    }
+  }
+
+  String? _resolveScreen(Map<String, dynamic> data) {
+    if (_isPaymentProcessingUpdate(data)) {
+      return NotificationRoutes.appointmentsProcessing;
+    }
+    if (_isAppointmentApproved(data)) {
+      return NotificationRoutes.appointmentsApproved;
+    }
+
+    final screen = data['screen']?.toString();
+    if (screen == NotificationRoutes.appointmentsProcessing ||
+        screen == 'appointment_processing' ||
+        screen == 'processing_appointments') {
+      return NotificationRoutes.appointmentsProcessing;
+    }
+    if (screen == NotificationRoutes.appointmentsApproved ||
+        screen == 'approved_appointments' ||
+        screen == 'appointment_approved') {
+      return NotificationRoutes.appointmentsApproved;
+    }
+    if (screen != null && screen.isNotEmpty) return screen;
+    return null;
+  }
+
+  void _applyNavigation(Map<String, dynamic> data) {
+    final screen = _resolveScreen(data);
+    if (kDebugMode) {
+      debugPrint('Notification navigation → screen: $screen, data: $data');
+    }
+    if (screen == null) return;
+
+    switch (screen) {
+      case NotificationRoutes.appointmentsApproved:
+        _navigateToAppointmentsTab(
+            NotificationRoutes.approvedSubTabIndex);
+        break;
+      case NotificationRoutes.appointmentsProcessing:
+        _navigateToAppointmentsTab(
+            NotificationRoutes.processingSubTabIndex);
+        break;
+      case NotificationRoutes.notificationList:
+        Get.toNamed('/notification');
+        break;
+      default:
+        if (kDebugMode) {
+          debugPrint('Unhandled notification screen: $screen');
+        }
+    }
+  }
+
+  void _navigateToAppointmentsTab(int subTabIndex) {
+    if (Get.isRegistered<BottomNavController>()) {
+      final nav = Get.find<BottomNavController>();
+      nav.currentIndex = NotificationRoutes.appointmentsTabIndex;
+      nav.update();
+    }
+    final appt = Get.isRegistered<AppointmentStatusController>()
+        ? Get.find<AppointmentStatusController>()
+        : Get.put(AppointmentStatusController());
+    appt.currentTab = subTabIndex;
+    appt.fetchAppointments();
+    appt.update();
+  }
+
+  void _refreshAppointmentsIfPossible() {
+    try {
+      if (Get.isRegistered<AppointmentStatusController>()) {
+        Get.find<AppointmentStatusController>().fetchAppointments();
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('Foreground appointment refresh error: $e');
+      }
+    }
+  }
+
   void initFirebaseMessaging() async {
-    // Request notification permissions
     NotificationSettings settings = await messaging.requestPermission(
       alert: true,
       badge: true,
@@ -130,118 +254,109 @@ class NotificationController extends GetxController {
 
     print('User granted permission: ${settings.authorizationStatus}');
 
-    // Handle foreground messages
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
-      print('Received a message in the foreground: ${message.notification?.body}');
+      print(
+          'Received a message in the foreground: ${message.notification?.body}');
 
-      // Show local notification with sound
+      _refreshAppointmentsIfPossible();
+
       if (message.notification != null) {
-        showLocalNotification(message.notification?.title,
-            message.notification?.body, message.data);
-
-/*        readNotificationWithTTS(
-            message.notification!.title!, message.notification!.body!);*/
-
+        showLocalNotification(
+          message.notification?.title,
+          message.notification?.body,
+          _routingDataFrom(message),
+        );
         unreadCount++;
       }
       await allNotifications();
     });
   }
 
-  //initialize text to speech
-
- /* void initTextToSpeech() {
-    tts.setLanguage('en-US');
-    tts.setSpeechRate(0.5);
-
-  }
-
-  void readNotificationWithTTS(String title, String body) async {
-    await tts.speak('${title}${body}');
-  }*/
-
-  // Handle messages when the app is in the background or terminated
   void setupInteractedMessage() async {
-    // When the app is in the background and opened by tapping the notification
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      print('Notification opened from background: ${message.notification?.body}');
-      // Handle notification navigation or actions here
-      _navigateToScreen(message.data);
+      print(
+          'Notification opened from background: ${message.notification?.body}');
+      handleNotificationOpen(_routingDataFrom(message));
     });
 
-    // When the app is terminated and opened by tapping the notification
-    RemoteMessage? initialMessage =
+    final RemoteMessage? initialMessage =
         await FirebaseMessaging.instance.getInitialMessage();
     if (initialMessage != null) {
-      print(
-          'Notification opened from terminated state: ${initialMessage.notification?.body}');
-      // Handle notification navigation or actions here
-      _navigateToScreen(initialMessage.data);
+      if (kDebugMode) {
+        debugPrint(
+          'getInitialMessage → data: ${initialMessage.data}, '
+          'title: ${initialMessage.notification?.title}, '
+          'body: ${initialMessage.notification?.body}',
+        );
+      }
+      handleNotificationOpen(_routingDataFrom(initialMessage));
     }
   }
 
-  // Initialize Local Notifications Plugin
   void initLocalNotifications() {
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
 
-    // iOS initialization settings
     const DarwinInitializationSettings initializationSettingsIOS =
-    DarwinInitializationSettings(
+        DarwinInitializationSettings(
       requestAlertPermission: true,
       requestBadgePermission: true,
       requestSoundPermission: true,
     );
 
     final InitializationSettings initializationSettings =
-    InitializationSettings(android: initializationSettingsAndroid,iOS: initializationSettingsIOS);
+        InitializationSettings(
+            android: initializationSettingsAndroid,
+            iOS: initializationSettingsIOS);
 
     flutterLocalNotificationsPlugin.initialize(initializationSettings,
         onDidReceiveNotificationResponse:
             (NotificationResponse response) async {
-      String? payload = response.payload;
-      print('Payload on notification click: $payload'); // Add this line
+      final payload = response.payload;
+      print('Payload on notification click: $payload');
       if (payload != null) {
-        _navigateToScreen({"screen": payload});
+        handleNotificationOpen({'screen': payload});
       }
     });
   }
 
-  // Show a local notification with sound
   void showLocalNotification(
       String? title, String? body, Map<String, dynamic> data) async {
-    print('Data payload in showLocalNotification: $data');
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
         AndroidNotificationDetails(
-      'channel_id', // Channel ID from manifest
-      'channel_name', // Channel name
+      'channel_id',
+      'Care2Care',
+      channelDescription: 'Appointment and account notifications',
       importance: Importance.max,
       priority: Priority.high,
       showWhen: true,
       playSound: true,
-      //sound: RawResourceAndroidNotificationSound('notification_sound'), // Custom sound
     );
 
-    const NotificationDetails platformChannelSpecifics =
-        NotificationDetails(android: androidPlatformChannelSpecifics);
+    const DarwinNotificationDetails initializationSettingsIOS =
+        DarwinNotificationDetails();
 
-    await flutterLocalNotificationsPlugin.show(
-        0, // Notification ID
-        title ?? 'Default Title', // Notification Title
-        body ?? 'Default Body', // Notification Body
+    const NotificationDetails platformChannelSpecifics = NotificationDetails(
+      android: androidPlatformChannelSpecifics,
+      iOS: initializationSettingsIOS,
+    );
+
+    try {
+      await flutterLocalNotificationsPlugin.show(
+        0,
+        title ?? 'Default Title',
+        body ?? 'Default Body',
         platformChannelSpecifics,
-        payload: data['screen'] // Notification Details
-        );
-  }
-
-  // Navigate to a specific screen based on notification data
-  void _navigateToScreen(Map<String, dynamic> data) {
-    String? screen = data['screen'];
-    print('Screen to navigate: $screen'); // Add this line
-    if (screen == 'notification_screen') {
-      Get.toNamed('/notification');
-    } else {
-      print("---->error");
+        payload: _resolveScreen({
+          ...data,
+          if (title != null) '_title': title,
+          if (body != null) '_body': body,
+        }),
+      );
+    } catch (e, stack) {
+      if (kDebugMode) {
+        debugPrint('Local notification error: $e\n$stack');
+      }
     }
   }
 
@@ -250,15 +365,10 @@ class NotificationController extends GetxController {
   List<AllNotification> listNotification = [];
   String? Count;
 
-
-
-
-
   allNotifications() async {
     loadNotification = true;
     update();
     String? token = await SharedPref().getToken();
-    // try {
     var res = await http.get(
       Uri.parse(ApiUrls().allNotifications),
       headers: {
@@ -269,20 +379,13 @@ class NotificationController extends GetxController {
       log(res.body);
       receiveNotification = receiveNotificationFromJson(res.body);
       listNotification = receiveNotification!.notifications ?? [];
-      // Access and print notification IDs (if needed)
-
-
       unreadCount = receiveNotification!.unreadCount ?? 0;
       update();
-      print("------All notifications${Count}");
       print("Fetch Successfully ");
       update();
     } else {
       debugPrint("message fetch not successfully ");
     }
-    /* } catch (d) {
-      debugPrint(d.toString());
-    }*/
     loadNotification = false;
     update();
   }
@@ -310,8 +413,6 @@ class NotificationController extends GetxController {
     update();
   }
 
-
-
   Future<void> deleteNotification(String notificationId) async {
     String? token = await SharedPref().getToken();
     try {
@@ -323,8 +424,8 @@ class NotificationController extends GetxController {
       );
 
       if (res.statusCode == 200) {
-        // Remove the notification from the list locally
-        listNotification.removeWhere((notification) => notification.id == notificationId);
+        listNotification
+            .removeWhere((notification) => notification.id == notificationId);
         update();
         showCustomToast(message: "Notification deleted successfully");
       } else {
@@ -333,8 +434,8 @@ class NotificationController extends GetxController {
       }
     } catch (e) {
       debugPrint("Exception while deleting notification: $e");
-      showCustomToast(message: "An error occurred while deleting the notification");
+      showCustomToast(
+          message: "An error occurred while deleting the notification");
     }
   }
-
 }

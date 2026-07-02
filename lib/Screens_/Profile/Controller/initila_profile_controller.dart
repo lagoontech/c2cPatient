@@ -187,7 +187,7 @@ class InitialProfileDetails extends GetxController {
         },
       );
       if (res.statusCode == 200) {
-        //await ScheduleController().fetchPrimaryInformationApi();
+        await fetchInitialUserDetails(forceRefresh: true);
         Get.to(() => PrimaryInformationView());
         print("Profile details added successfully");
       } else if(res.statusCode == 422){
@@ -272,9 +272,9 @@ class InitialProfileDetails extends GetxController {
 
 
   bool isProfileLoad = false;
-  Future<bool> fetchInitialUserDetails() async {
+  Future<bool> fetchInitialUserDetails({bool forceRefresh = false}) async {
 
-    if (hasFetchedUserDetails) {
+    if (!forceRefresh && hasFetchedUserDetails) {
       return isUserFound;
     }
     if (token == null || patientID == null) {
@@ -325,9 +325,13 @@ class InitialProfileDetails extends GetxController {
           specialListNumberCT.text =
               initialUserDetails?.specialistContactNumber ?? '';
           moreInfoCT.text = initialUserDetails?.moreinfo ?? '';
+          hasFetchedUserDetails = true;
+          isUserFound = true;
           update();
           return true;
         }
+        hasFetchedUserDetails = true;
+        isUserFound = false;
         update();
       } else {
         print("Error: ${res.statusCode} - ${res.body}");

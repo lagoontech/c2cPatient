@@ -201,6 +201,13 @@ class ScheduleController extends GetxController {
     inserting = true;
     update();
     try {
+      if (token == null || token!.isEmpty) {
+        await fetchCommonDetails();
+      }
+      if (token == null || token!.isEmpty) {
+        showCustomToast(message: "Session expired. Please log in again.");
+        return;
+      }
       String? patientIDStr = await SharedPref().getId();
       Map<String, dynamic> params = {
         'patient_id': int.parse(patientIDStr!),
@@ -585,9 +592,13 @@ class ScheduleController extends GetxController {
 
   @override
   void onInit() {
-    fetchPrimaryInformationApi();
-    fetchCommonDetails();
     super.onInit();
+    _init();
+  }
+
+  Future<void> _init() async {
+    await fetchCommonDetails();
+    fetchPrimaryInformationApi();
   }
 
   void onUserDetailsCompleted() {

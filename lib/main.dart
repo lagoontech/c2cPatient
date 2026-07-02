@@ -3,6 +3,8 @@ import 'package:care2care/test/payment%20screen.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -23,12 +25,22 @@ void main() async {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
+    Get.put(NotificationController(), permanent: true);
+    FirebaseMessaging.onBackgroundMessage(onBackgroundMessage);
   } on Exception catch (e) {
-    // TODO
+    if (kDebugMode) {
+      debugPrint('Firebase initialization error: $e');
+    }
   }
-  Get.put(NotificationController());
   Get.lazyPut<InitialProfileDetails>(() => InitialProfileDetails());
   runApp(const MyApp());
+}
+
+@pragma('vm:entry-point')
+Future<void> onBackgroundMessage(RemoteMessage message) async {
+  if (kDebugMode) {
+    debugPrint('Background message: ${message.data}');
+  }
 }
 
 

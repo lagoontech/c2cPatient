@@ -23,10 +23,15 @@ import 'Information_view.dart';
 class ProfileDetails extends StatelessWidget {
   ProfileDetails({super.key});
 
- final NotificationController controller = Get.put(NotificationController());
+  final NotificationController controller = Get.put(NotificationController());
+  final InitialProfileDetails profileController =
+      Get.put(InitialProfileDetails());
 
   @override
   Widget build(BuildContext context) {
+    if (profileController.profileList?.data?.patientInfo == null) {
+      profileController.fetchInitialUserDetails(forceRefresh: true);
+    }
     return GetBuilder<InitialProfileDetails>(builder: (v) {
       return CustomBackground(
         appBar: CustomAppBar(

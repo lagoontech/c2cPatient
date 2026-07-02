@@ -8,20 +8,31 @@ import 'package:iconly/iconly.dart';
 import 'package:http/http.dart' as http;
 import '../../../sharedPref/sharedPref.dart';
 import '../../Appoinment/appoinment_view.dart';
-import '../../Chat_/ChatListScreen/chat_list_screen.dart';
 import '../../HomeScreen/home-screen.dart';
 import '../../ProfileDetails/Profile_view.dart';
 import '../../caretakerList/careTakerListView.dart';
 
 class BottomNavController extends GetxController {
   int currentIndex = 0;
-  final List<Widget> screens = [
-    HomePage(),
-    CaretakerList(),
-    AppointmentView(),
-    // ChatListScreen(),
-    ProfileDetails(),
-  ];
+  final Map<int, Widget> _screenCache = {};
+
+  Widget getScreen(int index) {
+    return _screenCache.putIfAbsent(index, () {
+      switch (index) {
+        case 0:
+          return HomePage();
+        case 1:
+          return CaretakerList();
+        case 2:
+          return AppointmentView();
+        case 3:
+          return ProfileDetails();
+        default:
+          return HomePage();
+      }
+    });
+  }
+
   List<TabItem> items = [
     TabItem(
       icon: IconlyBold.home,
@@ -32,9 +43,6 @@ class BottomNavController extends GetxController {
     TabItem(
       icon: IconlyBold.calendar,
     ),
-    /* TabItem(
-      icon: Icons.chat_rounded,
-    ),*/
     TabItem(
       icon: IconlyBold.profile,
     ),
@@ -42,7 +50,6 @@ class BottomNavController extends GetxController {
 
   //
   Future<void> updateFCMTokenOnServer(String newToken) async {
-    /* try {*/
     String? patientId = await SharedPref().getId();
 
     if (patientId != null) {
@@ -52,9 +59,6 @@ class BottomNavController extends GetxController {
           'caretaker_id': patientId,
           'fcm_token': newToken,
         },
-        /*  headers: {
-            "Content-Type": "application/json",
-          },*/
       );
 
       if (response.statusCode == 200) {
@@ -65,9 +69,6 @@ class BottomNavController extends GetxController {
     } else {
       print("Patient ID is not available.");
     }
-    /*   } catch (e) {
-      print("Error updating FCM Token on server: $e");
-    }*/
   }
 
   @override
@@ -76,6 +77,5 @@ class BottomNavController extends GetxController {
       updateFCMTokenOnServer(newToken);
     });
     super.onInit();
-
   }
 }

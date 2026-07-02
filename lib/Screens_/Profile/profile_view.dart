@@ -22,7 +22,6 @@ class ProfileView extends StatelessWidget {
             leading: SizedBox(),
             actions: [
           GetBuilder<InitialProfileDetails>(
-              init: InitialProfileDetails(),
               builder: (v) {
                 return Padding(
                   padding: EdgeInsets.only(right: 18.r),
@@ -39,14 +38,7 @@ class ProfileView extends StatelessWidget {
                         )
                       : InkWell(
                           onTap: () {
-                            /* if (v.profileList == null) {
-                              debugPrint("Calling addInitialProfileDetails()");
-                              v.addInitialProfileDetails();
-                            } else {
-                              debugPrint("Calling updateInitialProfileDetails()");
-                              v.updateInitialProfileDetails();
-                            }*/
-                            v.addInitialProfileDetails();
+                            CT.addInitialProfileDetails();
                           },
                           child: Icon(
                             IconlyLight.tick_square,
@@ -59,8 +51,7 @@ class ProfileView extends StatelessWidget {
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 20.r),
           child: SingleChildScrollView(
-            child: GetBuilder(
-                init: InitialProfileDetails(),
+            child: GetBuilder<InitialProfileDetails>(
                 builder: (v) {
                   return Column(
                     children: [

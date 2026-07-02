@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart'; // Import GetX
+import '../../Notification/controller.dart';
 import '../../ReusableUtils_/image_background.dart';
 import '../../ReusableUtils_/loader.dart';
 import '../Auth_screen/Sigin_screen/signIn_view.dart';
@@ -34,8 +35,10 @@ class SplashScreenState extends State<SplashScreen> {
 
   //
   tokenCheck() async {
-    if(widget.fromSchedule!){
+    if(widget.fromSchedule == true){
       await Future.delayed(Duration(milliseconds: 1500));
+      final profileController = Get.put(InitialProfileDetails());
+      await profileController.fetchInitialUserDetails(forceRefresh: true);
       Get.offAll(() => HomeView());
       return;
     }
@@ -49,29 +52,29 @@ class SplashScreenState extends State<SplashScreen> {
     final patientSchedules = data?.patientSchedules;
 
     if (profileList != null && data != null && patientInfo != null && patientSchedules != null) {
-      print("Navigating to HomeView");
-      print("Profile List: $profileList");
-      print("Patient Info: $patientInfo");
-
+      onUserDetailsCompleted();
       Get.offAll(() => HomeView());
+      requestNotificationPermissions();
       return;
     } else if (profileList != null && data != null && patientInfo == null) {
-      print("Navigating to ProfileView");
       Get.offAll(() => ProfileView());
+      requestNotificationPermissions();
       return;
     } else if (profileList != null && data != null && patientSchedules == null) {
       Get.offAll(() => PrimaryInformationView());
+      requestNotificationPermissions();
       return;
     }
 
-    if (profileList != null && data != null && patientInfo != null) {
-      onUserDetailsCompleted();
-    }
-    bool isDetailsComplete = await SharedPref().getRegisterComplete();
+    final token = await SharedPref().getToken();
+    final isDetailsComplete = await SharedPref().getRegisterComplete();
     Future.delayed(const Duration(seconds: 1), () {
-      if (isDetailsComplete) {
+      if (token != null && token.isNotEmpty && isDetailsComplete) {
         Get.off(() => HomeView());
       } else {
+        if (Get.isRegistered<NotificationController>()) {
+          Get.find<NotificationController>().clearPendingNavigation();
+        }
         Get.off(() => MobileEmail());
       }
     }).then((_){
@@ -104,11 +107,6 @@ class SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-
-    if(widget.fromSchedule!=null && widget.fromSchedule!){
-      tokenCheck();
-    }
-
     return CustomBackground(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
