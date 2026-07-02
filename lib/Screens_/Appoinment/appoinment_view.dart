@@ -207,14 +207,18 @@ class AppointmentView extends StatelessWidget {
                                           },
                                         )
                                       : SingleChildScrollView(
-                                          physics: const AlwaysScrollableScrollPhysics(),
-                                          child: SizedBox(
-                                            height: 300.h,
-                                            child: const Center(
-                                              child: Text("No requests to show"),
-                                            ),
-                                          ),
-                                        ),
+                                physics: const AlwaysScrollableScrollPhysics(),
+                                child: SizedBox(
+                                  height: 300.h,
+                                  child: Center(
+                                    child: EmptyStateWidget(
+                                      title: "No ongoing sessions",
+                                      description: "No new requests found",
+                                      icon: Icons.pending_actions_rounded,
+                                    ),
+                                  ),
+                                ),
+                              ),
                             ),
                           ],
                         ),
@@ -331,14 +335,18 @@ class AppointmentView extends StatelessWidget {
                                           },
                                         )
                                       : SingleChildScrollView(
-                                          physics: const AlwaysScrollableScrollPhysics(),
-                                          child: SizedBox(
-                                            height: 300.h,
-                                            child: const Center(
-                                              child: Text("No requests to show"),
-                                            ),
-                                          ),
-                                        ),
+                                physics: const AlwaysScrollableScrollPhysics(),
+                                child: SizedBox(
+                                  height: 300.h,
+                                  child: Center(
+                                    child: EmptyStateWidget(
+                                      title: "No ongoing sessions",
+                                      description: "No approved requests found",
+                                      icon: Icons.task_alt_outlined,
+                                    ),
+                                  ),
+                                ),
+                              ),
                             ),
                           ],
                         ),

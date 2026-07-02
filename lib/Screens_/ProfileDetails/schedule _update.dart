@@ -156,9 +156,9 @@ class _ScheduleUpdateState extends State<ScheduleUpdate> {
                   return !v.loadingInfo?GridView.count(
                     crossAxisCount: 2,
                     shrinkWrap: true,
-                    crossAxisSpacing: 12,
-                    mainAxisSpacing: 12,
-                    childAspectRatio: 1.5,
+                    crossAxisSpacing: 8,
+                    mainAxisSpacing: 8,
+                    childAspectRatio: 1.7,
                     physics: const NeverScrollableScrollPhysics(),
                     children: [
 
@@ -745,12 +745,13 @@ class MealTimeCard extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(icon, style: TextStyle(fontSize: 22.sp)),
+            Text(icon, style: TextStyle(fontSize: 18.sp)),
             SizedBox(height: 6.h),
             Text(
               title,
               style: TextStyle(
                 fontWeight: FontWeight.w600,
+                fontSize: 13.sp
               ),
             ),
             SizedBox(height: 6.h),
@@ -761,6 +762,7 @@ class MealTimeCard extends StatelessWidget {
                     ? Colors.grey
                     : AppColors.primaryColor,
                 fontWeight: FontWeight.w500,
+                fontSize: 13.sp
               ),
             ),
           ],

@@ -7,6 +7,7 @@ import '../../ReusableUtils_/AppColors.dart';
 import '../../ReusableUtils_/appBar.dart';
 import '../../ReusableUtils_/image_background.dart';
 import 'Controller/completed_appointment_details_controller.dart';
+import 'package:care2care/Screens_/Schedule/modal/medication_model.dart';
 
 class CompletedAppointmentDetails extends StatelessWidget {
   CompletedAppointmentDetails(
@@ -129,6 +130,7 @@ class CompletedAppointmentDetails extends StatelessWidget {
                                                         appointmentId,
                                                     patientId: patientId);
                                               }
+                                              print(sc.selectedDate.toString());
                                             },
                                             items: dates.map<
                                                     DropdownMenuItem<DateTime>>(
@@ -395,214 +397,56 @@ class CompletedAppointmentDetails extends StatelessWidget {
                                                   BorderRadius.circular(12.r)),
                                           child: Padding(
                                             padding: EdgeInsets.all(12.w),
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  "Time: ${sc.selectedMedication ?? "N/A"}",
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 13.sp,
-                                                  ),
-                                                ),
-                                                SizedBox(height: 8.h),
-                                                sc.selectedMedication != null
-                                                    ? Column(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: sc
-                                                            .meditationDetails
-                                                            .firstWhere((element) =>
-                                                                element.time ==
-                                                                sc
-                                                                    .selectedMedication!)
-                                                            .medicationDetails!
-                                                            .map(
-                                                                (controller) =>
-                                                                    Padding(
-                                                                      padding: const EdgeInsets
-                                                                          .only(
-                                                                          bottom:
-                                                                              6.0),
-                                                                      child:
-                                                                          Row(
-                                                                        children: [
-                                                                          const Icon(
-                                                                              Icons.medication,
-                                                                              color: AppColors.primaryColor,
-                                                                              size: 15),
-                                                                          const SizedBox(
-                                                                              width: 8),
-                                                                          Text(
-                                                                            controller.text.isEmpty
-                                                                                ? "Not specified"
-                                                                                : controller.text,
-                                                                            style:
-                                                                                TextStyle(fontSize: 11.sp),
-                                                                          ),
-                                                                        ],
-                                                                      ),
-                                                                    ))
-                                                            .toList(),
-                                                      )
-                                                    : Text(
-                                                        "No medication recorded",
-                                                        style: TextStyle(
-                                                          color: Colors
-                                                              .grey.shade600,
-                                                          fontSize: 11.sp,
-                                                        ),
+                                            child: sc.meditationDetails.isEmpty ||
+                                                    !sc.meditationDetails.any((element) =>
+                                                        element.medicationDetails != null &&
+                                                        element.medicationDetails!.any((c) =>
+                                                            c.text.isNotEmpty &&
+                                                            c.text != "null" &&
+                                                            c.text != "Not specified"))
+                                                ? Row(
+                                                    children: [
+                                                      Icon(
+                                                        Icons.medication_liquid_outlined,
+                                                        color: Colors.grey.shade400,
+                                                        size: 28.r,
                                                       ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-
-                                        Card(
-                                          elevation: 1,
-                                          shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(12.r)),
-                                          child: Padding(
-                                            padding: EdgeInsets.all(12.w),
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  "Time: ${"Noon" ?? "N/A"}",
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 13.sp,
-                                                  ),
-                                                ),
-                                                SizedBox(height: 8.h),
-                                                sc.selectedMedication != null
-                                                    ? Column(
+                                                      SizedBox(width: 12.w),
+                                                      Column(
                                                         crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: sc
-                                                            .meditationDetails
-                                                            .firstWhere(
-                                                                (element) =>
-                                                                    element
-                                                                        .time ==
-                                                                    "Noon")
-                                                            .medicationDetails!
-                                                            .map(
-                                                                (controller) =>
-                                                                    Padding(
-                                                                      padding: const EdgeInsets
-                                                                          .only(
-                                                                          bottom:
-                                                                              6.0),
-                                                                      child:
-                                                                          Row(
-                                                                        children: [
-                                                                          const Icon(
-                                                                              Icons.medication,
-                                                                              color: AppColors.primaryColor,
-                                                                              size: 15),
-                                                                          const SizedBox(
-                                                                              width: 8),
-                                                                          Text(
-                                                                            controller.text.isEmpty
-                                                                                ? "Not specified"
-                                                                                : controller.text,
-                                                                            style:
-                                                                                TextStyle(fontSize: 11.sp),
-                                                                          ),
-                                                                        ],
-                                                                      ),
-                                                                    ))
-                                                            .toList(),
-                                                      )
-                                                    : Text(
-                                                        "No medication recorded",
-                                                        style: TextStyle(
-                                                          color: Colors
-                                                              .grey.shade600,
-                                                          fontSize: 11.sp,
-                                                        ),
+                                                            CrossAxisAlignment.start,
+                                                        children: [
+                                                          Text(
+                                                            "No Medications Recorded",
+                                                            style: TextStyle(
+                                                              fontWeight: FontWeight.w600,
+                                                              fontSize: 13.sp,
+                                                              color: Colors.grey.shade700,
+                                                            ),
+                                                          ),
+                                                          SizedBox(height: 2.h),
+                                                          Text(
+                                                            "No prescriptions or dosages recorded for today.",
+                                                            style: TextStyle(
+                                                              fontSize: 11.sp,
+                                                              color: Colors.grey.shade500,
+                                                            ),
+                                                          ),
+                                                        ],
                                                       ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-
-                                        Card(
-                                          elevation: 1,
-                                          shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(12.r)),
-                                          child: Padding(
-                                            padding: EdgeInsets.all(12.w),
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  "Time: ${"Evening" ?? "N/A"}",
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 13.sp,
+                                                    ],
+                                                  )
+                                                : Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment.start,
+                                                    children: [
+                                                      _buildMedicationList("Morning", sc),
+                                                      const Divider(),
+                                                      _buildMedicationList("Noon", sc),
+                                                      const Divider(),
+                                                      _buildMedicationList("Evening", sc),
+                                                    ],
                                                   ),
-                                                ),
-                                                SizedBox(height: 8.h),
-                                                sc.selectedMedication != null
-                                                    ? Column(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: sc
-                                                            .meditationDetails
-                                                            .firstWhere(
-                                                                (element) =>
-                                                                    element
-                                                                        .time ==
-                                                                    "Evening")
-                                                            .medicationDetails!
-                                                            .map(
-                                                                (controller) =>
-                                                                    Padding(
-                                                                      padding: const EdgeInsets
-                                                                          .only(
-                                                                          bottom:
-                                                                              6.0),
-                                                                      child:
-                                                                          Row(
-                                                                        children: [
-                                                                          const Icon(
-                                                                              Icons.medication,
-                                                                              color: AppColors.primaryColor,
-                                                                              size: 15),
-                                                                          const SizedBox(
-                                                                              width: 8),
-                                                                          Text(
-                                                                            controller.text.isEmpty
-                                                                                ? "Not specified"
-                                                                                : controller.text,
-                                                                            style:
-                                                                                TextStyle(fontSize: 11.sp),
-                                                                          ),
-                                                                        ],
-                                                                      ),
-                                                                    ))
-                                                            .toList(),
-                                                      )
-                                                    : Text(
-                                                        "No medication recorded",
-                                                        style: TextStyle(
-                                                          color: Colors
-                                                              .grey.shade600,
-                                                          fontSize: 11.sp,
-                                                        ),
-                                                      ),
-                                              ],
-                                            ),
                                           ),
                                         ),
 
@@ -748,5 +592,75 @@ class CompletedAppointmentDetails extends StatelessWidget {
     } catch (e) {
       return timeString;
     }
+  }
+
+  Widget _buildMedicationList(String time, CompletedAppointmentDetailsController controller) {
+    final detail = controller.meditationDetails.firstWhere(
+      (element) => element.time == time,
+      orElse: () => MedicationModel(time: time, medicationDetails: []),
+    );
+    final list = detail.medicationDetails ?? [];
+    final validMeds = list.where((c) => c.text.isNotEmpty && c.text != "null" && c.text != "Not specified").toList();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(
+              time == "Morning"
+                  ? Icons.wb_sunny_outlined
+                  : time == "Noon"
+                      ? Icons.light_mode_outlined
+                      : Icons.nights_stay_outlined,
+              color: AppColors.primaryColor,
+              size: 16.r,
+            ),
+            SizedBox(width: 6.w),
+            Text(
+              time,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 13.sp,
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: 6.h),
+        validMeds.isEmpty
+            ? Padding(
+                padding: EdgeInsets.only(left: 22.w, bottom: 8.h),
+                child: Text(
+                  "No medications recorded",
+                  style: TextStyle(
+                    fontSize: 11.sp,
+                    color: Colors.grey.shade500,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+              )
+            : Column(
+                children: validMeds.map((medController) {
+                  return Padding(
+                    padding: EdgeInsets.only(left: 22.w, bottom: 6.h),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.medication,
+                          color: AppColors.primaryColor,
+                          size: 15,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          medController.text,
+                          style: TextStyle(fontSize: 11.sp),
+                        ),
+                      ],
+                    ),
+                  );
+                }).toList(),
+              ),
+      ],
+    );
   }
 }

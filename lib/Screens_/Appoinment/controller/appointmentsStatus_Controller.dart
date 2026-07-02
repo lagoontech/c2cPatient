@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:care2care/ReusableUtils_/toast2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -17,11 +16,11 @@ class AppointmentStatusController extends GetxController {
 
   List<StatusData> RequestAppointment = [];
   List<StatusData> searchedRequestAppointment = [];
-  List<StatusData> ApprovedAppointment = [];
+  List<StatusData> ApprovedAppointment  = [];
   List<StatusData> searchedAppointments = [];
   List<StatusData> CompletedAppointment = [];
-  List<StatusData> searchedCompletedAppointment = [];
-  List<StatusData> CancelledAppointment = [];
+  List<StatusData> searchedCompletedAppointment  = [];
+  List<StatusData> CancelledAppointment  = [];
   List<StatusData> ProcessingAppointment = [];
   List<StatusData> searchedProcessingAppointment = [];
   TextEditingController cancelCT = TextEditingController();

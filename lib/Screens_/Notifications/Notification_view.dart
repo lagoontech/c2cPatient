@@ -1,15 +1,28 @@
+import 'dart:convert';
+
+import 'package:care2care/Screens_/Appoinment/Repository/appointment_repo.dart';
+import 'package:care2care/Screens_/Appoinment/modal/appointment_details_model.dart';
+import 'package:care2care/Screens_/patient_history/completed_appointment_details.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 import '../../Notification/controller.dart';
 import '../../ReusableUtils_/AppColors.dart';
 import '../../ReusableUtils_/appBar.dart';
 import '../../ReusableUtils_/customLabel.dart';
 import '../../ReusableUtils_/image_background.dart';
+import '../Appoinment/appointment_approved_details.dart';
 
-class NotificationView extends StatelessWidget {
+class NotificationView extends StatefulWidget {
   NotificationView({super.key});
+
+  @override
+  State<NotificationView> createState() => _NotificationViewState();
+}
+
+class _NotificationViewState extends State<NotificationView> {
 
   final NotificationController controller = Get.put(NotificationController());
 
@@ -84,6 +97,10 @@ class NotificationView extends StatelessWidget {
                               message: data.data?.body ?? '',
                               notificationId: data.id,
                               time: data.createdAt,
+                              appointmentId: data.data!.appointmentId,
+                              showPageLink: data.data!=null && data.data!.body!=null
+                                  ? data.data!.body!.contains("approved")
+                                  : false,
                             ),
                           ),
                         );
@@ -108,6 +125,8 @@ class CustomNotification extends StatelessWidget {
   final Color? iconColor;
   final String? notificationId;
   final DateTime? time;
+  final int ?appointmentId;
+  final bool ?showPageLink;
 
   CustomNotification({
     super.key,
@@ -118,6 +137,8 @@ class CustomNotification extends StatelessWidget {
     this.iconColor,
     this.notificationId,
     this.time, // Initialize the time property
+    this.appointmentId,
+    this.showPageLink = false
   });
 
   final NotificationController controller = Get.put(NotificationController());
@@ -219,6 +240,58 @@ class CustomNotification extends StatelessWidget {
                         color: Colors.black54,
                       ),
                     ),
+
+                    showPageLink!
+                        ? InkWell(
+                      onTap: () async{
+                        var data = await AppointmentRepo().getAppointmentDetails(appointmentId!);
+                        var approved = (data.data) as AppointmentDetail;
+                        if(approved.paymentStatus!= "success"){
+                          Get.to(()=> ApprovedDetailScreen(
+                            fromTime: approved
+                                .appointmentStartTime,
+                            Totime: approved
+                                .appointmentEndTime,
+                            serviceCharge: approved
+                                .caretaker
+                                ?.caretakerInfo
+                                ?.serviceCharge,
+                            appointmentId:
+                            approved.id,
+                            careTakerId: approved
+                                .caretakerId,
+                            paymentStatus: approved
+                                .paymentStatus,
+                            imgUrl: (data as AppointmentDetails).profilePath! + approved.caretaker!.profileImageUrl!,
+                            name: approved.caretaker?.caretakerInfo != null
+                                ? '${approved.caretaker!.caretakerInfo!.firstName ?? ''} ${approved.caretaker!.caretakerInfo!.lastName ?? ''}'
+                                : 'Unknown Caretaker',
+                            dates: List.from(jsonDecode(approved.appointmentDates!)).map((e)=> DateTime.parse(e)).toList(),
+                            status: approved
+                                .serviceStatus,
+                            time: (approved.appointmentStartTime != null && approved.appointmentEndTime != null)
+                                ? (() {
+                              try {
+                                return "From ${DateFormat('h:mm a').format(DateTime.parse('1970-01-01 ${approved.appointmentStartTime}'))} - To ${DateFormat('h:mm a').format(DateTime.parse('1970-01-01 ${approved.appointmentEndTime}'))}";
+                              } catch (e) {
+                                return "From ${approved.appointmentStartTime} - To ${approved.appointmentEndTime}";
+                              }
+                            })()
+                                : "N/A",
+                          ));
+                        }else{
+                          Get.to(()=> CompletedAppointmentDetails(
+                            caretakerId: approved.caretakerId,
+                            appointmentId: approved.id,
+                            patientId: approved.patientId,
+                            appointmentDates: List.from(jsonDecode(approved.appointmentDates!)).map((e)=> DateTime.parse(e)).toList(),
+                          ));}
+                        },
+                      child: Text("View Appointment", style: TextStyle(
+                          decoration: TextDecoration.underline
+                      ),),
+                    ) : SizedBox()
+
                   ],
                 ),
               ),

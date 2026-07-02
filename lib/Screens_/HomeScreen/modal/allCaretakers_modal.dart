@@ -32,7 +32,7 @@ class ViewAllCareTakers {
         type: json["type"],
         data: json["data"] == null
             ? []
-            : List<Datum>.from(json["data"]!.map((x) => Datum.fromJson(x))),
+            : List<Datum>.from(json["data"]["data"]!.map((x) => Datum.fromJson(x))),
         profilePath: json["profile_path"],
       );
 

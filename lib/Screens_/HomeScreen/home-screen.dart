@@ -43,7 +43,7 @@ class HomePage extends StatelessWidget {
       }
       return RefreshIndicator(
         onRefresh: () async {
-          await homeController.fetchAllCaretakersApi();
+          await homeController.fetchTopCaretakers();
           await notifyController.allNotifications();
         },
         child: Scaffold(

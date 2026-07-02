@@ -1,11 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
-
 import 'package:care2care/Screens_/caretakerList/Models/caretakers_list_model.dart';
 import 'package:care2care/constants/api_urls.dart';
 import 'package:care2care/sharedPref/sharedPref.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:http/http.dart' as http;
@@ -31,7 +29,9 @@ class HomeController extends GetxController {
   String? gender = "";
   RefreshController refreshController = RefreshController();
 
+  //
   fetchAllCaretakersApi() async {
+
     isLoadingCareTakersList = false;
     update();
     try {
@@ -49,13 +49,15 @@ class HomeController extends GetxController {
         if (viewAllCareTakers != null && viewAllCareTakers!.data != null) {
           careTakerInfo =
               viewAllCareTakers!.data!.map((e) => e.caretakerInfo!).toList();
+          print(careTakerInfo[0].address);
         }
       }
-    } catch (e) {
-      print('fetchAllCaretakersApi$e');
+    } catch (e,s) {
+      print('fetchAllCaretakersApi$s');
     }
     isLoadingCareTakersList = false;
     update();
+
   }
 
   //
@@ -90,10 +92,12 @@ class HomeController extends GetxController {
       );
       if (result.statusCode == 200) {
         log(result.body);
-        if (!loading)
-          careTakers = caretakersListModel(result.body).data.data;
-        else {
-          careTakers.addAll(caretakersListModel(result.body).data.data);
+        final model = caretakersListModel(result.body);
+        profilePath = model.profilePath;
+        if (!loading) {
+          careTakers = model.data.data;
+        } else {
+          careTakers.addAll(model.data.data);
         }
         print("caretakers-->${careTakers.length}");
       }
@@ -114,6 +118,7 @@ class HomeController extends GetxController {
   fetchTopCaretakers() async {
     isLoadingTopCareTakers = true;
     update();
+    print("fetching top caretakers");
     try {
       String? token = await SharedPref().getToken();
       var result = await http.get(Uri.parse(ApiUrls().topCaretakers), headers: {

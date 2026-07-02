@@ -63,4 +63,6 @@ class ApiUrls {
 
   String unavailableDates = "$baseUrl/api/patients/patient/unavailable-dates/";
 
+  String appointmentDetails = "$baseUrl/api/patients/patient/appointment/";
+
 }

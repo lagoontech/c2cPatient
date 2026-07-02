@@ -9,13 +9,11 @@ import '../../../../sharedPref/sharedPref.dart';
 import '../../../modals/Profile_modal.dart';
 import '../../Schedule/modal/medication_model.dart';
 
-class CompletedAppointmentDetailsController extends GetxController{
-
-
+class CompletedAppointmentDetailsController extends GetxController {
   bool loadingServiceHistory = false;
 
   PatientSchedules? patientSchedules;
-  DateTime ?selectedDate;
+  DateTime? selectedDate;
   ProfileList? profile;
 
   var selectedPatient = '';
@@ -56,14 +54,13 @@ class CompletedAppointmentDetailsController extends GetxController{
   final List<String> dinner = [];
   List<String> meditations = [];
   List<MedicationModel> meditationDetails = [];
-  String ?selectedMedication;
+  String? selectedMedication;
   final List<String> blood = [];
 
   String breakFastDetail = "";
-  String lunchDetail     = "";
-  String snacksDetail    = "";
-  String dinnerDetail    = "";
-
+  String lunchDetail = "";
+  String snacksDetail = "";
+  String dinnerDetail = "";
 
   final List<String> breakFast = [
     '06:00 AM',
@@ -109,7 +106,7 @@ class CompletedAppointmentDetailsController extends GetxController{
   var walkingTime = '';
   var medidation = '';
   List<dynamic> selectedOralCareTimings = [];
-  List<dynamic> selectedBathingTimings  = [];
+  List<dynamic> selectedBathingTimings = [];
   List<dynamic> selectedDressingTimings = [];
   List<dynamic> selectedWalkingTimings = [];
   TextEditingController medicalHistoryCT = TextEditingController();
@@ -124,21 +121,21 @@ class CompletedAppointmentDetailsController extends GetxController{
   TextEditingController pastSurgicalCT = TextEditingController();
 
   bool isLoading = false;
-  int ?caretakerId;
+  int? caretakerId;
   bool noDataYet = false;
 
-  int ?appointmentId;
-  int ?patientId;
+  int? appointmentId;
+  int? patientId;
 
   //
   loadGetHistory({int? appointmentId, int? patientId}) async {
-
     this.appointmentId = appointmentId;
     this.patientId = patientId;
     loadingServiceHistory = true;
     update();
     print(appointmentId);
-    try{
+    print(selectedDate.toString());
+    try {
       String? token = await SharedPref().getToken();
       final uri = Uri.parse(ApiUrls().ServiceHistory).replace(queryParameters: {
         "appointment_id": appointmentId?.toString(),
@@ -157,12 +154,12 @@ class CompletedAppointmentDetailsController extends GetxController{
       if (res.statusCode == 200) {
         var data = json.decode(res.body);
         log(data.toString());
-        profile = ProfileList.fromJson(data,isReport: true);
+        profile = ProfileList.fromJson(data, isReport: true);
         final schedules = profile?.data?.patientSchedules;
+        print(schedules?.toJson());
         if (schedules != null) {
           patientSchedules = schedules;
-          pastSurgicalCT.text =
-              schedules.patientPastsurgicalhistory ?? "";
+          pastSurgicalCT.text = schedules.patientPastsurgicalhistory ?? "";
           breakfastField.text = schedules.patientBreakfast ?? "";
           lunchField.text = schedules.patientLunch ?? "";
           snacksField.text = schedules.patientSnack ?? "";
@@ -177,12 +174,12 @@ class CompletedAppointmentDetailsController extends GetxController{
           temp.text = schedules.patientVitalsigns?.temperature ?? "";
           bp.text = schedules.patientVitalsigns?.bloodPressure ?? "";
           final walkingTimeVal = schedules.patientWalkingtime;
-          selectedWalkingTimings = walkingTimeVal != null ? jsonDecode(walkingTimeVal) : [];
+          selectedWalkingTimings =
+              walkingTimeVal != null ? jsonDecode(walkingTimeVal) : [];
           print(selectedWalkingTimings);
           heartRate.text =
               schedules.patientVitalsigns?.heartRate?.toString() ?? "";
-          respiration.text =
-              schedules.patientVitalsigns?.respiratoryRate ?? "";
+          respiration.text = schedules.patientVitalsigns?.respiratoryRate ?? "";
 
           ///
           final breakfastTime = schedules.patientBreakfasttime;
@@ -197,27 +194,33 @@ class CompletedAppointmentDetailsController extends GetxController{
           if (medications != null && medications.isNotEmpty) {
             medidation = "Morning";
             meditationDetails = [
-              MedicationModel(time: "Morning",medicationDetails: []),
-              MedicationModel(time: "Noon",medicationDetails: []),
-              MedicationModel(time: "Evening",medicationDetails: []),
+              MedicationModel(time: "Morning", medicationDetails: []),
+              MedicationModel(time: "Noon", medicationDetails: []),
+              MedicationModel(time: "Evening", medicationDetails: []),
             ];
             var medicationValues = jsonDecode(medications);
             medicationValues.keys.forEach((time) {
-              List<dynamic> ?details = medicationValues[time];
-              if(details != null) {
-                if(time == "Morning"){
+              List<dynamic>? details = medicationValues[time];
+              if (details != null) {
+                if (time == "Morning") {
                   details.forEach((element) {
-                    meditationDetails[0].medicationDetails!.add(TextEditingController(text:element.toString()));
+                    meditationDetails[0]
+                        .medicationDetails!
+                        .add(TextEditingController(text: element.toString()));
                   });
                 }
-                if(time == "Noon"){
+                if (time == "Noon") {
                   details.forEach((element) {
-                    meditationDetails[1].medicationDetails!.add(TextEditingController(text:element.toString()));
+                    meditationDetails[1]
+                        .medicationDetails!
+                        .add(TextEditingController(text: element.toString()));
                   });
                 }
-                if(time == "Evening"){
+                if (time == "Evening") {
                   details.forEach((element) {
-                    meditationDetails[2].medicationDetails!.add(TextEditingController(text:element.toString()));
+                    meditationDetails[2]
+                        .medicationDetails!
+                        .add(TextEditingController(text: element.toString()));
                   });
                 }
               }
@@ -283,7 +286,8 @@ class CompletedAppointmentDetailsController extends GetxController{
       } else {
         print('Failed to load history: ${res.statusCode}');
         noDataYet = true;
-      }}catch(e,s){
+      }
+    } catch (e, s) {
       print('Failed to load history: $s');
     }
     loadingServiceHistory = false;
@@ -296,36 +300,33 @@ class CompletedAppointmentDetailsController extends GetxController{
   var avg;
 
   //
-  getVitals() async{
-
+  getVitals() async {
     loadingVitals = true;
     update();
-    try{
+    try {
       String? token = await SharedPref().getToken();
       print(token);
-      final uri = Uri.parse(ApiUrls().getVitalsForAppointment).replace(
-        queryParameters: {
-          "appointment_id": appointmentId?.toString(),
-          "caretaker_id": caretakerId.toString(),
-          "patient_id": patientId?.toString(),
-        }
-      );
+      final uri = Uri.parse(ApiUrls().getVitalsForAppointment)
+          .replace(queryParameters: {
+        "appointment_id": appointmentId?.toString(),
+        "caretaker_id": caretakerId.toString(),
+        "patient_id": patientId?.toString(),
+      });
       var res = await http.get(
         uri,
         headers: {
           'Authorization': 'Bearer $token',
         },
       );
-      if(res.statusCode == 200){
+      if (res.statusCode == 200) {
         vitals = vitalsModelFromJson(res.body).data?.vitalsByDay ?? [];
         avg = calculateAverage(vitals);
       }
-    }catch(e,s){
+    } catch (e, s) {
       print("Error in getting vitals: $s");
     }
     loadingVitals = false;
     update();
-
   }
 
   //
@@ -338,19 +339,48 @@ class CompletedAppointmentDetailsController extends GetxController{
     int count = vitals.length;
 
     for (var v in vitals) {
-      bp += double.tryParse(v.vitalSigns?.bloodPressure ?? "0") ?? 0;
       heart += double.tryParse(v.vitalSigns?.heartRate ?? "0") ?? 0;
       resp += double.tryParse(v.vitalSigns?.respiratoryRate ?? "0") ?? 0;
       temp += double.tryParse(v.vitalSigns?.temperature ?? "0") ?? 0;
     }
 
     return {
-      "bp": (bp / count).toStringAsFixed(1),
+      "bp": averageBloodPressure(
+          vitals.map((e) => e.vitalSigns!.bloodPressure!).toList()),
       "heart": (heart / count).toStringAsFixed(0),
       "resp": (resp / count).toStringAsFixed(0),
       "temp": (temp / count).toStringAsFixed(1),
     };
   }
 
+  //
+  String averageBloodPressure(List<String> readings) {
+    if (readings.isEmpty) return "--/--";
 
+    int systolicSum = 0;
+    int diastolicSum = 0;
+    int count = 0;
+
+    for (final reading in readings) {
+      final parts = reading.split('/');
+
+      if (parts.length != 2) continue;
+
+      final systolic = int.tryParse(parts[0].trim());
+      final diastolic = int.tryParse(parts[1].trim());
+
+      if (systolic == null || diastolic == null) continue;
+
+      systolicSum += systolic;
+      diastolicSum += diastolic;
+      count++;
+    }
+
+    if (count == 0) return "--/--";
+
+    final avgSystolic = (systolicSum / count).round();
+    final avgDiastolic = (diastolicSum / count).round();
+
+    return "$avgSystolic/$avgDiastolic";
+  }
 }

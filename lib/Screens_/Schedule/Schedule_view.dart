@@ -239,211 +239,82 @@ class _ScheduleViewState extends State<ScheduleView> {
                   text: "Food Timing",
                   color: AppColors.primaryColor,
                 ),
-                kHeight15,
-                CustomLabel(text: "Break Fast"),
-                kHeight10,
-                Row(
-                  children: [
-                    Expanded(
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: GetBuilder<ScheduleController>(
-                          init: sc,
-                          builder: (v) {
-                            String? selectedBreakfastTime =
-                                v.patientSchedules?.patientBreakfasttime;
-                            /* String? formattedSelectedBreakfastTime;
-                            if (selectedBreakfastTime != null) {
-                              final timeParts =
-                                  selectedBreakfastTime.split(':');
-                              final hour = int.parse(timeParts[0]);
-                              final minute = timeParts[1];
-                              formattedSelectedBreakfastTime =
-                                  (hour % 12).toString().padLeft(2, '0') +
-                                      '.' +
-                                      minute +
-                                      (hour < 12 ? ' AM' : ' PM');
-                            }*/
 
-                            return Wrap(
-                              spacing: 8.0,
-                              children: v.breakFast.map((String time) {
-                                bool isSelected =
-                                    time == selectedBreakfastTime ||
-                                        v.filters.contains(time);
-                                return CustomChip(
-                                  label: time,
-                                  isSelected: isSelected,
-                                  onSelected: (bool selected) {
-                                    if (selected) {
-                                      v.filters.clear();
-                                      print("--->${v.filters.isEmpty}");
-                                      v.patientSchedules?.patientBreakfasttime =
-                                          null;
-                                      v.filters.add(time);
-                                      v.update();
-                                    } else {
-                                      v.filters.remove(time);
-                                    }
+                GetBuilder<ScheduleController>(
+                  builder: (v) {
+                    return !v.loadingInfo?GridView.count(
+                      crossAxisCount: 2,
+                      shrinkWrap: true,
+                      crossAxisSpacing: 8,
+                      mainAxisSpacing: 8,
+                      childAspectRatio: 1.7,
+                      physics: const NeverScrollableScrollPhysics(),
+                      children: [
 
-                                    // Update the controller and UI
-                                    v.update();
-
-                                    print("updated time: $time");
-                                  },
-                                );
-                              }).toList(),
-                            );
+                        MealTimeCard(
+                          title: "Breakfast",
+                          icon: "🌅",
+                          time: v.formatTime(v.patientSchedules?.patientBreakfasttime ?? "--"),
+                          onTap: () async {
+                            final result = await showTimePickerDialog(context);
+                            if (result != null && result.toString().isNotEmpty) {
+                              v.patientSchedules?.patientBreakfasttime = result;
+                              v.filters.clear();
+                              v.filters.add(result);
+                              v.update();
+                            }
                           },
                         ),
-                      ),
-                    ),
-                  ],
-                ),
-                kHeight15,
-                CustomLabel(text: "Lunch"),
-                kHeight10,
-                Row(
-                  children: [
-                    Expanded(
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: GetBuilder<ScheduleController>(builder: (v) {
-                          String? selectedBreakfastTime =
-                              v.patientSchedules?.patientLunchtime;
-                          String? formattedSelectedBreakfastTime;
-                          /*   if (selectedBreakfastTime != null) {
-                            final timeParts = selectedBreakfastTime.split(':');
-                            final hour = int.parse(timeParts[0]);
-                            final minute = timeParts[1];
-                            formattedSelectedBreakfastTime =
-                                (hour % 12).toString().padLeft(2, '0') +
-                                    '.' +
-                                    minute +
-                                    (hour < 12 ? ' AM' : ' PM');
-                          }*/
-                          return Wrap(
-                            spacing: 8.0,
-                            children: v.lunchList.map((String name) {
-                              bool isSelected = name == selectedBreakfastTime ||
-                                  v.lunchFilters.contains(name);
-                              return CustomChip(
-                                label: name,
-                                isSelected: isSelected,
-                                onSelected: (bool selected) {
-                                  setState(() {
-                                    if (selected) {
-                                      v.lunchFilters.clear();
-                                      v.lunchFilters.add(name);
-                                    } else {
-                                      v.lunchFilters.remove(name);
-                                    }
-                                  });
-                                },
-                              );
-                            }).toList(),
-                          );
-                        }),
-                      ),
-                    ),
-                  ],
-                ),
-                kHeight15,
-                CustomLabel(text: "Snacks"),
-                kHeight10,
-                Row(
-                  children: [
-                    Expanded(
-                      child: SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: GetBuilder<ScheduleController>(
-                            builder: (v) {
-                              // Assign default snack time if empty or null, otherwise use existing snack time
-                              String selectedSnackTime = v.patientSchedules?.patientSnackstime ?? "";
-                              String formattedSelectedSnackTime =
-                                  "06:00"; // Default value in case of errors
 
-                              return Wrap(
-                                spacing: 8.0,
-                                children: v.snackList.map((String name) {
-                                  // Ensure that the list is not empty or out of bounds
-                                  bool isSelected = name == selectedSnackTime ||
-                                      v.snacks.contains(name);
+                        MealTimeCard(
+                          title: "Lunch",
+                          icon: "🍛",
+                          time: v.formatTime(v.patientSchedules?.patientLunchtime ?? "--"),
+                          onTap: () async {
+                            final result = await showTimePickerDialog(context);
+                            if (result != null && result.toString().isNotEmpty) {
+                              v.patientSchedules?.patientLunchtime = result;
+                              v.lunchFilters.clear();
+                              v.lunchFilters.add(result);
+                              v.update();
+                            }
+                          },
+                        ),
 
-                                  return CustomChip(
-                                    label: name,
-                                    isSelected: isSelected,
-                                    onSelected: (bool selected) {
-                                      // Safely update snacks list
-                                      if (selected) {
-                                        v.snacks.clear();
-                                        v.snacks.add(name);
-                                        v.patientSchedules?.patientSnackstime = name; // Update snack time
-                                        v.update(); // Rebuild GetX state
-                                      } else {
-                                        v.snacks.remove(name);
-                                        v.patientSchedules?.patientSnackstime = null; // Clear snack time
-                                        v.update();
-                                      }
-                                    },
-                                  );
-                                }).toList(),
-                              );
-                            },
-                          )),
-                    ),
-                  ],
+                        MealTimeCard(
+                          title: "Snacks",
+                          icon: "☕",
+                          time: v.formatTime(v.patientSchedules?.patientSnackstime ?? "--"),
+                          onTap: () async {
+                            final result = await showTimePickerDialog(context);
+                            if (result != null && result.toString().isNotEmpty) {
+                              v.patientSchedules?.patientSnackstime = result;
+                              v.snacks.clear();
+                              v.snacks.add(result);
+                              v.update();
+                            }
+                          },
+                        ),
+
+                        MealTimeCard(
+                          title: "Dinner",
+                          icon: "🌙",
+                          time: v.formatTime(v.patientSchedules?.patientDinnertime ?? "--"),
+                          onTap: () async {
+                            final result = await showTimePickerDialog(context);
+                            if (result != null && result.toString().isNotEmpty) {
+                              v.patientSchedules?.patientDinnertime = result;
+                              v.dinner.clear();
+                              v.dinner.add(result);
+                              v.update();
+                            }
+                          },
+                        ),
+                      ],
+                    ) : SizedBox();
+                  },
                 ),
-                kHeight15,
-                CustomLabel(text: "Dinner"),
-                kHeight10,
-                Row(
-                  children: [
-                    Expanded(
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: GetBuilder<ScheduleController>(builder: (v) {
-                          String? selectedBreakfastTime =
-                              v.patientSchedules?.patientDinnertime;
-                          String? formattedSelectedBreakfastTime;
-                          /* if (selectedBreakfastTime != null) {
-                            final timeParts = selectedBreakfastTime.split(':');
-                            final hour = int.parse(timeParts[0]);
-                            final minute = timeParts[1];
-                            formattedSelectedBreakfastTime =
-                                (hour % 12).toString().padLeft(2, '0') +
-                                    '.' +
-                                    minute +
-                                    (hour < 12 ? ' AM' : ' PM');
-                          }*/
-                          return Wrap(
-                            spacing: 8.0,
-                            children: sc.dinnerList.map((String name) {
-                              bool isSelected = name == selectedBreakfastTime ||
-                                  v.dinner.contains(name);
-                              return CustomChip(
-                                label: name,
-                                isSelected: isSelected,
-                                onSelected: (bool selected) {
-                                  setState(() {
-                                    if (selected) {
-                                      v.dinner.clear();
-                                      v.patientSchedules?.patientDinnertime =
-                                          null;
-                                      v.dinner.add(name);
-                                    } else {
-                                      sc.dinner.remove(name);
-                                    }
-                                  });
-                                },
-                              );
-                            }).toList(),
-                          );
-                        }),
-                      ),
-                    ),
-                  ],
-                ),
+
                 kHeight15,
                 CustomLabel(text: "Hydration(Water)"),
                 kHeight10,
@@ -853,4 +724,79 @@ class _ScheduleViewState extends State<ScheduleView> {
           ),
         ));
   }
+
+  //
+  Future<dynamic> showTimePickerDialog(BuildContext context) async {
+
+    var result =  await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
+    if(result!=null && result is TimeOfDay){
+      //with am pm
+      return "${result.hourOfPeriod.toString().padLeft(2, '0')}.${result.minute.toString().padLeft(2, '0')} ${result.period == DayPeriod.am ? 'AM' : 'PM'}";
+    }
+    return "";
+  }
+
+
 }
+
+class MealTimeCard extends StatelessWidget {
+  final String title;
+  final String icon;
+  final String? time;
+  final VoidCallback onTap;
+
+  const MealTimeCard({
+    super.key,
+    required this.title,
+    required this.icon,
+    required this.time,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.all(6.w),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(14.w),
+          color: AppColors.primaryColor.withOpacity(0.08),
+          border: Border.all(
+            color: AppColors.primaryColor.withOpacity(0.2),
+          ),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(icon, style: TextStyle(fontSize: 18.sp)),
+            SizedBox(height: 6.h),
+            Text(
+              title,
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 13.sp
+              ),
+            ),
+            SizedBox(height: 6.h),
+            Text(
+              time ?? "Select Time",
+              style: TextStyle(
+                color: time == null
+                    ? Colors.grey
+                    : AppColors.primaryColor,
+                fontWeight: FontWeight.w500,
+                fontSize: 13.sp
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+

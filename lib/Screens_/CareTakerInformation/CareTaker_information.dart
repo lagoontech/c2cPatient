@@ -182,7 +182,7 @@ class _CaretakerInformationState extends State<CaretakerInformation> {
                       // Calculate the exact size needed to span the width of the card
                       final double availableWidth = MediaQuery.of(context).size.width - 32.w;
                       final double calTileSize = availableWidth / 7;
-                      final double calHeight = calTileSize * 6 + 96;
+                      final double calHeight = calTileSize * 6 + 100;
 
                       return Container(
                         decoration: BoxDecoration(

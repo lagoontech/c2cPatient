@@ -30,7 +30,7 @@ class CaretakersListModel {
         status: json["status"],
         type: json["type"],
         data: Data.fromJson(json["data"]),
-        profilePath: json["profile_path"],
+        profilePath: json["profile_path"] ?? "",
       );
 
   Map<String, dynamic> toJson() => {
@@ -74,20 +74,24 @@ class Data {
   });
 
   factory Data.fromJson(Map<String, dynamic> json) => Data(
-        currentPage: json["current_page"],
-        data: List<CaretakersListData>.from(
-            json["data"].map((x) => CaretakersListData.fromJson(x))),
-        firstPageUrl: json["first_page_url"],
+        currentPage: json["current_page"] ?? 1,
+        data: json["data"] == null
+            ? []
+            : List<CaretakersListData>.from(
+                json["data"].map((x) => CaretakersListData.fromJson(x))),
+        firstPageUrl: json["first_page_url"] ?? "",
         from: json["from"] ?? 0,
         lastPage: json["last_page"] ?? 0,
-        lastPageUrl: json["last_page_url"],
-        links: List<Link>.from(json["links"].map((x) => Link.fromJson(x))),
+        lastPageUrl: json["last_page_url"] ?? "",
+        links: json["links"] == null
+            ? []
+            : List<Link>.from(json["links"].map((x) => Link.fromJson(x))),
         nextPageUrl: json["next_page_url"],
-        path: json["path"],
-        perPage: json["per_page"],
+        path: json["path"] ?? "",
+        perPage: json["per_page"] ?? 0,
         prevPageUrl: json["prev_page_url"],
         to: json["to"] ?? 0,
-        total: json["total"],
+        total: json["total"] ?? 0,
       );
 
   Map<String, dynamic> toJson() => {
@@ -141,25 +145,35 @@ class CaretakersListData {
 
   factory CaretakersListData.fromJson(Map<String, dynamic> json) =>
       CaretakersListData(
-        id: json["id"],
-        mobilenum: json["mobilenum"],
-        fcmToken: json["fcm_token"],
-        otp: json["otp"],
-        about: json["aboutme"],
-        otpverified: json["otpverified"],
+        id: json["id"] ?? 0,
+        mobilenum: json["mobilenum"] ?? "",
+        fcmToken: json["fcm_token"] ?? "",
+        otp: json["otp"] ?? "",
+        about: json["aboutme"] ?? "",
+        otpverified: json["otpverified"] ?? 0,
         profileImageUrl: json["profile_image_url"] ?? "",
-        createdAt: DateTime.parse(json["created_at"]),
-        updatedAt: DateTime.parse(json["updated_at"]),
-        caretakerInfo: CaretakerInfo3.fromJson(json["caretaker_info"]),
-        caretakerDocuments: List<CaretakerDocument>.from(
-            json["caretaker_documents"]
+        createdAt: json["created_at"] == null
+            ? DateTime.now()
+            : DateTime.parse(json["created_at"]),
+        updatedAt: json["updated_at"] == null
+            ? DateTime.now()
+            : DateTime.parse(json["updated_at"]),
+        caretakerInfo: json["caretaker_info"] == null
+            ? CaretakerInfo3.empty()
+            : CaretakerInfo3.fromJson(json["caretaker_info"]),
+        caretakerDocuments: json["caretaker_documents"] == null
+            ? []
+            : List<CaretakerDocument>.from(json["caretaker_documents"]
                 .map((x) => CaretakerDocument.fromJson(x))),
-        patientAppointments: List<PatientAppointment>.from(
-            json["patient_appointments"]
+        patientAppointments: json["patient_appointments"] == null
+            ? []
+            : List<PatientAppointment>.from(json["patient_appointments"]
                 .map((x) => PatientAppointment.fromJson(x))),
-        patientReviews: List<PatientReview>.from(
-            json["patient_reviews"].map((x) => PatientReview.fromJson(x))),
-        averageRating: json["average_rating"] ?? null,
+        patientReviews: json["patient_reviews"] == null
+            ? []
+            : List<PatientReview>.from(
+                json["patient_reviews"].map((x) => PatientReview.fromJson(x))),
+        averageRating: json["average_rating"]?.toString(),
       );
 
   Map<String, dynamic> toJson() => {
@@ -266,27 +280,55 @@ class CaretakerInfo3 {
       required this.updatedAt,
       this.about});
 
+  factory CaretakerInfo3.empty() => CaretakerInfo3(
+        id: 0,
+        caretakerId: 0,
+        firstName: "",
+        lastName: "",
+        email: "",
+        sex: "",
+        age: 0,
+        dob: DateTime.now(),
+        medicalLicense: "",
+        location: "",
+        nationality: "",
+        address: "",
+        yearOfExperiences: "",
+        primaryContactNumber: "",
+        secondaryContactNumber: "",
+        serviceCharge: "",
+        totalPatientsAttended: "",
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
+      );
+
   factory CaretakerInfo3.fromJson(Map<String, dynamic> json) => CaretakerInfo3(
-        id: json["id"],
-        caretakerId: json["caretaker_id"],
-        firstName: json["first_name"],
-        lastName: json["last_name"],
-        email: json["email"],
-        sex: json["sex"],
-        age: json["age"],
+        id: json["id"] ?? 0,
+        caretakerId: json["caretaker_id"] ?? 0,
+        firstName: json["first_name"] ?? "",
+        lastName: json["last_name"] ?? "",
+        email: json["email"] ?? "",
+        sex: json["sex"] ?? "",
+        age: json["age"] ?? 0,
         about: json["aboutme"] ?? "",
-        dob: DateTime.parse(json["dob"]),
+        dob: json["dob"] == null
+            ? DateTime.now()
+            : DateTime.parse(json["dob"]),
         medicalLicense: json["medical_license"] ?? "",
         location: json["location"] ?? "",
         nationality: json["nationality"] ?? "",
-        address: json["address"],
-        yearOfExperiences: json["year_of_experiences"],
+        address: json["address"] ?? "",
+        yearOfExperiences: json["year_of_experiences"] ?? "",
         primaryContactNumber: json["primary_contact_number"] ?? "",
         secondaryContactNumber: json["secondary_contact_number"] ?? "",
-        serviceCharge: json["service_charge"],
+        serviceCharge: json["service_charge"] ?? "",
         totalPatientsAttended: json["total_patients_attended"] ?? "",
-        createdAt: DateTime.parse(json["created_at"]),
-        updatedAt: DateTime.parse(json["updated_at"]),
+        createdAt: json["created_at"] == null
+            ? DateTime.now()
+            : DateTime.parse(json["created_at"]),
+        updatedAt: json["updated_at"] == null
+            ? DateTime.now()
+            : DateTime.parse(json["updated_at"]),
       );
 
   Map<String, dynamic> toJson() => {
@@ -414,7 +456,7 @@ class PatientReview {
         caretakerId: json["caretaker_id"],
         status: json["status"],
         rating: json["rating"],
-        reviewMsg: json["review_msg"],
+        reviewMsg: json["review_msg"] ?? "",
         createdAt: DateTime.parse(json["created_at"]),
         updatedAt: DateTime.parse(json["updated_at"]),
       );

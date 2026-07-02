@@ -59,17 +59,23 @@ class Data {
   String? title;
   String? body;
   String? screen;
+  int ?appointmentId;
+  int ?caretakerId;
 
   Data({
     this.title,
     this.body,
     this.screen,
+    this.appointmentId,
+    this.caretakerId
   });
 
   factory Data.fromJson(Map<String, dynamic> json) => Data(
     title: json["title"],
     body: json["body"],
     screen: json["screen"],
+    appointmentId: json["appointment_id"],
+    caretakerId: json["caretaker_id"]
   );
 
   Map<String, dynamic> toJson() => {

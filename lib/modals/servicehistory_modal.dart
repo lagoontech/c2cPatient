@@ -21,12 +21,23 @@ class ServiceHistory {
     this.data,
   });
 
-  factory ServiceHistory.fromJson(Map<String, dynamic> json) => ServiceHistory(
-    success: json["success"],
-    status: json["status"],
-    message: json["message"],
-    data: json["data"] == null ? null : Data.fromJson(json["data"]),
-  );
+  factory ServiceHistory.fromJson(Map<String, dynamic> json) {
+    final dataMap = json["data"];
+    Map<String, dynamic>? parsedData;
+    if (dataMap != null) {
+      if (dataMap["patient_schedules"] != null) {
+        parsedData = Map<String, dynamic>.from(dataMap["patient_schedules"]);
+      } else {
+        parsedData = Map<String, dynamic>.from(dataMap);
+      }
+    }
+    return ServiceHistory(
+      success: json["success"],
+      status: json["status"],
+      message: json["message"],
+      data: parsedData == null ? null : Data.fromJson(parsedData),
+    );
+  }
 
   Map<String, dynamic> toJson() => {
     "success": success,
@@ -101,23 +112,23 @@ class Data {
     patientId: json["patient_id"],
     caretakerId: json["caretaker_id"],
     patientBreakfasttime: json["patient_breakfasttime"],
-    patientBreakfasttimeDetails: json["patient_breakfasttime_details"],
+    patientBreakfasttimeDetails: _safeStringify(json["patient_breakfasttime_details"]),
     patientLunchtime: json["patient_lunchtime"],
-    patientLunchtimeDetails: json["patient_lunchtime_details"],
+    patientLunchtimeDetails: _safeStringify(json["patient_lunchtime_details"]),
     patientSnackstime: json["patient_snackstime"],
-    patientSnackstimeDetails: json["patient_snackstime_details"],
+    patientSnackstimeDetails: _safeStringify(json["patient_snackstime_details"]),
     patientDinnertime: json["patient_dinnertime"],
-    patientDinnertimeDetails: json["patient_dinnertime_details"],
-    patientMedications: json["patient_medications"],
-    patientMedicationsDetails: json["patient_medications_details"],
-    patientHydration: json["patient_hydration"],
-    patientOralcare: json["patient_oralcare"],
-    patientBathing: json["patient_bathing"],
-    patientDressing: json["patient_dressing"],
-    patientToileting: json["patient_toileting"],
-    patientWalkingtime: json["patient_walkingtime"],
-    patientVitalsigns: json["patient_vitalsigns"],
-    patientBloodsugar: json["patient_bloodsugar"],
+    patientDinnertimeDetails: _safeStringify(json["patient_dinnertime_details"]),
+    patientMedications: _safeStringify(json["patient_medications"]),
+    patientMedicationsDetails: _safeStringify(json["patient_medications_details"]),
+    patientHydration: _safeStringify(json["patient_hydration"]),
+    patientOralcare: _safeStringify(json["patient_oralcare"]),
+    patientBathing: _safeStringify(json["patient_bathing"]),
+    patientDressing: _safeStringify(json["patient_dressing"]),
+    patientToileting: _safeStringify(json["patient_toileting"]),
+    patientWalkingtime: _safeStringify(json["patient_walkingtime"]),
+    patientVitalsigns: _safeStringify(json["patient_vitalsigns"]),
+    patientBloodsugar: _safeStringify(json["patient_bloodsugar"]),
     createdAt: json["created_at"] == null ? null : DateTime.parse(json["created_at"]),
     updatedAt: json["updated_at"] == null ? null : DateTime.parse(json["updated_at"]),
     patient: json["patient"] == null ? null : Caretaker.fromJson(json["patient"]),
@@ -470,5 +481,15 @@ class PatientInfo {
       "created_at": createdAt?.toIso8601String(),
       "updated_at": updatedAt?.toIso8601String(),
     };
+  }
+}
+
+String? _safeStringify(dynamic value) {
+  if (value == null) return null;
+  if (value is String) return value;
+  try {
+    return jsonEncode(value);
+  } catch (_) {
+    return value.toString();
   }
 }

@@ -21,7 +21,7 @@ class VitalsView extends StatelessWidget {
           CustomBackground(
             appBar: CustomAppBar(title: "Vitals History"),
             child: Padding(
-              padding: EdgeInsets.all(16),
+              padding: EdgeInsets.all(8),
               child: GetBuilder<CompletedAppointmentDetailsController>(
                 builder: (vc) {
                   if (vc.vitals.isEmpty) {
@@ -167,7 +167,7 @@ class VitalsView extends StatelessWidget {
         Text(
           title,
           style: TextStyle(
-            fontSize: 18.sp,
+            fontSize: 16.sp,
             fontWeight: FontWeight.bold,
           ),
         ),

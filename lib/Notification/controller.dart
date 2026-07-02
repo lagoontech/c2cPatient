@@ -88,6 +88,8 @@ class NotificationController extends GetxController {
 }
 */
 
+import 'dart:developer';
+
 import 'package:care2care/Notification/modal/notification_modal.dart';
 import 'package:care2care/ReusableUtils_/toast2.dart';
 import 'package:care2care/constants/api_urls.dart';
@@ -264,6 +266,7 @@ class NotificationController extends GetxController {
       },
     );
     if (res.statusCode == 200) {
+      log(res.body);
       receiveNotification = receiveNotificationFromJson(res.body);
       listNotification = receiveNotification!.notifications ?? [];
       // Access and print notification IDs (if needed)

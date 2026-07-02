@@ -94,12 +94,12 @@ class CaretakerList extends StatelessWidget {
                       physics: NeverScrollableScrollPhysics(),
                       itemCount: controller.careTakers.length,
                       itemBuilder: (context, index) {
+                        var data = controller.careTakers[index];
                         var caretaker =
                             controller.careTakers[index].caretakerInfo;
                         var path = controller.profilePath;
                         var imgUrl =
                             controller.careTakers[index].profileImageUrl;
-
                         return GestureDetector(
                           onTap: () {
                             Get.to(
@@ -110,7 +110,7 @@ class CaretakerList extends StatelessWidget {
                                 doctorDesignation: 'Care Taker',
                                 doctorState: caretaker.address,
                                 gender: caretaker.sex,
-                                about: caretaker.about,
+                                about: caretaker.about ?? data.about ?? '',
                                 totalPatient:
                                     caretaker.totalPatientsAttended.toString(),
                                 experience:
@@ -138,7 +138,7 @@ class CaretakerList extends StatelessWidget {
                                   caretaker.totalPatientsAttended.toString(),
                               experience:
                                   caretaker.yearOfExperiences.toString(),
-                              rating: caretaker.yearOfExperiences.toString(),
+                              rating: data.averageRating,
                             ),
                           ),
                         );
@@ -446,20 +446,26 @@ Widget carTakerList(BuildContext context, HomeController controller,
             height: MediaQuery.of(context).size.height * 0.08,
             width: MediaQuery.of(context).size.width,
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Circleso(context,
-                    icon: IconlyBold.user_2, name: '${totalPatient}+ Patients'),
-                Circleso(context,
-                    icon: IconlyBold.work, name: '${experience}+ years '),
-                Circleso(context,
-                    icon: EneftyIcons.dollar_circle_outline,
-                    name: "\$${charge}/Hr"),
-                Circleso(context,
-                    icon: IconlyBold.star,
-                    name: rating != null
-                        ? '${double.parse(rating).round()}'
-                        : 'No ratings'),
+                Expanded(
+                  child: Circleso(context,
+                      icon: IconlyBold.user_2,
+                      name: _formatPatients(totalPatient)),
+                ),
+                Expanded(
+                  child: Circleso(context,
+                      icon: IconlyBold.work,
+                      name: _formatExperience(experience)),
+                ),
+                Expanded(
+                  child: Circleso(context,
+                      icon: EneftyIcons.dollar_circle_outline,
+                      name: "\$${charge}/Hr"),
+                ),
+                Expanded(
+                  child: Circleso(context,
+                      icon: IconlyBold.star, name: _formatRating(rating)),
+                ),
               ],
             ),
           ),
@@ -469,8 +475,31 @@ Widget carTakerList(BuildContext context, HomeController controller,
   );
 }
 
+String _formatPatients(String? totalPatient) {
+  if (totalPatient == null || totalPatient.trim().isEmpty) {
+    return 'No patients yet';
+  }
+  return '$totalPatient+ Patients';
+}
+
+String _formatExperience(String? experience) {
+  if (experience == null || experience.trim().isEmpty) {
+    return 'No experience';
+  }
+  return '$experience+ years';
+}
+
+String _formatRating(String? rating) {
+  if (rating == null || rating.trim().isEmpty) {
+    return 'No ratings';
+  }
+  final parsed = double.tryParse(rating);
+  return parsed != null ? '${parsed.round()}' : 'No ratings';
+}
+
 Widget Circleso(BuildContext context, {IconData? icon, String? name}) {
   return Column(
+    crossAxisAlignment: CrossAxisAlignment.center,
     children: [
       CircleAvatar(
         radius: 20.r,
@@ -485,6 +514,9 @@ Widget Circleso(BuildContext context, {IconData? icon, String? name}) {
       Expanded(
         child: Text(
           name ?? '',
+          textAlign: TextAlign.center,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
           style: TextStyle(
             color: Colors.black,
             fontSize: 11.sp,

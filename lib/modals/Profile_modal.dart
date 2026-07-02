@@ -80,9 +80,9 @@ class Data {
     updatedAt: json["updated_at"] == null ? null : DateTime.parse(json["updated_at"]),
     patientInfo: json["patient_info"] == null ? null : PatientInfo.fromJson(json["patient_info"]),
     caretakerInfo: json["caretaker_info"] == null ? null : CaretakerInfo.fromJson(json["caretaker_info"]),
-    patientSchedules: isReport
-        ? PatientSchedules.fromJson(json)
-        : json["patient_schedules"] == null ? null : PatientSchedules.fromJson(json["patient_schedules"]),
+    patientSchedules: json["patient_schedules"] != null
+        ? PatientSchedules.fromJson(json["patient_schedules"])
+        : (isReport ? PatientSchedules.fromJson(json) : null),
     patientDocuments: json["patient_documents"] == null
         ? []
         : List<PatientDocument>.from(json["patient_documents"]
@@ -387,35 +387,39 @@ class PatientSchedules {
       id: json["id"],
       patientId: json["patient_id"],
       patientDietplan: json["patient_dietplan"] != null
-          ? List<String>.from(jsonDecode(json["patient_dietplan"]))
+          ? (json["patient_dietplan"] is String
+              ? List<String>.from(jsonDecode(json["patient_dietplan"]))
+              : List<String>.from(json["patient_dietplan"]))
           : [],
       patientActivitytype: json["patient_activitytype"] ,
       patientPastmedicalhistory: json["patient_pastmedicalhistory"] != null
-          ? List<String>.from(jsonDecode(json["patient_pastmedicalhistory"]))
+          ? (json["patient_pastmedicalhistory"] is String
+              ? List<String>.from(jsonDecode(json["patient_pastmedicalhistory"]))
+              : List<String>.from(json["patient_pastmedicalhistory"]))
           : [],
       patientPastsurgicalhistory: json["patient_pastsurgicalhistory"],
       patientBreakfasttime: json["patient_breakfasttime"],
       patientSnackstime: json['patient_snackstime'],
       patientLunchtime: json["patient_lunchtime"],
-      patientLunch: json["patient_lunchtime_details"],
-      patientSnack: json["patient_snackstime_details"],
-      patientBreakfast: json["patient_breakfasttime_details"],
-      patientDinner: json["patient_dinnertime_details"],
+      patientLunch: _safeStringify(json["patient_lunchtime_details"]),
+      patientSnack: _safeStringify(json["patient_snackstime_details"]),
+      patientBreakfast: _safeStringify(json["patient_breakfasttime_details"]),
+      patientDinner: _safeStringify(json["patient_dinnertime_details"]),
       patientDinnertime: json["patient_dinnertime"],
-      patientMedications: json["patient_medications_details"] ?? json["patient_medications"],
-      patientHydration: json["patient_hydration"],
-      patientOralcare: json["patient_oralcare"],
-      patientBathing: json["patient_bathing"],
-      patientDressing: json["patient_dressing"],
-      patientToileting: json["patient_toileting"],
-      patientWalkingtime: json["patient_walkingtime"],
+      patientMedications: _safeStringify(json["patient_medications_details"] ?? json["patient_medications"]),
+      patientHydration: _safeStringify(json["patient_hydration"]),
+      patientOralcare: _safeStringify(json["patient_oralcare"]),
+      patientBathing: _safeStringify(json["patient_bathing"]),
+      patientDressing: _safeStringify(json["patient_dressing"]),
+      patientToileting: _safeStringify(json["patient_toileting"]),
+      patientWalkingtime: _safeStringify(json["patient_walkingtime"]),
       patientVitalsigns: json['patient_vitalsigns'] != null
           ? PatientVitalSigns.fromJson(json["patient_vitalsigns"].runtimeType.toString()=="String"
           ? jsonDecode(json['patient_vitalsigns'])
             : json['patient_vitalsigns']
       )
           : null,
-      patientBloodsugar: json["patient_bloodsugar"],
+      patientBloodsugar: _safeStringify(json["patient_bloodsugar"]),
       createdAt: json["created_at"] == null ? null : DateTime.parse(json["created_at"]),
       updatedAt: json["updated_at"] == null ? null : DateTime.parse(json["updated_at"]),
     );
@@ -477,4 +481,14 @@ class PatientVitalSigns {
     'temperature': temperature,
     'weight': weight,
   };
+}
+
+String? _safeStringify(dynamic value) {
+  if (value == null) return null;
+  if (value is String) return value;
+  try {
+    return jsonEncode(value);
+  } catch (_) {
+    return value.toString();
+  }
 }
