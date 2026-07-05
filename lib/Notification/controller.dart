@@ -393,6 +393,9 @@ class NotificationController extends GetxController {
   bool viewedNotification = false;
 
   notificationsUnread() async {
+    if (listNotification.isEmpty) {
+      return;
+    }
     viewedNotification = true;
     update();
     String? token = await SharedPref().getToken();

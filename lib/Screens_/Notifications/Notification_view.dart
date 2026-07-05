@@ -55,10 +55,15 @@ class _NotificationViewState extends State<NotificationView> {
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            CustomLabel(
-                              text: "Mark all as read",
-                              fontSize: 12.0,
-                              color: Colors.black,
+                            InkWell(
+                              onTap: () {
+                                v.notificationsUnread();
+                              },
+                              child: CustomLabel(
+                                text: "Mark all as read",
+                                fontSize: 12.0,
+                                color: Colors.black,
+                              ),
                             ),
                           ],
                         )

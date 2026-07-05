@@ -254,11 +254,15 @@ class _ScheduleViewState extends State<ScheduleView> {
                         MealTimeCard(
                           title: "Breakfast",
                           icon: "🌅",
-                          time: v.formatTime(v.patientSchedules?.patientBreakfasttime ?? "--"),
+                          time: v.filters.isNotEmpty
+                              ? v.formatTime(v.filters.first)
+                              : v.formatTime(v.patientSchedules?.patientBreakfasttime ?? "--"),
                           onTap: () async {
                             final result = await showTimePickerDialog(context);
                             if (result != null && result.toString().isNotEmpty) {
-                              v.patientSchedules?.patientBreakfasttime = result;
+                              if (v.patientSchedules != null) {
+                                v.patientSchedules!.patientBreakfasttime = result;
+                              }
                               v.filters.clear();
                               v.filters.add(result);
                               v.update();
@@ -269,11 +273,15 @@ class _ScheduleViewState extends State<ScheduleView> {
                         MealTimeCard(
                           title: "Lunch",
                           icon: "🍛",
-                          time: v.formatTime(v.patientSchedules?.patientLunchtime ?? "--"),
+                          time: v.lunchFilters.isNotEmpty
+                              ? v.formatTime(v.lunchFilters.first)
+                              : v.formatTime(v.patientSchedules?.patientLunchtime ?? "--"),
                           onTap: () async {
                             final result = await showTimePickerDialog(context);
                             if (result != null && result.toString().isNotEmpty) {
-                              v.patientSchedules?.patientLunchtime = result;
+                              if (v.patientSchedules != null) {
+                                v.patientSchedules!.patientLunchtime = result;
+                              }
                               v.lunchFilters.clear();
                               v.lunchFilters.add(result);
                               v.update();
@@ -284,11 +292,15 @@ class _ScheduleViewState extends State<ScheduleView> {
                         MealTimeCard(
                           title: "Snacks",
                           icon: "☕",
-                          time: v.formatTime(v.patientSchedules?.patientSnackstime ?? "--"),
+                          time: v.snacks.isNotEmpty
+                              ? v.formatTime(v.snacks.first)
+                              : v.formatTime(v.patientSchedules?.patientSnackstime ?? "--"),
                           onTap: () async {
                             final result = await showTimePickerDialog(context);
                             if (result != null && result.toString().isNotEmpty) {
-                              v.patientSchedules?.patientSnackstime = result;
+                              if (v.patientSchedules != null) {
+                                v.patientSchedules!.patientSnackstime = result;
+                              }
                               v.snacks.clear();
                               v.snacks.add(result);
                               v.update();
@@ -299,11 +311,15 @@ class _ScheduleViewState extends State<ScheduleView> {
                         MealTimeCard(
                           title: "Dinner",
                           icon: "🌙",
-                          time: v.formatTime(v.patientSchedules?.patientDinnertime ?? "--"),
+                          time: v.dinner.isNotEmpty
+                              ? v.formatTime(v.dinner.first)
+                              : v.formatTime(v.patientSchedules?.patientDinnertime ?? "--"),
                           onTap: () async {
                             final result = await showTimePickerDialog(context);
                             if (result != null && result.toString().isNotEmpty) {
-                              v.patientSchedules?.patientDinnertime = result;
+                              if (v.patientSchedules != null) {
+                                v.patientSchedules!.patientDinnertime = result;
+                              }
                               v.dinner.clear();
                               v.dinner.add(result);
                               v.update();

@@ -15,6 +15,7 @@ import 'package:get/get.dart';
 import 'package:iconly/iconly.dart';
 import 'package:intl/intl.dart';
 import 'package:readmore/readmore.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../caretakerList/careTakerListView.dart';
 
 class CaretakerInformation extends StatefulWidget {
@@ -28,6 +29,7 @@ class CaretakerInformation extends StatefulWidget {
   String? imageUrl;
   String? charge;
   String? about;
+  String? phoneNumber;
 
   int? careTakerId;
 
@@ -43,7 +45,8 @@ class CaretakerInformation extends StatefulWidget {
       this.imageUrl,
       this.careTakerId,
       this.charge,
-      this.about});
+      this.about,
+      this.phoneNumber});
 
   @override
   State<CaretakerInformation> createState() => _CaretakerInformationState();
@@ -74,17 +77,17 @@ class _CaretakerInformationState extends State<CaretakerInformation> {
 
     return CustomBackground(
       appBar: CustomAppBar(
-        actions: [
-          Padding(
-            padding: EdgeInsets.only(right: 8.w),
-            child: IconButton(
-                onPressed: () {},
-                icon: const Icon(
-                  Icons.share,
-                  color: AppColors.primaryColor,
-                )),
-          ),
-        ],
+        // actions: [
+        //   Padding(
+        //     padding: EdgeInsets.only(right: 8.w),
+        //     child: IconButton(
+        //         onPressed: () {},
+        //         icon: const Icon(
+        //           Icons.share,
+        //           color: AppColors.primaryColor,
+        //         )),
+        //   ),
+        // ],
         title: "CareTaker Information",
       ),
       child: Padding(
@@ -117,7 +120,31 @@ class _CaretakerInformationState extends State<CaretakerInformation> {
                         icon: IconlyBold.message,
                         circleColor: Colors.white,
                         name: "Contact Care Taker",
-                        containerColor: AppColors.primaryColor),
+                        containerColor: AppColors.primaryColor,
+                        onTap: () async {
+                          final phone = widget.phoneNumber;
+                          if (phone != null && phone.trim().isNotEmpty) {
+                            final Uri launchUri = Uri(
+                              scheme: 'tel',
+                              path: phone.trim(),
+                            );
+                            if (await canLaunchUrl(launchUri)) {
+                              await launchUrl(launchUri);
+                            } else {
+                              Get.snackbar(
+                                "Error",
+                                "Could not launch dialer.",
+                                snackPosition: SnackPosition.BOTTOM,
+                              );
+                            }
+                          } else {
+                            Get.snackbar(
+                              "Not Available",
+                              "Caretaker contact number is not available.",
+                              snackPosition: SnackPosition.BOTTOM,
+                            );
+                          }
+                        }),
                   ],
                 ),
                 kHeight10,
@@ -177,112 +204,121 @@ class _CaretakerInformationState extends State<CaretakerInformation> {
                 ),
 
                 //
-                GetBuilder<CareTakerController>(
-                    builder: (vc){
-                      // Calculate the exact size needed to span the width of the card
-                      final double availableWidth = MediaQuery.of(context).size.width - 32.w;
-                      final double calTileSize = availableWidth / 7;
-                      final double calHeight = calTileSize * 6 + 100;
+                GetBuilder<CareTakerController>(builder: (vc) {
+                  // Calculate the exact size needed to span the width of the card
+                  final double availableWidth =
+                      MediaQuery.of(context).size.width - 32.w;
+                  final double calTileSize = availableWidth / 7;
+                  final double calHeight = calTileSize * 6 + 100;
 
-                      return Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(12.r),
-                          border: Border.all(color: Colors.grey.shade200),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.04),
-                              blurRadius: 10,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
+                  return Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12.r),
+                      border: Border.all(color: Colors.grey.shade200),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.04),
+                          blurRadius: 10,
+                          offset: const Offset(0, 2),
                         ),
-                        clipBehavior: Clip.antiAlias,
-                        child: !vc.blockingDates ? Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            DateRangePickerWidget(
-                              doubleMonth: false,
-                              maximumDateRangeLength: 30,
-                              minimumDateRangeLength: 2,
-                              minDate: DateTime.now().subtract(Duration(days: 1)),
-                              disabledDates: vc.unavailableDates,
-                              theme: CalendarTheme(
-                                selectedColor: AppColors.primaryColor,
-                                inRangeColor: AppColors.primaryColor.withOpacity(0.12),
-                                inRangeTextStyle: TextStyle(
-                                  color: Colors.black87,
-                                  fontSize: 12.sp,
+                      ],
+                    ),
+                    clipBehavior: Clip.antiAlias,
+                    child: !vc.blockingDates
+                        ? Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              DateRangePickerWidget(
+                                doubleMonth: false,
+                                maximumDateRangeLength: 30,
+                                minimumDateRangeLength: 2,
+                                minDate:
+                                    DateTime.now().subtract(Duration(days: 1)),
+                                disabledDates: vc.unavailableDates,
+                                theme: CalendarTheme(
+                                  selectedColor: AppColors.primaryColor,
+                                  inRangeColor:
+                                      AppColors.primaryColor.withOpacity(0.12),
+                                  inRangeTextStyle: TextStyle(
+                                    color: Colors.black87,
+                                    fontSize: 12.sp,
+                                  ),
+                                  selectedTextStyle: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 12.sp,
+                                  ),
+                                  todayTextStyle: TextStyle(
+                                    color: AppColors.primaryColor,
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 12.sp,
+                                  ),
+                                  defaultTextStyle: TextStyle(
+                                    color: Colors.black87,
+                                    fontSize: 12.sp,
+                                  ),
+                                  disabledTextStyle: TextStyle(
+                                    color: Colors.grey.shade300,
+                                    fontSize: 12.sp,
+                                  ),
+                                  radius: 10.0,
+                                  tileSize: calTileSize,
                                 ),
-                                selectedTextStyle: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 12.sp,
-                                ),
-                                todayTextStyle: TextStyle(
-                                  color: AppColors.primaryColor,
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 12.sp,
-                                ),
-                                defaultTextStyle: TextStyle(
-                                  color: Colors.black87,
-                                  fontSize: 12.sp,
-                                ),
-                                disabledTextStyle: TextStyle(
-                                  color: Colors.grey.shade300,
-                                  fontSize: 12.sp,
-                                ),
-                                radius: 10.0,
-                                tileSize: calTileSize,
+                                height: calHeight,
+                                onDateRangeChanged: (v) {
+                                  vc.selectedRange = v;
+                                  vc.calculateNumberOfDays();
+                                },
                               ),
-                              height: calHeight,
-                              onDateRangeChanged: (v){
-                                vc.selectedRange = v;
-                                vc.calculateNumberOfDays();
-                              },
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(left: 12.w, right: 12.w, bottom: 12.h, top: 4.h),
-                              child: Row(
-                                children: [
-                                  Container(
-                                    padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
-                                    decoration: BoxDecoration(
-                                      color: AppColors.primaryColor.withOpacity(0.08),
-                                      borderRadius: BorderRadius.circular(20.r),
-                                    ),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Icon(Icons.date_range_rounded,
-                                          size: 14.sp,
-                                          color: AppColors.primaryColor,
-                                        ),
-                                        SizedBox(width: 4.w),
-                                        Text(
-                                          "${controller.numberOfDays} day${controller.numberOfDays != 1 ? 's' : ''} selected",
-                                          style: TextStyle(
-                                            fontSize: 11.5.sp,
-                                            fontWeight: FontWeight.w600,
+                              Padding(
+                                padding: EdgeInsets.only(
+                                    left: 12.w,
+                                    right: 12.w,
+                                    bottom: 12.h,
+                                    top: 4.h),
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 10.w, vertical: 5.h),
+                                      decoration: BoxDecoration(
+                                        color: AppColors.primaryColor
+                                            .withOpacity(0.08),
+                                        borderRadius:
+                                            BorderRadius.circular(20.r),
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(
+                                            Icons.date_range_rounded,
+                                            size: 14.sp,
                                             color: AppColors.primaryColor,
                                           ),
-                                        ),
-                                      ],
+                                          SizedBox(width: 4.w),
+                                          Text(
+                                            "${controller.numberOfDays} day${controller.numberOfDays != 1 ? 's' : ''} selected",
+                                            style: TextStyle(
+                                              fontSize: 11.5.sp,
+                                              fontWeight: FontWeight.w600,
+                                              color: AppColors.primaryColor,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
-                            ),
-                          ],
-                        ) : SizedBox(
+                            ],
+                          )
+                        : SizedBox(
                             height: 200.h,
                             child: CustomCircularLoader(
-                                color: AppColors.primaryColor
-                            )
-                        ),
-                      );
-                    }
-                ),
+                                color: AppColors.primaryColor)),
+                  );
+                }),
 
                 kHeight10,
                 Container(
@@ -436,34 +472,38 @@ Widget switchContainer(BuildContext context,
     String? name,
     Color? containerColor,
     Color? circleColor,
-    Color? iconColor}) {
+    Color? iconColor,
+    VoidCallback? onTap}) {
   return Expanded(
-    child: Container(
-      padding: EdgeInsets.symmetric(horizontal: 3.w),
-      height: 30.h,
-      width: MediaQuery.of(context).size.width * 0.38,
-      decoration: BoxDecoration(
-        border: Border.all(width: 0.2),
-        color: containerColor,
-        borderRadius: BorderRadius.circular(20.r),
-      ),
-      child: Row(
-        children: [
-          CircleAvatar(
-            radius: 15.r,
-            backgroundColor: circleColor,
-            child: Icon(
-              size: 17.sp,
-              icon,
-              color: iconColor,
+    child: GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 3.w),
+        height: 30.h,
+        width: MediaQuery.of(context).size.width * 0.38,
+        decoration: BoxDecoration(
+          border: Border.all(width: 0.2),
+          color: containerColor,
+          borderRadius: BorderRadius.circular(20.r),
+        ),
+        child: Row(
+          children: [
+            CircleAvatar(
+              radius: 15.r,
+              backgroundColor: circleColor,
+              child: Icon(
+                size: 17.sp,
+                icon,
+                color: iconColor,
+              ),
             ),
-          ),
-          SizedBox(width: 5.w),
-          Text(
-            name ?? '',
-            style: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.w600),
-          )
-        ],
+            SizedBox(width: 5.w),
+            Text(
+              name ?? '',
+              style: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.w600),
+            )
+          ],
+        ),
       ),
     ),
   );

@@ -140,7 +140,57 @@ class EditProfileController extends GetxController {
   }
 
   //
+  bool validateFields() {
+    if (firstName.text.trim().isEmpty) {
+      showCustomToast(message: "Please enter your first name");
+      return false;
+    }
+    if (dobCT.text.trim().isEmpty) {
+      showCustomToast(message: "Please select your date of birth");
+      return false;
+    }
+    if (ageCT.text.trim().isEmpty) {
+      showCustomToast(message: "Please enter your age");
+      return false;
+    }
+    if (sexCT.text.trim().isEmpty) {
+      showCustomToast(message: "Please select your sex");
+      return false;
+    }
+
+    final email = emailCT.text.trim();
+    if (email.isEmpty) {
+      showCustomToast(message: "Please enter your email");
+      return false;
+    }
+    final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+    if (!emailRegex.hasMatch(email)) {
+      showCustomToast(message: "Please enter a valid email address");
+      return false;
+    }
+
+    if (primaryContactNameCT.text.trim().isEmpty) {
+      showCustomToast(message: "Please enter a primary contact name");
+      return false;
+    }
+
+    final primaryNumber = primaryContactNumberCT.text.trim();
+    if (primaryNumber.isEmpty) {
+      showCustomToast(message: "Please enter a primary contact number");
+      return false;
+    }
+    final phoneRegex = RegExp(r'^\+?[0-9]{7,15}$');
+    if (!phoneRegex.hasMatch(primaryNumber)) {
+      showCustomToast(message: "Please enter a valid primary contact number");
+      return false;
+    }
+
+    return true;
+  }
+
   updateInitialProfileDetails() async {
+    if (!validateFields()) return;
+
     isLoading = true;
     update();
     try {

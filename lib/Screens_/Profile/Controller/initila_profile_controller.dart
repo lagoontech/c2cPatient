@@ -145,7 +145,57 @@ class InitialProfileDetails extends GetxController {
 
   //add Profile Details
 
+  bool validateFields() {
+    if (firstName.text.trim().isEmpty) {
+      showCustomToast(message: "Please enter your first name");
+      return false;
+    }
+    if (dobCT.text.trim().isEmpty) {
+      showCustomToast(message: "Please select your date of birth");
+      return false;
+    }
+    if (ageCT.text.trim().isEmpty) {
+      showCustomToast(message: "Please enter your age");
+      return false;
+    }
+    if (sexCT.text.trim().isEmpty) {
+      showCustomToast(message: "Please select your sex");
+      return false;
+    }
+    
+    final email = emailCT.text.trim();
+    if (email.isEmpty) {
+      showCustomToast(message: "Please enter your email");
+      return false;
+    }
+    final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+    if (!emailRegex.hasMatch(email)) {
+      showCustomToast(message: "Please enter a valid email address");
+      return false;
+    }
+
+    if (primaryContactNameCT.text.trim().isEmpty) {
+      showCustomToast(message: "Please enter a primary contact name");
+      return false;
+    }
+
+    final primaryNumber = primaryContactNumberCT.text.trim();
+    if (primaryNumber.isEmpty) {
+      showCustomToast(message: "Please enter a primary contact number");
+      return false;
+    }
+    final phoneRegex = RegExp(r'^\+?[0-9]{7,15}$');
+    if (!phoneRegex.hasMatch(primaryNumber)) {
+      showCustomToast(message: "Please enter a valid primary contact number");
+      return false;
+    }
+
+    return true;
+  }
+
   addInitialProfileDetails() async {
+    if (!validateFields()) return;
+
     isLoading = true;
     update();
 
@@ -211,6 +261,8 @@ class InitialProfileDetails extends GetxController {
   //update Profile Details if user already found in db
 
   updateInitialProfileDetails() async {
+    if (!validateFields()) return;
+
     isLoading = true;
     update();
    try {
@@ -222,7 +274,7 @@ class InitialProfileDetails extends GetxController {
         "patient_id": patientID,
         "first_name": firstName.text,
         "last_name": lastName.text,
-        "sex": sexCT.text,
+        "sex": sexCT.text.toLowerCase(),
         "age": ageCT.text,
         "email":emailCT.text,
         "dob": DateFormat('yyyy-MM-dd').format(parsed),
@@ -302,7 +354,7 @@ class InitialProfileDetails extends GetxController {
           firstName.text = initialUserDetails?.firstName ?? '';
           lastName.text = initialUserDetails?.lastName ?? '';
           emailCT.text = initialUserDetails?.email ?? '';
-          sexCT.text = initialUserDetails?.sex ?? '';
+          sexCT.text = initialUserDetails?.sex?.capitalizeFirst ?? '';
           dobCT.text = initialUserDetails?.dob?.toIso8601String() ?? '';
           ageCT.text = initialUserDetails?.age.toString() ?? '';
           heightCT.text = initialUserDetails?.height.toString() ?? '';

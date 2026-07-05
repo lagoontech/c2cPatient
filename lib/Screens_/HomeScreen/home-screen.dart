@@ -244,6 +244,9 @@ class HomePage extends StatelessWidget {
                                 data.yearOfExperiences.toString(),
                                 rating: v.topCaretakers[index].averageRating,
                                 imageUrl: '${path}${imgUrl}',
+                                phoneNumber: data.primaryContactNumber.isNotEmpty
+                                    ? data.primaryContactNumber
+                                    : v.topCaretakers[index].mobilenum,
                               ));
                             },
                             child: CustomCareTakers(

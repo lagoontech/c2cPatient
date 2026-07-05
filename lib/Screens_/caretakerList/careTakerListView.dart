@@ -118,6 +118,9 @@ class CaretakerList extends StatelessWidget {
                                 rating:
                                     controller.careTakers[index].averageRating,
                                 imageUrl: '${path}${imgUrl}',
+                                phoneNumber: caretaker.primaryContactNumber.isNotEmpty
+                                    ? caretaker.primaryContactNumber
+                                    : data.mobilenum,
                               ),
                               transition: Transition.fade,
                               duration: const Duration(milliseconds: 300),
@@ -171,139 +174,328 @@ class CaretakerList extends StatelessWidget {
   showFilterSheet(BuildContext context) async {
     await showModalBottomSheet(
         context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
+        ),
         builder: (context) {
           return GetBuilder<HomeController>(builder: (vc) {
-            return Container(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height * 0.5,
-              padding: EdgeInsets.symmetric(horizontal: 12.w),
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    filterLabel("Rating"),
-                    Center(
-                      child: RatingBar(
-                          alignment: Alignment.center,
-                          filledIcon: Icons.star,
-                          emptyIcon: Icons.star_border,
-                          onRatingChanged: (v) {
-                            ct.rating = v;
-                            ct.update();
-                          }),
+            return Padding(
+              padding: EdgeInsets.only(
+                top: 8.h,
+                left: 20.w,
+                right: 20.w,
+                bottom: MediaQuery.of(context).padding.bottom + 16.h,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Center(
+                    child: Container(
+                      width: 40.w,
+                      height: 4.h,
+                      margin: EdgeInsets.only(bottom: 12.h),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade300,
+                        borderRadius: BorderRadius.circular(2.r),
+                      ),
                     ),
-                    filterLabel("Price"),
-                    SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.8,
-                        child: SliderTheme(
-                          data: SliderThemeData(
-                            showValueIndicator: ShowValueIndicator.always,
-                          ),
-                          child: RangeSlider(
-                            values: ct.priceRange,
-                            min: 0,
-                            max: 1000,
-                            labels: RangeLabels(
-                                '${ct.priceRange.start.round()}',
-                                '${ct.priceRange.end.round()}'),
-                            inactiveColor: Colors.grey,
-                            activeColor: Colors.black,
-                            onChanged: (RangeValues values) {
-                              ct.priceRange = values;
-                              ct.update();
-                            },
-                          ),
-                        )),
-                    SizedBox(
-                      height: 12.h,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Filter Caretakers",
+                        style: TextStyle(
+                          fontSize: 18.sp,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () => Navigator.pop(context),
+                        icon: Icon(Icons.close, size: 20.r, color: Colors.grey.shade600),
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
+                      ),
+                    ],
+                  ),
+                  const Divider(height: 20, thickness: 0.8),
+                  
+                  // Rating Section
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Minimum Rating",
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      Text(
+                        ct.rating > 0 ? "${ct.rating.toStringAsFixed(1)} Stars & up" : "Any Rating",
+                        style: TextStyle(
+                          fontSize: 13.sp,
+                          color: AppColors.primaryColor,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 8.h),
+                  Center(
+                    child: RatingBar(
+                        alignment: Alignment.center,
+                        filledIcon: Icons.star,
+                        emptyIcon: Icons.star_border,
+                        filledColor: Colors.amber,
+                        emptyColor: Colors.grey.shade300,
+                        initialRating: ct.rating,
+                        size: 36.sp,
+                        onRatingChanged: (v) {
+                          ct.rating = v;
+                          ct.update();
+                        }),
+                  ),
+                  SizedBox(height: 20.h),
+
+                  // Price Section
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Price Range",
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      Text(
+                        "\$${ct.priceRange.start.round()} - \$${ct.priceRange.end.round()}/Hr",
+                        style: TextStyle(
+                          fontSize: 13.sp,
+                          color: AppColors.primaryColor,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 4.h),
+                  SliderTheme(
+                    data: SliderThemeData(
+                      showValueIndicator: ShowValueIndicator.always,
+                      activeTrackColor: AppColors.primaryColor,
+                      inactiveTrackColor: AppColors.primaryColor.withOpacity(0.15),
+                      thumbColor: AppColors.primaryColor,
+                      valueIndicatorColor: AppColors.primaryColor,
+                      valueIndicatorTextStyle: TextStyle(
+                        color: Colors.white,
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      overlayColor: AppColors.primaryColor.withOpacity(0.12),
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        // Male Option
-                        GestureDetector(
+                    child: RangeSlider(
+                      values: ct.priceRange,
+                      min: 0,
+                      max: ct.maxPrice,
+                      labels: RangeLabels(
+                          '${ct.priceRange.start.round()}',
+                          '${ct.priceRange.end.round()}'),
+                      onChanged: (RangeValues values) {
+                        ct.priceRange = values;
+                        ct.update();
+                      },
+                    ),
+                  ),
+                  SizedBox(height: 20.h),
+
+                  // Gender Section
+                  Text(
+                    "Gender",
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  SizedBox(height: 10.h),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // Male Option
+                      Expanded(
+                        child: GestureDetector(
                           onTap: () {
                             ct.gender = "male";
                             ct.update();
                           },
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 12, horizontal: 20),
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 200),
+                            padding: EdgeInsets.symmetric(vertical: 10.h),
                             decoration: BoxDecoration(
                               color: ct.gender == "male"
-                                  ? Colors.blue
-                                  : Colors.grey[300],
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Text(
-                              "Male",
-                              style: TextStyle(
+                                  ? AppColors.primaryColor.withOpacity(0.1)
+                                  : Colors.grey.shade50,
+                              borderRadius: BorderRadius.circular(12.r),
+                              border: Border.all(
                                 color: ct.gender == "male"
-                                    ? Colors.white
-                                    : Colors.black,
-                                fontWeight: FontWeight.bold,
+                                    ? AppColors.primaryColor
+                                    : Colors.grey.shade300,
+                                width: 1.5,
                               ),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.male_rounded,
+                                  color: ct.gender == "male"
+                                      ? AppColors.primaryColor
+                                      : Colors.grey.shade600,
+                                  size: 20.r,
+                                ),
+                                SizedBox(width: 6.w),
+                                Text(
+                                  "Male",
+                                  style: TextStyle(
+                                    color: ct.gender == "male"
+                                        ? AppColors.primaryColor
+                                        : Colors.grey.shade700,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 13.sp,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ),
-                        const SizedBox(width: 16),
-                        // Female Option
-                        GestureDetector(
+                      ),
+                      SizedBox(width: 16.w),
+                      // Female Option
+                      Expanded(
+                        child: GestureDetector(
                           onTap: () {
                             ct.gender = "female";
                             ct.update();
                           },
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 12, horizontal: 20),
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 200),
+                            padding: EdgeInsets.symmetric(vertical: 10.h),
                             decoration: BoxDecoration(
                               color: ct.gender == "female"
-                                  ? Colors.pink
-                                  : Colors.grey[300],
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Text(
-                              "Female",
-                              style: TextStyle(
+                                  ? AppColors.primaryColor.withOpacity(0.1)
+                                  : Colors.grey.shade50,
+                              borderRadius: BorderRadius.circular(12.r),
+                              border: Border.all(
                                 color: ct.gender == "female"
-                                    ? Colors.white
-                                    : Colors.black,
-                                fontWeight: FontWeight.bold,
+                                    ? AppColors.primaryColor
+                                    : Colors.grey.shade300,
+                                width: 1.5,
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.female_rounded,
+                                  color: ct.gender == "female"
+                                      ? AppColors.primaryColor
+                                      : Colors.grey.shade600,
+                                  size: 20.r,
+                                ),
+                                SizedBox(width: 6.w),
+                                Text(
+                                  "Female",
+                                  style: TextStyle(
+                                    color: ct.gender == "female"
+                                        ? AppColors.primaryColor
+                                        : Colors.grey.shade700,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 13.sp,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 32.h),
+
+                  // Actions
+                  Row(
+                    children: [
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () {
+                            ct.gender = "";
+                            ct.priceRange = RangeValues(0.0, ct.maxPrice);
+                            ct.rating = 0.0;
+                            ct.update();
+                          },
+                          child: Container(
+                            height: 44.h,
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade100,
+                              borderRadius: BorderRadius.circular(22.r),
+                              border: Border.all(color: Colors.grey.shade300),
+                            ),
+                            child: Center(
+                              child: Text(
+                                "Clear All",
+                                style: TextStyle(
+                                  color: Colors.grey.shade700,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14.sp,
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 24.h,
-                    ),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: CustomButton(
-                            width: 80.w,
-                            text: "Apply",
-                            onPressed: () {
-                              ct.getCareTakers();
-                            },
+                      ),
+                      SizedBox(width: 12.w),
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () {
+                            ct.getCareTakers();
+                            Navigator.pop(context);
+                          },
+                          child: Container(
+                            height: 44.h,
+                            decoration: BoxDecoration(
+                              color: AppColors.primaryColor,
+                              borderRadius: BorderRadius.circular(22.r),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: AppColors.primaryColor.withOpacity(0.3),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 4),
+                                ),
+                              ],
+                            ),
+                            child: Center(
+                              child: Text(
+                                "Apply Filters",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14.sp,
+                                ),
+                              ),
+                            ),
                           ),
                         ),
-                        CustomButton(
-                          width: 80.w,
-                          text: "Clear",
-                          color: Colors.red,
-                          onPressed: () {
-                            ct.gender = "";
-                            ct.priceRange = const RangeValues(0, 1000);
-                            ct.rating = 0.0;
-                            ct.update();
-                          },
-                        ),
-                      ],
-                    )
-                  ],
-                ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             );
           });

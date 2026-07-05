@@ -22,7 +22,8 @@ class HomeController extends GetxController {
   TextEditingController searchTEC = TextEditingController();
 
   double rating = 0.0;
-  RangeValues priceRange = RangeValues(0.0, 1000);
+  double maxPrice = 1000.0;
+  RangeValues priceRange = const RangeValues(0.0, 1000.0);
   String profilePath = "";
   Timer? searchTimer;
   int page = 1;
@@ -99,6 +100,25 @@ class HomeController extends GetxController {
         } else {
           careTakers.addAll(model.data.data);
         }
+
+        // Calculate max price from the list
+        double highest = 0.0;
+        for (var item in careTakers) {
+          final val = double.tryParse(item.caretakerInfo.serviceCharge) ?? 0.0;
+          if (val > highest) {
+            highest = val;
+          }
+        }
+        if (highest <= 0.0) {
+          highest = 1000.0; // Fallback if list is empty or charges are 0
+        }
+        if (priceRange.start > highest) {
+          priceRange = RangeValues(0.0, highest);
+        } else if (priceRange.end > highest || priceRange.end == maxPrice) {
+          priceRange = RangeValues(priceRange.start, highest);
+        }
+        maxPrice = highest;
+
         print("caretakers-->${careTakers.length}");
       }
     } catch (e, s) {

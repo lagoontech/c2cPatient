@@ -54,62 +54,74 @@ class ProfileView extends StatelessWidget {
             child: GetBuilder<InitialProfileDetails>(
                 builder: (v) {
                   return Column(
-                    children: [
-                      SizedBox(height: 5.h),
-                      customTextField(
-                        context,
-                        controller: CT.firstName,
-                        labelText: "First Name",
-                      ),
-                      SizedBox(height: 15.h),
-                      customTextField(
-                        context,
-                        controller: CT.lastName,
-                        labelText: "Last Name",
-                      ),
-                      SizedBox(height: 15.h),
-                      customTextField(
-                        context,
-                        labelText: "Date of Birth",
-                        readOnly: true,
-                        controller: CT.dobCT,
-                        suffix: IconButton(
-                            onPressed: () {
-                              CT.selectDob(context);
-                            },
-                            icon: Icon(
-                              Icons.calendar_month_outlined,
-                              color: AppColors.primaryColor,
-                            )),
-                      ),
-                      kHeight20,
-                      Row(
                         children: [
-                          Flexible(
-                            flex: 5,
-                            child: customTextField(context,
-                                readOnly: true,
-                                labelText: "Age",
-                                controller: CT.ageCT),
+                          SizedBox(height: 5.h),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: customTextField(
+                                  context,
+                                  controller: CT.firstName,
+                                  labelText: "First Name *",
+                                ),
+                              ),
+                              kWidth15,
+                              Expanded(
+                                child: customTextField(
+                                  context,
+                                  controller: CT.lastName,
+                                  labelText: "Last Name",
+                                ),
+                              ),
+                            ],
                           ),
-                          kWidth20,
-                          Expanded(
-                              flex: 5,
-                              child: customDropdown(context,
-                                  value: null,
-                                  items: ["Male","Female","Other"].map((e) =>
-                                      DropdownMenuItem(child: Text(e),value: e,)).toList(),
-                                  labelText: "Sex",onChanged: (v){
-                                CT.sexCT.text = v;
-                              })),
-                        ],
-                      ),
-                      SizedBox(height: 15.h),
-                      customTextField(
-                        context,
-                        controller: CT.emailCT,
-                        labelText: "E-mail",
-                      ),
+                          SizedBox(height: 15.h),
+                          Row(
+                            children: [
+                              Expanded(
+                                flex: 6,
+                                child: customTextField(
+                                  context,
+                                  labelText: "Date of Birth *",
+                                  readOnly: true,
+                                  controller: CT.dobCT,
+                                  suffix: IconButton(
+                                      onPressed: () {
+                                        CT.selectDob(context);
+                                      },
+                                      icon: Icon(
+                                        Icons.calendar_month_outlined,
+                                        color: AppColors.primaryColor,
+                                      )),
+                                ),
+                              ),
+                              kWidth15,
+                              Expanded(
+                                flex: 4,
+                                child: customTextField(context,
+                                    readOnly: true,
+                                    labelText: "Age *",
+                                    controller: CT.ageCT),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 15.h),
+                          customDropdown(context,
+                              contentPadding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 8.w),
+                              value: ["Male", "Female", "Other"].contains(CT.sexCT.text.trim().capitalizeFirst)
+                                  ? CT.sexCT.text.trim().capitalizeFirst
+                                  : null,
+                              items: ["Male","Female","Other"].map((e) =>
+                                  DropdownMenuItem(child: Text(e),value: e,)).toList(),
+                              labelText: "Sex *",onChanged: (v){
+                            CT.sexCT.text = v;
+                          }),
+                          SizedBox(height: 15.h),
+                          customTextField(
+                            context,
+                            controller: CT.emailCT,
+                            labelText: "E-mail *",
+                          ),
                       kHeight20,
                       Row(
                         children: [
@@ -208,7 +220,7 @@ class ProfileView extends StatelessWidget {
                           controller: CT.primary_care_giver_nameCT),
                       kHeight20,
                       customTextField(context,
-                          labelText: "Primary Contact Name",
+                          labelText: "Primary Contact Name *",
                           controller: CT.primaryContactNameCT),
                       kHeight20,
                       customTextField(context,
@@ -221,7 +233,7 @@ class ProfileView extends StatelessWidget {
                             flex: 5,
                             child: customTextField(context,
                                 textInputType: TextInputType.phone,
-                                labelText: "Primary Contact Number",
+                                labelText: "Primary Contact Number *",
                                 controller: CT.primaryContactNumberCT),
                           ),
                           kWidth15,

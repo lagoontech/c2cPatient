@@ -18,25 +18,27 @@ import '../../HomeView/home_view.dart';
 import '../../Profile/modal/initilaProfileDetailsModal.dart' hide PatientInfo;
 
 class ScheduleController extends GetxController {
-
   final List<String> filters = [];
   final List<String> lunchFilters = [];
   final List<String> snacks = [];
   final List<String> dinner = [];
   List<String> meditations = [];
   List<MedicationModel> meditationDetails = [];
-  String ?selectedMedication;
+  String? selectedMedication;
   final List<String> hydration = [];
   final List<String> blood = [];
   EditProfileController profileController = Get.put(EditProfileController());
-  InitialProfileDetails initialProfileDetails = Get.put(InitialProfileDetails());
+  InitialProfileDetails initialProfileDetails =
+      Get.put(InitialProfileDetails());
 
   var DietItems = [
     Diet(name: 'Regular Diet', id: 1),
     Diet(name: 'Clear Liquid Diet', id: 2),
     Diet(name: 'Full Liquid Diet', id: 3),
     Diet(name: 'Cardiac Diet (2 g sodium, low cholesterol, low-fat)', id: 4),
-    Diet(name: 'Cardiac/Diabetic (2 g or 3 g sodium, low-cholesterol, low-fat)', id: 5),
+    Diet(
+        name: 'Cardiac/Diabetic (2 g or 3 g sodium, low-cholesterol, low-fat)',
+        id: 5),
     Diet(name: 'Renal Diet', id: 6),
     Diet(name: 'Non Regular Diet', id: 7),
   ];
@@ -124,7 +126,7 @@ class ScheduleController extends GetxController {
   var selectedOption = '';
   var oralSelection = '';
   List<dynamic> selectedOralCareTimings = [];
-  List<dynamic> selectedBathingTimings  = [];
+  List<dynamic> selectedBathingTimings = [];
   List<dynamic> selectedDressingTimings = [];
   List<dynamic> selectedWalkingTimings = [];
   var ostomySelection = '';
@@ -196,6 +198,7 @@ class ScheduleController extends GetxController {
       return "--";
     }
   }
+
   //
   InsertPrimaryInformationAndScheduleApi() async {
     inserting = true;
@@ -213,16 +216,46 @@ class ScheduleController extends GetxController {
         'patient_id': int.parse(patientIDStr!),
         "patient_dietplan": diet.map((e) => e.name).toList(),
         "patient_activitytype": activityCT.text,
-        "patient_pastmedicalhistory": medicalHistoryList.map((e) => e.name).toList(),
+        "patient_pastmedicalhistory":
+            medicalHistoryList.map((e) => e.name).toList(),
         "patient_pastsurgicalhistory": pastSurgicalCT.text,
-        "patient_breakfasttime": filters.isNotEmpty ? filters.first : null, // Access as string
-        "patient_lunchtime": lunchFilters.isNotEmpty ? lunchFilters.first : null, // Access as string
-        "patient_dinnertime": dinner.isNotEmpty ? dinner.first : null, // Access as string
-        "patient_snackstime": snacks.isNotEmpty ? snacks.first : null, // Access as string
+        "patient_breakfasttime":
+            filters.isNotEmpty ? filters.first : null, // Access as string
+        "patient_lunchtime": lunchFilters.isNotEmpty
+            ? lunchFilters.first
+            : null, // Access as string
+        "patient_dinnertime":
+            dinner.isNotEmpty ? dinner.first : null, // Access as string
+        "patient_snackstime":
+            snacks.isNotEmpty ? snacks.first : null, // Access as string
         "patient_medications": {
-          "Morning": (meditationDetails.firstWhere((element) => element.time == "Morning", orElse: () => MedicationModel(time: "Morning", medicationDetails: [])).medicationDetails ?? []).map((e) => e.text).toList(),
-          "Noon": (meditationDetails.firstWhere((element) => element.time == "Noon", orElse: () => MedicationModel(time: "Noon", medicationDetails: [])).medicationDetails ?? []).map((e) => e.text).toList(),
-          "Evening": (meditationDetails.firstWhere((element) => element.time == "Evening", orElse: () => MedicationModel(time: "Evening", medicationDetails: [])).medicationDetails ?? []).map((e) => e.text).toList()
+          "Morning": (meditationDetails
+                      .firstWhere((element) => element.time == "Morning",
+                          orElse: () => MedicationModel(
+                              time: "Morning", medicationDetails: []))
+                      .medicationDetails ??
+                  [])
+              .where((e) => e.text.trim().isNotEmpty)
+              .map((e) => e.text.trim())
+              .toList(),
+          "Noon": (meditationDetails
+                      .firstWhere((element) => element.time == "Noon",
+                          orElse: () => MedicationModel(
+                              time: "Noon", medicationDetails: []))
+                      .medicationDetails ??
+                  [])
+              .where((e) => e.text.trim().isNotEmpty)
+              .map((e) => e.text.trim())
+              .toList(),
+          "Evening": (meditationDetails
+                      .firstWhere((element) => element.time == "Evening",
+                          orElse: () => MedicationModel(
+                              time: "Evening", medicationDetails: []))
+                      .medicationDetails ??
+                  [])
+              .where((e) => e.text.trim().isNotEmpty)
+              .map((e) => e.text.trim())
+              .toList()
         },
         "patient_hydration": hydrationTEC.text,
         "patient_oralcare": selectedOralCareTimings,
@@ -262,7 +295,6 @@ class ScheduleController extends GetxController {
     }
     inserting = false;
     update();
-
   }
 
   //
@@ -275,16 +307,46 @@ class ScheduleController extends GetxController {
         'patient_id': int.parse(patientIDStr!),
         "patient_dietplan": diet.map((e) => e.name).toList(),
         "patient_activitytype": activityCT.text,
-        "patient_pastmedicalhistory": medicalHistoryList.map((e) => e.name).toList(),
+        "patient_pastmedicalhistory":
+            medicalHistoryList.map((e) => e.name).toList(),
         "patient_pastsurgicalhistory": pastSurgicalCT.text,
-        "patient_breakfasttime": filters.isNotEmpty ? filters.first : null, // Access as string
-        "patient_lunchtime": lunchFilters.isNotEmpty ? lunchFilters.first : null, // Access as string
-        "patient_dinnertime": dinner.isNotEmpty ? dinner.first : null, // Access as string
-        "patient_snackstime": snacks.isNotEmpty ? snacks.first : null, // Access as string
+        "patient_breakfasttime":
+            filters.isNotEmpty ? filters.first : null, // Access as string
+        "patient_lunchtime": lunchFilters.isNotEmpty
+            ? lunchFilters.first
+            : null, // Access as string
+        "patient_dinnertime":
+            dinner.isNotEmpty ? dinner.first : null, // Access as string
+        "patient_snackstime":
+            snacks.isNotEmpty ? snacks.first : null, // Access as string
         "patient_medications": {
-          "Morning": (meditationDetails.firstWhere((element) => element.time == "Morning", orElse: () => MedicationModel(time: "Morning", medicationDetails: [])).medicationDetails ?? []).map((e) => e.text).toList(),
-          "Noon": (meditationDetails.firstWhere((element) => element.time == "Noon", orElse: () => MedicationModel(time: "Noon", medicationDetails: [])).medicationDetails ?? []).map((e) => e.text).toList(),
-          "Evening": (meditationDetails.firstWhere((element) => element.time == "Evening", orElse: () => MedicationModel(time: "Evening", medicationDetails: [])).medicationDetails ?? []).map((e) => e.text).toList()
+          "Morning": (meditationDetails
+                      .firstWhere((element) => element.time == "Morning",
+                          orElse: () => MedicationModel(
+                              time: "Morning", medicationDetails: []))
+                      .medicationDetails ??
+                  [])
+              .where((e) => e.text.trim().isNotEmpty)
+              .map((e) => e.text.trim())
+              .toList(),
+          "Noon": (meditationDetails
+                      .firstWhere((element) => element.time == "Noon",
+                          orElse: () => MedicationModel(
+                              time: "Noon", medicationDetails: []))
+                      .medicationDetails ??
+                  [])
+              .where((e) => e.text.trim().isNotEmpty)
+              .map((e) => e.text.trim())
+              .toList(),
+          "Evening": (meditationDetails
+                      .firstWhere((element) => element.time == "Evening",
+                          orElse: () => MedicationModel(
+                              time: "Evening", medicationDetails: []))
+                      .medicationDetails ??
+                  [])
+              .where((e) => e.text.trim().isNotEmpty)
+              .map((e) => e.text.trim())
+              .toList()
         },
         "patient_hydration": hydrationTEC.text,
         "patient_oralcare": selectedOralCareTimings,
@@ -318,7 +380,7 @@ class ScheduleController extends GetxController {
         showCustomToast(message: "Updated successfully");
         debugPrint("succssfully");
       } else {
-        ResponseUtils().showErrorToast(res.body,statusCode: res.statusCode);
+        ResponseUtils().showErrorToast(res.body, statusCode: res.statusCode);
       }
     } catch (e) {
       debugPrint(e.toString());
@@ -327,166 +389,168 @@ class ScheduleController extends GetxController {
     update();
   }
 
-
   //
-  setInitialMedication(){
-
+  setInitialMedication() {
     medidation = "Morning";
     selectedMedication = "Morning";
     meditationDetails = [
-      MedicationModel(time: "Morning",medicationDetails: []),
-      MedicationModel(time: "Noon",medicationDetails: []),
-      MedicationModel(time: "Evening",medicationDetails: []),
+      MedicationModel(time: "Morning", medicationDetails: []),
+      MedicationModel(time: "Noon", medicationDetails: []),
+      MedicationModel(time: "Evening", medicationDetails: []),
     ];
   }
 
   bool loadingInfo = false;
 
   Future<void> fetchPrimaryInformationApi() async {
-
     loadingInfo = true;
     update();
-      try {
-    String? token = await SharedPref().getToken();
-    String? patientIDStr = await SharedPref().getId();
+    try {
+      String? token = await SharedPref().getToken();
+      String? patientIDStr = await SharedPref().getId();
 
-    var response = await http.get(
-      Uri.parse(ApiUrls().patientInfoFetch),
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer $token",
-      },
-    );
+      var response = await http.get(
+        Uri.parse(ApiUrls().patientInfoFetch),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+      );
 
-    if (response.statusCode == 200) {
-      var jsonResponse = jsonDecode(response.body);
-      profile = ProfileList.fromJson(jsonResponse);
-      if (profile?.data?.patientSchedules != null) {
-        patientSchedules = profile!.data!.patientSchedules;
-        pastSurgicalCT.text =
-            patientSchedules?.patientPastsurgicalhistory?.toString() ?? "";
-        activityCT.text = patientSchedules?.patientActivitytype ?? "";
-        toileting.text = patientSchedules?.patientToileting ?? "";
-        temp.text = 120.toString();
-        bp.text = patientSchedules?.patientVitalsigns?.bloodPressure ?? "";
-        final walkingTimeVal = patientSchedules?.patientWalkingtime;
-        selectedWalkingTimings = walkingTimeVal != null 
-            ? jsonDecode(walkingTimeVal) 
-            : [];
-        heartRate.text =
-            patientSchedules?.patientVitalsigns?.heartRate?.toString() ?? "";
-        respiration.text =
-            patientSchedules?.patientVitalsigns?.respiratoryRate ?? "";
+      if (response.statusCode == 200) {
+        var jsonResponse = jsonDecode(response.body);
+        profile = ProfileList.fromJson(jsonResponse);
+        if (profile?.data?.patientSchedules != null) {
+          patientSchedules = profile!.data!.patientSchedules;
+          pastSurgicalCT.text =
+              patientSchedules?.patientPastsurgicalhistory?.toString() ?? "";
+          activityCT.text = patientSchedules?.patientActivitytype ?? "";
+          toileting.text = patientSchedules?.patientToileting ?? "";
+          temp.text = 120.toString();
+          bp.text = patientSchedules?.patientVitalsigns?.bloodPressure ?? "";
+          final walkingTimeVal = patientSchedules?.patientWalkingtime;
+          selectedWalkingTimings =
+              walkingTimeVal != null ? jsonDecode(walkingTimeVal) : [];
+          heartRate.text =
+              patientSchedules?.patientVitalsigns?.heartRate?.toString() ?? "";
+          respiration.text =
+              patientSchedules?.patientVitalsigns?.respiratoryRate ?? "";
 
-        //DietPlan
-        diet = (patientSchedules?.patientDietplan ?? []).map((e) {
-          return Diet(name: e, id: e.length);
-        }).toList();
+          //DietPlan
+          diet = (patientSchedules?.patientDietplan ?? []).map((e) {
+            return Diet(name: e, id: e.length);
+          }).toList();
 
-        //MedicalHistory
-        medicalHistoryList =
-            (patientSchedules?.patientPastmedicalhistory ?? []).map((e) {
-          return MedicalHistory(name: e, id: e.length);
-        }).toList();
+          //MedicalHistory
+          medicalHistoryList =
+              (patientSchedules?.patientPastmedicalhistory ?? []).map((e) {
+            return MedicalHistory(name: e, id: e.length);
+          }).toList();
 
-        ///
-        final breakfastTime = patientSchedules?.patientBreakfasttime;
-        if (breakfastTime != null && breakfastTime.isNotEmpty) {
-          filters.clear();
-          filters.add(breakfastTime);
-        }
+          ///
+          final breakfastTime = patientSchedules?.patientBreakfasttime;
+          if (breakfastTime != null && breakfastTime.isNotEmpty) {
+            filters.clear();
+            filters.add(breakfastTime);
+          }
 
-        final medications = patientSchedules?.patientMedications;
-        if (medications != null && medications.isNotEmpty) {
-          medidation = "Morning";
-          meditationDetails = [
-            MedicationModel(time: "Morning",medicationDetails: []),
-            MedicationModel(time: "Noon",medicationDetails: []),
-            MedicationModel(time: "Evening",medicationDetails: []),
-          ];
-          var medicationValues = jsonDecode(medications);
-          medicationValues.keys.forEach((time) {
-            List<dynamic> ?details = medicationValues[time];
-            if(details != null) {
-              if(time == "Morning"){
-                details.forEach((element) {
-                  meditationDetails[0].medicationDetails!.add(TextEditingController(text:element.toString()));
-                });
+          final medications = patientSchedules?.patientMedications;
+          if (medications != null && medications.isNotEmpty) {
+            medidation = "Morning";
+            meditationDetails = [
+              MedicationModel(time: "Morning", medicationDetails: []),
+              MedicationModel(time: "Noon", medicationDetails: []),
+              MedicationModel(time: "Evening", medicationDetails: []),
+            ];
+            var medicationValues = jsonDecode(medications);
+            medicationValues.keys.forEach((time) {
+              List<dynamic>? details = medicationValues[time];
+              if (details != null) {
+                if (time == "Morning") {
+                  details.forEach((element) {
+                    meditationDetails[0]
+                        .medicationDetails!
+                        .add(TextEditingController(text: element.toString()));
+                  });
+                }
+                if (time == "Noon") {
+                  details.forEach((element) {
+                    meditationDetails[1]
+                        .medicationDetails!
+                        .add(TextEditingController(text: element.toString()));
+                  });
+                }
+                if (time == "Evening") {
+                  details.forEach((element) {
+                    meditationDetails[2]
+                        .medicationDetails!
+                        .add(TextEditingController(text: element.toString()));
+                  });
+                }
               }
-              if(time == "Noon"){
-                details.forEach((element) {
-                  meditationDetails[1].medicationDetails!.add(TextEditingController(text:element.toString()));
-                });
-              }
-              if(time == "Evening"){
-                details.forEach((element) {
-                  meditationDetails[2].medicationDetails!.add(TextEditingController(text:element.toString()));
-                });
-              }
-            }
-          });
-          selectedMedication = medidation;
-          debugPrint(medidation);
-        }else{
-          meditationDetails = [
-            MedicationModel(time: "Morning",medicationDetails: []),
-            MedicationModel(time: "Noon",medicationDetails: []),
-            MedicationModel(time: "Evening",medicationDetails: []),
-          ];
-        }
-        final oralCare = patientSchedules?.patientOralcare;
-        if (oralCare != null && oralCare.isNotEmpty) {
-          oralSelection = oralCare;
-          selectedOralCareTimings = jsonDecode(oralCare);
-          debugPrint(medidation);
-        }
-        final bathing = patientSchedules?.patientBathing;
-        if (bathing != null && bathing.isNotEmpty) {
-          bathingSelection = bathing;
-          selectedBathingTimings = jsonDecode(bathing);
-          debugPrint(medidation);
-        }
-        final dressing = patientSchedules?.patientDressing;
-        if (dressing != null && dressing.isNotEmpty) {
-          dressingSelection = dressing;
-          selectedDressingTimings = jsonDecode(dressing);
-          debugPrint(medidation);
-        }
+            });
+            selectedMedication = medidation;
+            debugPrint(medidation);
+          } else {
+            meditationDetails = [
+              MedicationModel(time: "Morning", medicationDetails: []),
+              MedicationModel(time: "Noon", medicationDetails: []),
+              MedicationModel(time: "Evening", medicationDetails: []),
+            ];
+          }
+          final oralCare = patientSchedules?.patientOralcare;
+          if (oralCare != null && oralCare.isNotEmpty) {
+            oralSelection = oralCare;
+            selectedOralCareTimings = jsonDecode(oralCare);
+            debugPrint(medidation);
+          }
+          final bathing = patientSchedules?.patientBathing;
+          if (bathing != null && bathing.isNotEmpty) {
+            bathingSelection = bathing;
+            selectedBathingTimings = jsonDecode(bathing);
+            debugPrint(medidation);
+          }
+          final dressing = patientSchedules?.patientDressing;
+          if (dressing != null && dressing.isNotEmpty) {
+            dressingSelection = dressing;
+            selectedDressingTimings = jsonDecode(dressing);
+            debugPrint(medidation);
+          }
 
-        final lunchTime = patientSchedules?.patientLunchtime;
-        if (lunchTime != null && lunchTime.isNotEmpty) {
-          lunchFilters.clear();
-          lunchFilters.add(lunchTime);
-        }
-        final hydrationVal = patientSchedules?.patientHydration;
-        if (hydrationVal != null && hydrationVal.isNotEmpty) {
-          hydrationTEC.text = hydrationVal;
-        }
+          final lunchTime = patientSchedules?.patientLunchtime;
+          if (lunchTime != null && lunchTime.isNotEmpty) {
+            lunchFilters.clear();
+            lunchFilters.add(lunchTime);
+          }
+          final hydrationVal = patientSchedules?.patientHydration;
+          if (hydrationVal != null && hydrationVal.isNotEmpty) {
+            hydrationTEC.text = hydrationVal;
+          }
 
-        final snacksVal = patientSchedules?.patientSnackstime;
-        if (snacksVal != null && snacksVal.isNotEmpty) {
-          snacks.clear();
-          snacks.add(snacksVal);
-        }
+          final snacksVal = patientSchedules?.patientSnackstime;
+          if (snacksVal != null && snacksVal.isNotEmpty) {
+            snacks.clear();
+            snacks.add(snacksVal);
+          }
 
-        final dinnerVal = patientSchedules?.patientDinnertime;
-        if (dinnerVal != null && dinnerVal.isNotEmpty) {
-          dinner.clear();
-          dinner.add(dinnerVal);
+          final dinnerVal = patientSchedules?.patientDinnertime;
+          if (dinnerVal != null && dinnerVal.isNotEmpty) {
+            dinner.clear();
+            dinner.add(dinnerVal);
+          }
+          final bloodSugarVal = patientSchedules?.patientBloodsugar;
+          if (bloodSugarVal != null && bloodSugarVal.isNotEmpty) {
+            bloodSugarTEC.text = bloodSugarVal;
+          }
+          debugPrint(
+              "Fetched patient schedules: ${profile?.data?.patientSchedules?.toJson()}");
+        } else {
+          debugPrint("No patient schedules found.");
         }
-        final bloodSugarVal = patientSchedules?.patientBloodsugar;
-        if (bloodSugarVal != null && bloodSugarVal.isNotEmpty) {
-          bloodSugarTEC.text = bloodSugarVal;
-        }
-        debugPrint(
-            "Fetched patient schedules: ${profile?.data?.patientSchedules?.toJson()}");
       } else {
-        debugPrint("No patient schedules found.");
+        debugPrint("Status code: ${response.statusCode}");
       }
-    } else {
-      debugPrint("Status code: ${response.statusCode}");
-    }
-    } catch (e,s) {
+    } catch (e, s) {
       debugPrint("Error: $s");
     }
     loadingInfo = false;
@@ -549,13 +613,13 @@ class ScheduleController extends GetxController {
           profileController.update();
         }
         if (initialProfileDetails.profileList?.data != null) {
-          initialProfileDetails.profileList!.data!.profileImageUrl = newImageUrl;
+          initialProfileDetails.profileList!.data!.profileImageUrl =
+              newImageUrl;
           initialProfileDetails.update();
         }
         showCustomToast(message: "Profile photo updated");
         print("newImageUrl$newImageUrl");
         print("uploadResponse$jsonResponse");
-        update();
       } else {}
     } catch (e) {
       debugPrint(e.toString());
@@ -574,21 +638,20 @@ class ScheduleController extends GetxController {
           "Accept": "application/json",
         },
       );
-      if(res.statusCode ==200 ){
+      if (res.statusCode == 200) {
         selectImage = null;
         if (profile?.data != null) {
           profile!.data!.profileImageUrl = 'default-profile-img-female.png';
         }
         update();
         showCustomToast(message: 'Successfully Removed');
-      }else{
+      } else {
         showCustomToast(message: 'Not Successfully Removed');
       }
     } catch (e) {
       debugPrint(e.toString());
     }
   }
-
 
   @override
   void onInit() {

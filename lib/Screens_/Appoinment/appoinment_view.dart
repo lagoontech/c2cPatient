@@ -448,6 +448,7 @@ class AppointmentView extends StatelessWidget {
                                                           imageUrl:
                                                               '${data}${cancelled.caretaker?.profileImageUrl ?? ""}',
                                                           rating: "2",
+                                                          phoneNumber: cancelled.caretaker?.caretakerInfo?.primaryContactNumber ?? cancelled.caretaker?.mobilenum,
                                                         ));
                                                   },
                                                   action: "Reschedule",

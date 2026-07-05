@@ -13,6 +13,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:shimmer/shimmer.dart';
 import '../../ReusableUtils_/AppColors.dart';
 import '../../ReusableUtils_/custom_textfield.dart';
+import '../../ReusableUtils_/customButton.dart';
 import '../Profile/Controller/initila_profile_controller.dart';
 import 'Controller/edit_profile_controller.dart';
 
@@ -36,22 +37,16 @@ class AccountInformation extends StatelessWidget {
       return !v.loadingProfile?CustomBackground(
         appBar: CustomAppBar(
           title: 'Profile Information',
-          actions: [
-            InkWell(
-              onTap: () {
-                      ec.updateInitialProfileDetails();
-                    },
-              child: Padding(
-                padding: const EdgeInsets.only(right: 12.0),
-                child: Text(
-                  "Done",
-                  style: TextStyle(
-                    color: Colors.blue,
-                  ),
-                ),
-              ),
-            ),
-          ],
+        ),
+        bottomNavBar: Padding(
+          padding: EdgeInsets.only(bottom: 12.h, top: 8.h),
+          child: CustomButton(
+            text: "Save",
+            isLoading: v.isLoading,
+            onPressed: () {
+              ec.updateInitialProfileDetails();
+            },
+          ),
         ),
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 12.w),
