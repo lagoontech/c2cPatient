@@ -36,9 +36,9 @@ android {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "com.care2care.patient"
         minSdkVersion flutter.minSdkVersion
-        targetSdk = 35
-        versionCode = 4.0
-        versionName = "4.0"
+        targetSdk = 36
+        versionCode = 5.0
+        versionName = "5.0"
     }
 
     signingConfigs {

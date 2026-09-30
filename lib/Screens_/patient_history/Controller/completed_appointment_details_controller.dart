@@ -302,6 +302,8 @@ class CompletedAppointmentDetailsController extends GetxController {
   //
   getVitals() async {
     loadingVitals = true;
+    vitals = [];
+    avg = null;
     update();
     try {
       String? token = await SharedPref().getToken();
@@ -324,32 +326,56 @@ class CompletedAppointmentDetailsController extends GetxController {
       }
     } catch (e, s) {
       print("Error in getting vitals: $s");
+      vitals = [];
+      avg = null;
     }
     loadingVitals = false;
     update();
   }
 
   //
-  Map<String, String> calculateAverage(List<VitalsByDay> vitals) {
-    double bp = 0;
+  Map<String, String>? calculateAverage(List<VitalsByDay> vitals) {
+    if (vitals.isEmpty) return null;
+
     double heart = 0;
     double resp = 0;
     double temp = 0;
-
-    int count = vitals.length;
+    int heartCount = 0;
+    int respCount = 0;
+    int tempCount = 0;
 
     for (var v in vitals) {
-      heart += double.tryParse(v.vitalSigns?.heartRate ?? "0") ?? 0;
-      resp += double.tryParse(v.vitalSigns?.respiratoryRate ?? "0") ?? 0;
-      temp += double.tryParse(v.vitalSigns?.temperature ?? "0") ?? 0;
+      final signs = v.vitalSigns;
+      if (signs == null) continue;
+
+      final h = double.tryParse(signs.heartRate ?? "");
+      if (h != null) {
+        heart += h;
+        heartCount++;
+      }
+      final r = double.tryParse(signs.respiratoryRate ?? "");
+      if (r != null) {
+        resp += r;
+        respCount++;
+      }
+      final t = double.tryParse(signs.temperature ?? "");
+      if (t != null) {
+        temp += t;
+        tempCount++;
+      }
     }
 
+    final bpReadings = vitals
+        .map((e) => e.vitalSigns?.bloodPressure)
+        .whereType<String>()
+        .where((bp) => bp.trim().isNotEmpty)
+        .toList();
+
     return {
-      "bp": averageBloodPressure(
-          vitals.map((e) => e.vitalSigns!.bloodPressure!).toList()),
-      "heart": (heart / count).toStringAsFixed(0),
-      "resp": (resp / count).toStringAsFixed(0),
-      "temp": (temp / count).toStringAsFixed(1),
+      "bp": averageBloodPressure(bpReadings),
+      "heart": heartCount == 0 ? "-" : (heart / heartCount).toStringAsFixed(0),
+      "resp": respCount == 0 ? "-" : (resp / respCount).toStringAsFixed(0),
+      "temp": tempCount == 0 ? "-" : (temp / tempCount).toStringAsFixed(1),
     };
   }
 

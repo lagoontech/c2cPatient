@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'Models/vitals_model.dart';
 
 class VitalsView extends StatelessWidget {
   VitalsView({super.key});
@@ -24,6 +23,14 @@ class VitalsView extends StatelessWidget {
               padding: EdgeInsets.all(8),
               child: GetBuilder<CompletedAppointmentDetailsController>(
                 builder: (vc) {
+                  if (vc.loadingVitals) {
+                    return Center(
+                      child: CircularProgressIndicator(
+                        color: AppColors.primaryColor,
+                      ),
+                    );
+                  }
+
                   if (vc.vitals.isEmpty) {
                     return Center(
                       child: Text(
@@ -33,13 +40,63 @@ class VitalsView extends StatelessWidget {
                     );
                   }
 
+                  final avg = vc.avg;
+                  final rows = <DataRow>[
+                    ...vc.vitals.map((v) {
+                      return DataRow(
+                        cells: [
+                          DataCell(Text(
+                            v.appointmentDate == null
+                                ? "N/A"
+                                : DateFormat("dd MMM yyyy")
+                                    .format(v.appointmentDate!),
+                          )),
+                          DataCell(Center(
+                              child: Text(
+                                  v.vitalSigns?.bloodPressure ?? "-"))),
+                          DataCell(Center(
+                              child: Text(v.vitalSigns?.heartRate ?? "-"))),
+                          DataCell(Center(
+                              child: Text(
+                                  v.vitalSigns?.respiratoryRate ?? "-"))),
+                          DataCell(Center(
+                              child: Text(
+                                  v.vitalSigns?.temperature ?? "-"))),
+                        ],
+                      );
+                    }),
+                  ];
+
+                  if (avg is Map) {
+                    rows.add(
+                      DataRow(
+                        color: MaterialStateProperty.all(
+                            Colors.green.withOpacity(0.08)),
+                        cells: [
+                          DataCell(
+                            Text(
+                              "Average",
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          DataCell(Center(
+                              child: Text(avg["bp"]?.toString() ?? "-"))),
+                          DataCell(Center(
+                              child: Text(avg["heart"]?.toString() ?? "-"))),
+                          DataCell(Center(
+                              child: Text(avg["resp"]?.toString() ?? "-"))),
+                          DataCell(Center(
+                              child: Text(avg["temp"]?.toString() ?? "-"))),
+                        ],
+                      ),
+                    );
+                  }
+
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       _buildSectionHeader("Vital Signs History"),
                       SizedBox(height: 8),
-
-                      /// Card container like other sections
                       Card(
                         elevation: 1,
                         shape: RoundedRectangleBorder(
@@ -81,60 +138,7 @@ class VitalsView extends StatelessWidget {
                                   label: Center(child: Text("Temp")),
                                 ),
                               ],
-                              rows: [
-                                ...vc.vitals.map((v) {
-                                  return DataRow(
-                                    cells: [
-                                      DataCell(Text(
-                                        v.appointmentDate == null
-                                            ? "N/A"
-                                            : DateFormat("dd MMM yyyy")
-                                                .format(v.appointmentDate!),
-                                      )),
-                                      DataCell(Center(
-                                          child: Text(
-                                              v.vitalSigns?.bloodPressure ??
-                                                  "-"))),
-                                      DataCell(Center(
-                                          child: Text(
-                                              v.vitalSigns?.heartRate ?? "-"))),
-                                      DataCell(Center(
-                                          child: Text(
-                                              v.vitalSigns?.respiratoryRate ??
-                                                  "-"))),
-                                      DataCell(Center(
-                                          child: Text(
-                                              v.vitalSigns?.temperature ??
-                                                  "-"))),
-                                    ],
-                                  );
-                                }).toList(),
-
-                                /// Average row
-                                vc.avg != null
-                                    ? DataRow(
-                                        color: MaterialStateProperty.all(
-                                            Colors.green.withOpacity(0.08)),
-                                        cells: [
-                                          DataCell(
-                                            Text(
-                                              "Average",
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                          ),
-                                          DataCell(Center(
-                                              child: Text(vc.avg["bp"]!))),
-                                          DataCell(Center(
-                                              child: Text(vc.avg["heart"]!))),
-                                          DataCell(Center(
-                                              child: Text(vc.avg["resp"]!))),
-                                          DataCell(Center(
-                                              child: Text(vc.avg["temp"]!))),
-                                        ],
-                                      )
-                                    : DataRow(cells: []),
-                              ],
+                              rows: rows,
                             ),
                           ),
                         ),
